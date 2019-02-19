@@ -21,19 +21,24 @@ namespace ociusApi
 
     public static class Database
     {
-        //drones gets all drones
-        //drones?history=hour/day/week/month gets all for duration
-        //drones/{name} gets drone by name
-        //drones/{name}?history=hour/day/week/month gets all for duration
-
         public async static Task<string> GetAll()
         {
-            var skywave = JObject.Parse(@"{
-                [""name"": ""bruce"", ""company"": ""ocius"",],
-                [""name"": ""bob"", ""company"": ""ocius""]""}");
-            return skywave.ToString();
+            var drones = JObject.Parse(@"{
+            ""drones"": [{
+                    ""name"": ""bruce"",
+                    ""owner"": ""ocius"",
+                    ""link"": ""https://api.ocius.com.au/drones/bruce""
+                }, {
+                    ""name"": ""bob"",
+                    ""owner"": ""ocius"",
+                    ""link"": ""https://api.ocius.com.au/drones/bob""
+                }]
+            }");
+
+            return drones.ToString();
 
             /*
+            DYNAMO
             var client = new AmazonDynamoDBClient();
             var table = Table.LoadTable(client, "drones");
             var search = table.Query("bruce", new QueryFilter("timestamp", QueryOperator.GreaterThan, 1550304750));

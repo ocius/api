@@ -31,22 +31,27 @@ namespace GetByName
 
     public static class Database
     {
-        //drones list of drone names and links to them
-        //drones/{name} gets drone by name
+        //Todo:
         //drones/{name}/raw Gets data from the raw table
+        //Add query string ?history=hour/day/week/month gets all for duration
         //default is 24 hours
-        //?history=hour/day/week/month gets all for duration
 
         public async static Task<string> GetByName(string name)
         {
+            var drone = JObject.Parse(@"{
+                ""drone"": ""bruce"", 
+                ""lat"": ""1"", 
+                ""long"": ""1""
+            }");
 
-            var skywave = JObject.Parse(@"{""drone"": ""skywave"", ""lat"": ""1"", ""long"": ""1""}");
-            return skywave.ToString();
+            return drone.ToString();
 
             /*
             The source of the data is an implementation detail
             Todo:
             Transform the raw data into the form above. Save that in a new table.
+            Add saildrone data?
+            Approach the VCs that funded saildrone
             Code to access that table is below:
             
             var client = new AmazonDynamoDBClient();
@@ -54,6 +59,8 @@ namespace GetByName
             var query = table.Query(name, new QueryFilter(Constants.Timestamp, QueryOperator.GreaterThan, duration));
             var results = await query.GetRemainingAsync();
             return results.First().ToJson();
+
+            
             */
         }
     }
