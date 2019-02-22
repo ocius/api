@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
+using System.Linq;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
@@ -10,25 +11,21 @@ namespace RawDataToClientData
 {
     public class Function
     {
+        private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
+
         public async Task FunctionHandler(ILambdaContext context)
         {
-            var rawData = ReadRawDataAsync();
-            var clientData = TransformData(rawData);
-            await Database.InsertAsync(clientData);
+            var raw = await ReadAsync("RawData");
+            var clean = TransformData(raw);
+            await Database.InsertAsync(clean);
         }
 
-        public static string ReadRawDataAsync()
+        public static async Task<string> ReadAsync(string tableName)
         {
-            //here we get the raw data from the db
-            //how? it needs to be in there first
-            //go fix the other function
-            var rawData = @"{
-                ""foo"": ""bar"", 
-                ""x"": ""y"", 
-                ""1"": ""0""
-            }";
-
-            return rawData;
+            var table = Table.LoadTable(client, tableName);
+            var search = table.Query("Bruce", new QueryFilter("timestamp", QueryOperator.GreaterThan, 0));
+            var results = await search.GetRemainingAsync();
+            return results.First().ToJson();
         }
         public static string TransformData(string rawData)
         {
@@ -38,20 +35,15 @@ namespace RawDataToClientData
             //test by actually calling his api
             //that way we know if he's broken it
 
-            var clientData = @"{
-                ""drone"": ""bruce"", 
-                ""lat"": ""1"", 
-                ""long"": ""1""
-            }";
+            Console.WriteLine(rawData);
 
-            return clientData;
+            return rawData;
         }
 
         public static class Database
         {
             public async static Task InsertAsync(string json)
             {
-                var client = new AmazonDynamoDBClient();
                 var table = Table.LoadTable(client, "ClientData");
                 var item = Document.FromJson(json);
                 item["name"] = "Bruce";
