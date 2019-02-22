@@ -15,33 +15,21 @@ namespace RawDataToClientData
 
         public async Task FunctionHandler(ILambdaContext context)
         {
-            var raw = await ReadAsync("RawData");
-            var clean = TransformData(raw);
-            await Database.InsertAsync(clean);
-        }
-
-        public static async Task<string> ReadAsync(string tableName)
-        {
-            var table = Table.LoadTable(client, tableName);
-            var search = table.Query("Bruce", new QueryFilter("timestamp", QueryOperator.GreaterThan, 0));
-            var results = await search.GetRemainingAsync();
-            return results.First().ToJson();
-        }
-        public static string TransformData(string rawData)
-        {
-            //here is the heavy lifting
-            //the logic
-            //this part could be great for tdd
-            //test by actually calling his api
-            //that way we know if he's broken it
-
-            Console.WriteLine(rawData);
-
-            return rawData;
+            var rawData = await Database.ReadAsync("RawData");
+            var cleanData = Drone.TransformData(rawData);
+            await Database.InsertAsync(cleanData);
         }
 
         public static class Database
         {
+            public static async Task<string> ReadAsync(string tableName)
+            {
+                var table = Table.LoadTable(client, tableName);
+                var search = table.Query("Bruce", new QueryFilter("timestamp", QueryOperator.GreaterThan, 0));
+                var results = await search.GetRemainingAsync();
+                return results.First().ToJson();
+            }
+
             public async static Task InsertAsync(string json)
             {
                 var table = Table.LoadTable(client, "ClientData");
@@ -50,6 +38,15 @@ namespace RawDataToClientData
                 item["timestamp"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                 await table.PutItemAsync(item);
             }
+        }
+    }
+
+    public static class Drone
+    {
+        public static string TransformData(string rawData)
+        {
+            //pull out the name, the timestamp, and the vehicle json?
+            return "foo";
         }
     }
 }
