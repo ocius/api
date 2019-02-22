@@ -45,7 +45,7 @@ namespace XmlToJson
         public async static Task Insert(string json)
         {
             var client = new AmazonDynamoDBClient();
-            var table = Table.LoadTable(client, "drones");
+            var table = Table.LoadTable(client, "RawData");
             var drone = Document.FromJson(json);
             drone["name"] = "Bruce";
             drone["timestamp"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
