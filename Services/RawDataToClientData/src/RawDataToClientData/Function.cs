@@ -46,7 +46,7 @@ namespace RawDataToClientData
         public static string TransformData(string rawData)
         {
             //pull out the name, the timestamp, and the vehicle json?
-            return "foo";
+            return rawData;
         }
     }
 }
