@@ -17,7 +17,7 @@ namespace RawDataToClientData.Tests
             var expected = GetExpected();
 
             //Act
-            var actual = Function.Drone.TransformData(input);
+            var actual = Drone.TransformData(input);
 
             //Assert
             Assert.Equal(expected, actual);
