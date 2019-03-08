@@ -27,8 +27,9 @@ namespace RawDataToClientData
         public static string TransformData(string rawData)
         {
             var vehicles = GetVehiclesArray(rawData);
-            var drones = vehicles.Select(v => CreateDrone(v));
-            return JsonConvert.SerializeObject(drones);
+            var drones = vehicles.Select(v => CreateDrone(v)).ToList();
+            var owner = new Owner(drones);
+            return JsonConvert.SerializeObject(owner);
         }
 
         private static Drone CreateDrone(JToken vehicle){
@@ -52,6 +53,16 @@ namespace RawDataToClientData
         {
             Lat = lat;
             Lon = lon;
+        }
+    }
+
+    public class Owner
+    {
+        public List<Drone> Drones {get;}
+
+        public Owner(List<Drone> drones)
+        {
+            Drones = drones;
         }
     }
 
