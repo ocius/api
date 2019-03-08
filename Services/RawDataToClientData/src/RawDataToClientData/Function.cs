@@ -20,8 +20,30 @@ namespace RawDataToClientData
         {
             var rawDataTableName = "RawData";
             var rawData = await Database.ReadAsync(client, rawDataTableName);
-            var cleanData = Drone.TransformData(rawData);
+            var cleanData = TransformData(rawData);
             await Database.InsertAsync(client, cleanData);
+        }
+
+        public static string TransformData(string rawData)
+        {
+            var vehicles = GetVehiclesArray(rawData);
+            var lat = vehicles.First()["mavpos"]["lat"].ToString();
+            var lon = vehicles.First()["mavpos"]["lon"].ToString();
+
+            var latL = vehicles.Last()["mavpos"]["lat"]?.ToString();
+            var lonL = vehicles.Last()["mavpos"]["lon"]?.ToString();
+
+            var droneF = new Drone(lat, lon);
+            var droneL = new Drone(latL, lonL);
+            var drones = new List<Drone> { droneF, droneL};
+
+            return JsonConvert.SerializeObject(drones);
+        }
+
+        private static JToken GetVehiclesArray(string rawData){
+            var json = JsonConvert.DeserializeObject(rawData) as JObject;
+            var data = json["Response"]["File"];
+            return data["Vehicle"];
         }
     }
 
@@ -33,20 +55,6 @@ namespace RawDataToClientData
         {
             Lat = lat;
             Lon = lon;
-        }
-
-        public static string TransformData(string rawData)
-        {
-            var json = JsonConvert.DeserializeObject(rawData) as JObject;
-            var response = json["Response"];
-            var file = response["File"];
-            var vehicles = file["Vehicle"];
-
-
-            var lat = vehicles.First()["mavpos"]["lat"].ToString();
-            var lon = vehicles.First()["mavpos"]["lon"].ToString();
-            var drone = new Drone(lat, lon);
-            return JsonConvert.SerializeObject(drone);
         }
     }
 

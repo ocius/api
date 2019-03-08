@@ -17,7 +17,7 @@ namespace RawDataToClientData.Tests
             var expected = GetExpected();
 
             //Act
-            var actual = Drone.TransformData(input);
+            var actual = Function.TransformData(input);
 
             //Assert
             Assert.Equal(expected, actual);
@@ -25,9 +25,7 @@ namespace RawDataToClientData.Tests
 
         public static string GetExpected()
         {
-            var expected = @"{""Lat"":""-339059283"",""Lon"":""1512347900""}";
-
-            return expected.ToString();
+            return @"[{""Lat"":""-339059283"",""Lon"":""1512347900""},{""Lat"":null,""Lon"":null}]";
         }
     }
 }
