@@ -27,17 +27,14 @@ namespace RawDataToClientData
         public static string TransformData(string rawData)
         {
             var vehicles = GetVehiclesArray(rawData);
-            var lat = vehicles.First()["mavpos"]["lat"].ToString();
-            var lon = vehicles.First()["mavpos"]["lon"].ToString();
-
-            var latL = vehicles.Last()["mavpos"]["lat"]?.ToString();
-            var lonL = vehicles.Last()["mavpos"]["lon"]?.ToString();
-
-            var droneF = new Drone(lat, lon);
-            var droneL = new Drone(latL, lonL);
-            var drones = new List<Drone> { droneF, droneL};
-
+            var drones = vehicles.Select(v => CreateDrone(v));
             return JsonConvert.SerializeObject(drones);
+        }
+
+        private static Drone CreateDrone(JToken vehicle){
+            var lat = vehicle["mavpos"]["lat"]?.ToString();
+            var lon = vehicle["mavpos"]["lon"]?.ToString();
+            return new Drone(lat, lon);
         }
 
         private static JToken GetVehiclesArray(string rawData){
