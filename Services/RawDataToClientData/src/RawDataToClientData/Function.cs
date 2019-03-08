@@ -25,17 +25,28 @@ namespace RawDataToClientData
         }
     }
 
-    public static class Drone
+    public class Drone
     {
+        public string Lat {get;}
+        public string Lon {get;}  //Long is a reserved word     
+        public Drone(string lat, string lon) 
+        {
+            Lat = lat;
+            Lon = lon;
+        }
+
         public static string TransformData(string rawData)
         {
             var json = JsonConvert.DeserializeObject(rawData) as JObject;
-            var response = (json["Response"]);
+            var response = json["Response"];
             var file = response["File"];
-            //file can contain many vehicles
-            var vehicle = file["Vehicle"];
-            //pull out the name, the timestamp, and the vehicle json?
-            return json.ToString();
+            var vehicles = file["Vehicle"];
+
+
+            var lat = vehicles.First()["mavpos"]["lat"].ToString();
+            var lon = vehicles.First()["mavpos"]["lon"].ToString();
+            var drone = new Drone(lat, lon);
+            return JsonConvert.SerializeObject(drone);
         }
     }
 

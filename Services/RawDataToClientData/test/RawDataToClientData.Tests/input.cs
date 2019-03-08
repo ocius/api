@@ -17,7 +17,7 @@ namespace RawDataToClientData.Tests
         ""name"": ""Bruce"",
         ""Response"": {
             ""File"": {
-            ""TimeStamp"": ""2019-02-22 09-16-51-026"",
+            ""TimeStamp"": ""2019-03-08 01-58-18-899"",
             ""Vehicle"": [
                 {
                 ""bp"": [
@@ -39,13 +39,11 @@ namespace RawDataToClientData.Tests
                     }
                 ],
                 ""mavpos"": {
-                    ""alt"": ""360"",
+                    ""alt"": ""-3930"",
                     ""COMPASS_RAW"": {
-                    ""heading"": ""272.380005"",
                     ""offset"": ""-4.000000"",
-                    ""reference"": ""1"",
                     ""sensorid"": ""1"",
-                    ""time"": ""1327582856799"",
+                    ""time"": ""259410848325"",
                     ""variation"": ""12.490000""
                     },
                     ""cruise_speed"": ""0.926002"",
@@ -53,25 +51,25 @@ namespace RawDataToClientData.Tests
                     ""hb_bmode"": ""65"",
                     ""hb_system_status"": ""4"",
                     ""hb_type"": ""11"",
-                    ""hdg"": ""28088"",
-                    ""home_lat"": ""-33.905978"",
-                    ""home_lon"": ""151.234857"",
-                    ""lat"": ""-339059616"",
+                    ""hdg"": ""848"",
+                    ""home_lat"": ""-33.905932"",
+                    ""home_lon"": ""151.234788"",
+                    ""lat"": ""-339059283"",
                     ""linkok"": ""1"",
-                    ""lon"": ""1512348615"",
+                    ""lon"": ""1512347900"",
                     ""mode"": ""MANUAL"",
                     ""nsats"": ""7"",
-                    ""odo_metres"": ""700894.174320"",
-                    ""pit"": ""0.093224"",
-                    ""raw_eph"": ""180"",
-                    ""raw_epv"": ""340"",
-                    ""relalt"": ""70"",
-                    ""rol"": ""-0.010775"",
+                    ""odo_metres"": ""3415.636682"",
+                    ""pit"": ""0.085214"",
+                    ""raw_eph"": ""100"",
+                    ""raw_epv"": ""150"",
+                    ""relalt"": ""-220"",
+                    ""rol"": ""-0.010389"",
                     ""rudder_set_pos"": ""1540"",
                     ""s1"": ""1540"",
                     ""s10"": ""0"",
-                    ""s11"": ""47104"",
-                    ""s12"": ""109"",
+                    ""s11"": ""20480"",
+                    ""s12"": ""3"",
                     ""s13"": ""0"",
                     ""s14"": ""0"",
                     ""s15"": ""0"",
@@ -83,13 +81,11 @@ namespace RawDataToClientData.Tests
                     ""sail_wp_lat"": ""214.748365"",
                     ""sail_wp_lon"": ""214.748365"",
                     ""status"": ""MAV_STATE_ACTIVE"",
-                    ""statustext"": ""Ocius N2K: 3D Fix restored from msg 129029"",
+                    ""statustext"": ""User: Unknown set servo 11 value to 1100"",
                     ""sysid"": ""2"",
-                    ""vfr_alt"": ""0.360000"",
-                    ""vfr_hdg"": ""280"",
-                    ""wind_dir"": ""279.890015"",
-                    ""wind_spd"": ""1.075191"",
-                    ""yaw"": ""-1.380905""
+                    ""vfr_alt"": ""-3.930000"",
+                    ""vfr_hdg"": ""8"",
+                    ""yaw"": ""0.148178""
                 },
                 ""n_type"": ""MAV"",
                 ""pc"": [
@@ -163,6 +159,72 @@ namespace RawDataToClientData.Tests
                     ""name"": ""oc_dp_capture""
                     },
                     {
+                    ""cid"": ""1"",
+                    ""desc"": ""Relay Control Process"",
+                    ""did"": ""15"",
+                    ""name"": ""oc_dp_hwmon"",
+                    ""state"": ""1""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""new ais live"",
+                    ""did"": ""17"",
+                    ""name"": ""oc_dp_ais"",
+                    ""state"": ""1""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""Capture for A*"",
+                    ""did"": ""19"",
+                    ""name"": ""oc_dp_capture""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""nmea2000 proxy to 7799"",
+                    ""did"": ""3"",
+                    ""name"": ""oc_dp_proxy"",
+                    ""state"": ""1""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""Torqeedo Process"",
+                    ""did"": ""4"",
+                    ""name"": ""oc_dp_torqeedo"",
+                    ""state"": ""1""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""FleetMaple"",
+                    ""did"": ""22"",
+                    ""name"": ""oc_dp_fleetmaple""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""Collision Avoidance"",
+                    ""did"": ""18"",
+                    ""name"": ""oc_dp_ca""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""Iridium Connection"",
+                    ""did"": ""16"",
+                    ""name"": ""oc_dp_iridium""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""Mavlink Connection"",
+                    ""did"": ""1"",
+                    ""name"": ""oc_dp_mavproc"",
+                    ""state"": ""1""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""UDT Client to AWS"",
+                    ""did"": ""21"",
+                    ""name"": ""oc_dp_tclient"",
+                    ""state"": ""1""
+                    },
+                    {
                     ""cid"": ""2"",
                     ""desc"": ""capture uw camera"",
                     ""did"": ""2"",
@@ -189,13 +251,6 @@ namespace RawDataToClientData.Tests
                     },
                     {
                     ""cid"": ""2"",
-                    ""desc"": ""udt client 52.65.110.215"",
-                    ""did"": ""4"",
-                    ""name"": ""oc_dp_tclient"",
-                    ""state"": ""1""
-                    },
-                    {
-                    ""cid"": ""2"",
                     ""desc"": ""push mh to aws"",
                     ""did"": ""11"",
                     ""name"": ""oc_dp_udppush""
@@ -205,13 +260,6 @@ namespace RawDataToClientData.Tests
                     ""desc"": ""push mr to aws"",
                     ""did"": ""12"",
                     ""name"": ""oc_dp_udppush""
-                    },
-                    {
-                    ""cid"": ""2"",
-                    ""desc"": ""Mavlink from pi 9999"",
-                    ""did"": ""3"",
-                    ""name"": ""oc_dp_mavproc"",
-                    ""state"": ""1""
                     },
                     {
                     ""cid"": ""2"",
@@ -263,6 +311,20 @@ namespace RawDataToClientData.Tests
                     ""name"": ""oc_dp_acomms""
                     },
                     {
+                    ""cid"": ""2"",
+                    ""desc"": ""Mavlink from pi 9999"",
+                    ""did"": ""3"",
+                    ""name"": ""oc_dp_mavproc"",
+                    ""state"": ""1""
+                    },
+                    {
+                    ""cid"": ""2"",
+                    ""desc"": ""UDT Client to AWS"",
+                    ""did"": ""4"",
+                    ""name"": ""oc_dp_tclient"",
+                    ""state"": ""1""
+                    },
+                    {
                     ""cid"": ""3"",
                     ""desc"": ""UDT Server"",
                     ""did"": ""2"",
@@ -277,13 +339,6 @@ namespace RawDataToClientData.Tests
                     },
                     {
                     ""cid"": ""3"",
-                    ""desc"": ""udp from bruce"",
-                    ""did"": ""4"",
-                    ""name"": ""oc_dp_mavproc"",
-                    ""state"": ""1""
-                    },
-                    {
-                    ""cid"": ""3"",
                     ""desc"": ""mavproc sim bruce"",
                     ""did"": ""7"",
                     ""name"": ""oc_dp_mavproc""
@@ -293,19 +348,26 @@ namespace RawDataToClientData.Tests
                     ""desc"": ""capture bruce mastrear"",
                     ""did"": ""6"",
                     ""name"": ""oc_dp_capture""
+                    },
+                    {
+                    ""cid"": ""3"",
+                    ""desc"": ""UDP from Vehicles"",
+                    ""did"": ""4"",
+                    ""name"": ""oc_dp_mavproc"",
+                    ""state"": ""1""
                     }
                 ],
                 ""stext"": [
-                    ""2019-02-22 07-33-08-191:Ocius N2K: No FIX from msg 129029"",
-                    ""2019-02-22 07-33-15-264:Ocius N2K: 3D Fix restored from msg 129029"",
-                    ""2019-02-22 08-08-24-315:Ocius N2K: No FIX from msg 129029"",
-                    ""2019-02-22 08-08-25-390:Ocius N2K: 3D Fix restored from msg 129029"",
-                    ""2019-02-22 08-48-41-539:Ocius N2K: No FIX from msg 129029"",
-                    ""2019-02-22 08-48-42-535:Ocius N2K: 3D Fix restored from msg 129029"",
-                    ""2019-02-22 08-48-46-562:Ocius N2K: No FIX from msg 129029"",
-                    ""2019-02-22 08-48-47-617:Ocius N2K: 3D Fix restored from msg 129029"",
-                    ""2019-02-22 08-48-53-582:Ocius N2K: No FIX from msg 129029"",
-                    ""2019-02-22 08-48-59-597:Ocius N2K: 3D Fix restored from msg 129029""
+                    ""2019-03-08 01-57-24-429:User: Unknown set servo 11 value to 1900"",
+                    ""2019-03-08 01-57-26-210:User: Unknown set servo 11 value to 1100"",
+                    ""2019-03-08 01-57-35-351:User: Unknown set servo 11 value to 1900"",
+                    ""2019-03-08 01-57-37-247:User: Unknown set servo 11 value to 1100"",
+                    ""2019-03-08 01-57-46-253:User: Unknown set servo 11 value to 1900"",
+                    ""2019-03-08 01-57-48-179:User: Unknown set servo 11 value to 1100"",
+                    ""2019-03-08 01-57-57-291:User: Unknown set servo 11 value to 1900"",
+                    ""2019-03-08 01-57-59-198:User: Unknown set servo 11 value to 1100"",
+                    ""2019-03-08 01-58-08-307:User: Unknown set servo 11 value to 1900"",
+                    ""2019-03-08 01-58-10-193:User: Unknown set servo 11 value to 1100""
                 ],
                 ""tqm"": {
                     ""cur"": ""0"",
@@ -321,6 +383,232 @@ namespace RawDataToClientData.Tests
                     ""w_id"": ""1"",
                     ""w_mt"": ""28""
                 }
+                },
+                {
+                ""mavpos"": {
+                    ""airspeed"": ""0.227000"",
+                    ""alt"": ""580"",
+                    ""COMPASS_RAW"": {
+                    ""offset"": ""0.100000"",
+                    ""sensorid"": ""1""
+                    },
+                    ""cruise_speed"": ""5.000000"",
+                    ""fixtype"": ""3"",
+                    ""groundspeed"": ""0.227000"",
+                    ""hb_bmode"": ""65"",
+                    ""hb_system_status"": ""4"",
+                    ""hb_type"": ""10"",
+                    ""hdg"": ""8858"",
+                    ""home_lat"": ""-33.906019"",
+                    ""home_lon"": ""151.234799"",
+                    ""lat"": ""-339060231"",
+                    ""linkok"": ""1"",
+                    ""lon"": ""1512347970"",
+                    ""mode"": ""MANUAL"",
+                    ""nsats"": ""13"",
+                    ""odo_metres"": ""2377.026482"",
+                    ""pit"": ""0.042292"",
+                    ""raw_cog"": ""24377"",
+                    ""raw_eph"": ""72"",
+                    ""raw_epv"": ""127"",
+                    ""relalt"": ""10"",
+                    ""rol"": ""0.025095"",
+                    ""rudder_set_pos"": ""1500"",
+                    ""s1"": ""1500"",
+                    ""s10"": ""14847"",
+                    ""s11"": ""39424"",
+                    ""s12"": ""34"",
+                    ""s13"": ""0"",
+                    ""s14"": ""0"",
+                    ""s15"": ""0"",
+                    ""s16"": ""0"",
+                    ""s3"": ""1500"",
+                    ""s7"": ""0"",
+                    ""s8"": ""0"",
+                    ""s9"": ""60415"",
+                    ""sail_wp_lat"": ""214.748365"",
+                    ""sail_wp_lon"": ""214.748365"",
+                    ""status"": ""MAV_STATE_ACTIVE"",
+                    ""statustext"": ""APM:Rover V3.2.0-dev (61810976)"",
+                    ""sysid"": ""3"",
+                    ""vfr_alt"": ""0.580000"",
+                    ""vfr_hdg"": ""88"",
+                    ""yaw"": ""1.546081""
+                },
+                ""n_type"": ""MAV"",
+                ""ps"": [
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""capture picam"",
+                    ""did"": ""3"",
+                    ""name"": ""oc_dp_capture"",
+                    ""state"": ""1""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""Iridium Connection"",
+                    ""did"": ""4"",
+                    ""name"": ""oc_dp_iridium""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""Mavlink Connection"",
+                    ""did"": ""1"",
+                    ""name"": ""oc_dp_mavproc"",
+                    ""state"": ""1""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""UDT Client to AWS"",
+                    ""did"": ""2"",
+                    ""name"": ""oc_dp_tclient"",
+                    ""state"": ""1""
+                    }
+                ],
+                ""stext"": ""2019-03-07 23-03-04-477:APM:Rover V3.2.0-dev (61810976)""
+                },
+                {
+                ""bp"": [
+                    {
+                    ""bp_id"": ""1"",
+                    ""bp_name"": ""Bow""
+                    },
+                    {
+                    ""bp_id"": ""2"",
+                    ""bp_name"": ""Port""
+                    },
+                    {
+                    ""bp_id"": ""3"",
+                    ""bp_name"": ""Stbd""
+                    },
+                    {
+                    ""bp_id"": ""4"",
+                    ""bp_name"": ""Stern""
+                    }
+                ],
+                ""mavpos"": {
+                    ""alt"": ""-130"",
+                    ""COMPASS_RAW"": {
+                    ""offset"": ""0.100000"",
+                    ""sensorid"": ""1""
+                    },
+                    ""cruise_speed"": ""3.086674"",
+                    ""fixtype"": ""6"",
+                    ""hb_bmode"": ""65"",
+                    ""hb_system_status"": ""4"",
+                    ""hb_type"": ""11"",
+                    ""hdg"": ""7803"",
+                    ""lat"": ""-355556288"",
+                    ""linkok"": ""1"",
+                    ""lon"": ""1503833215"",
+                    ""mast_pos"": ""1100"",
+                    ""mast_set_pos"": ""1100"",
+                    ""mode"": ""MANUAL"",
+                    ""nav_bearing"": ""92"",
+                    ""nsats"": ""10"",
+                    ""odo_metres"": ""30758.236728"",
+                    ""pit"": ""0.001688"",
+                    ""raw_eph"": ""121"",
+                    ""raw_epv"": ""200"",
+                    ""relalt"": ""-270"",
+                    ""rol"": ""0.001662"",
+                    ""rudder_pos"": ""1500"",
+                    ""rudder_set_pos"": ""1500"",
+                    ""s1"": ""1500"",
+                    ""s10"": ""0"",
+                    ""s11"": ""31488"",
+                    ""s12"": ""16926"",
+                    ""s13"": ""56325"",
+                    ""s14"": ""19461"",
+                    ""s15"": ""19460"",
+                    ""s16"": ""56324"",
+                    ""s3"": ""1500"",
+                    ""s7"": ""0"",
+                    ""s8"": ""0"",
+                    ""s9"": ""0"",
+                    ""sail_mode"": ""2"",
+                    ""sail_pos"": ""1500"",
+                    ""sail_set_pos"": ""1500"",
+                    ""sail_wp_lat"": ""214.748365"",
+                    ""sail_wp_lon"": ""214.748365"",
+                    ""status"": ""MAV_STATE_ACTIVE"",
+                    ""statustext"": ""EKF2 IMU0 is using GPS"",
+                    ""sysid"": ""4"",
+                    ""target_bearing"": ""92"",
+                    ""vfr_alt"": ""-0.130000"",
+                    ""vfr_hdg"": ""78"",
+                    ""winch_pos"": ""1100"",
+                    ""winch_set_pos"": ""1100"",
+                    ""wind_spd"": ""9.995679"",
+                    ""wp_dist"": ""1886"",
+                    ""wp_lat"": ""-356411392"",
+                    ""wp_lon"": ""1505781248"",
+                    ""yaw"": ""1.361946""
+                },
+                ""n_type"": ""MAV"",
+                ""ps"": [
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""Mavlink Connection"",
+                    ""did"": ""1"",
+                    ""name"": ""oc_dp_mavproc"",
+                    ""state"": ""1""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""UDT Client to AWS"",
+                    ""did"": ""2"",
+                    ""name"": ""oc_dp_tclient"",
+                    ""state"": ""1""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""Collision Avoidance"",
+                    ""did"": ""5"",
+                    ""name"": ""oc_dp_ca"",
+                    ""state"": ""1""
+                    },
+                    {
+                    ""cid"": ""1"",
+                    ""desc"": ""Iridium Connection"",
+                    ""did"": ""4"",
+                    ""name"": ""oc_dp_iridium"",
+                    ""state"": ""1""
+                    },
+                    {
+                    ""cid"": ""2"",
+                    ""desc"": ""Phidget Power Mon"",
+                    ""did"": ""1"",
+                    ""name"": ""oc_dp_megapower"",
+                    ""state"": ""1""
+                    },
+                    {
+                    ""cid"": ""2"",
+                    ""desc"": ""Mavlink Connection"",
+                    ""did"": ""2"",
+                    ""name"": ""oc_dp_mavproc"",
+                    ""state"": ""1""
+                    },
+                    {
+                    ""cid"": ""2"",
+                    ""desc"": ""UDT Client to AWS"",
+                    ""did"": ""3"",
+                    ""name"": ""oc_dp_tclient"",
+                    ""state"": ""1""
+                    }
+                ],
+                ""stext"": [
+                    ""2019-03-07 23-03-15-869:APM:Rover V3.2.0-dev (0caa2e12)"",
+                    ""2019-03-07 23-03-15-879:APM:Rover V3.2.0-dev (0caa2e12)"",
+                    ""2019-03-08 00-45-41-806:Reached waypoint #18"",
+                    ""2019-03-08 00-45-41-806:Executing command ID #16"",
+                    ""2019-03-08 00-59-15-517:Reached waypoint #19"",
+                    ""2019-03-08 00-59-15-527:Executing command ID #16"",
+                    ""2019-03-08 01-55-59-017:EKF2 IMU0 tilt alignment complete"",
+                    ""2019-03-08 01-56-03-161:Wind has risen, sailing can resume."",
+                    ""2019-03-08 01-56-05-501:EKF2 IMU0 Origin set to GPS"",
+                    ""2019-03-08 01-56-29-926:EKF2 IMU0 is using GPS""
+                ]
                 },
                 {
                 ""mavpos"": {
@@ -345,6 +633,7 @@ namespace RawDataToClientData.Tests
             ""ResponseTime"": ""0"",
             ""Status"": ""Succeeded""
         },
-        ""timestamp"": 1550827011
+        ""timestamp"": 1552010303
         }";
-}}
+    }
+}

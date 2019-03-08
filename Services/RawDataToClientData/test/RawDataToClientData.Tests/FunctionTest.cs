@@ -25,11 +25,7 @@ namespace RawDataToClientData.Tests
 
         public static string GetExpected()
         {
-            var expected = JObject.Parse(@"{
-                ""drone"": ""bruce"", 
-                ""lat"": ""1"", 
-                ""long"": ""1""
-            }");
+            var expected = @"{""Lat"":""-339059283"",""Lon"":""1512347900""}";
 
             return expected.ToString();
         }
