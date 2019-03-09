@@ -47,13 +47,6 @@ namespace GetByName
             return drone.ToString();
 
             /*
-            The source of the data is an implementation detail
-            Todo:
-            Transform the raw data into the form above. Save that in a new table.
-            Add saildrone data?
-            Approach the VCs that funded saildrone
-            Code to access that table is below:
-            
             var client = new AmazonDynamoDBClient();
             var table = Table.LoadTable(client, Constants.Drones);
             var query = table.Query(name, new QueryFilter(Constants.Timestamp, QueryOperator.GreaterThan, duration));

@@ -23,28 +23,11 @@ namespace ociusApi
     {
         public async static Task<string> GetAll()
         {
-            var drones = JObject.Parse(@"{
-            ""drones"": [{
-                    ""name"": ""bruce"",
-                    ""owner"": ""ocius"",
-                    ""link"": ""https://api.ocius.com.au/drones/bruce""
-                }, {
-                    ""name"": ""bob"",
-                    ""owner"": ""ocius"",
-                    ""link"": ""https://api.ocius.com.au/drones/bob""
-                }]
-            }");
-
-            return drones.ToString();
-
-            /*
-            DYNAMO
             var client = new AmazonDynamoDBClient();
-            var table = Table.LoadTable(client, "drones");
-            var search = table.Query("bruce", new QueryFilter("timestamp", QueryOperator.GreaterThan, 1550304750));
+            var table = Table.LoadTable(client, "ClientData");
+            var search = table.Query("Bruce", new QueryFilter("timestamp", QueryOperator.GreaterThan, 1550304750));
             var results = await search.GetRemainingAsync();
             return results.First().ToJson();
-            */
         }
     }
 
