@@ -27,7 +27,7 @@ namespace ociusApi
             var table = Table.LoadTable(client, "ClientData");
             var search = table.Query("Bruce", new QueryFilter("timestamp", QueryOperator.GreaterThan, 1550304750));
             var results = await search.GetRemainingAsync();
-            return results.First().ToJson();
+            return results.Last().ToJson();
         }
     }
 

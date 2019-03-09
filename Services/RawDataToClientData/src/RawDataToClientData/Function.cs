@@ -73,7 +73,7 @@ namespace RawDataToClientData
             var table = Table.LoadTable(client, tableName);
             var search = table.Query("Bruce", new QueryFilter("timestamp", QueryOperator.GreaterThan, 0));
             var results = await search.GetRemainingAsync();
-            return results.First().ToJson();
+            return results.Last().ToJson();
         }
 
         public async static Task InsertAsync(AmazonDynamoDBClient client, string json)
