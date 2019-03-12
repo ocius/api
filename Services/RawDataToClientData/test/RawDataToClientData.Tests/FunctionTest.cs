@@ -9,11 +9,13 @@ namespace RawDataToClientData.Tests
         public void TransformData_ShouldExtractLatLong()
         {
             //Arrange
-            var input = SampleInputData.Json;
+            var json = SampleInputData.Json;
+            var xml = SampleInputData.Xml;
+            var mapping = Function.MapIdToName(xml);
             var expected = GetExpectedJson();
 
             //Act
-            var actual = Function.TransformData(input);
+            var actual = Function.TransformData(json, mapping);
 
             //Assert
             Assert.Equal(expected, actual);
@@ -24,7 +26,7 @@ namespace RawDataToClientData.Tests
         {
             //Arrange
             var input = SampleInputData.Xml;
-            var expected = GetExpectedXml();
+            var expected = GetExpectedMapping();
 
             //Act
             var actual = Function.MapIdToName(input);
@@ -35,15 +37,17 @@ namespace RawDataToClientData.Tests
 
         public static string GetExpectedJson()
         {
-            return @"[{""Lat"":""-339059283"",""Lon"":""1512347900""},{""Lat"":""-339060231"",""Lon"":""1512347970""},{""Lat"":""-355556288"",""Lon"":""1503833215""},{""Lat"":null,""Lon"":null}]";
+            return @"{""drones"":[{""Name"":""Bruce"",""Lat"":""-339059283"",""Lon"":""1512347900""},{""Name"":""Dory"",""Lat"":""-339060231"",""Lon"":""1512347970""},{""Name"":""Bob"",""Lat"":""-355556288"",""Lon"":""1503833215""},{""Name"":""Unknown"",""Lat"":""0"",""Lon"":""0""}]}";
         }
 
-        public static IEnumerable<IdToNameMapping> GetExpectedXml()
+        public static Dictionary<string, string> GetExpectedMapping()
         {
-            var bruce = new IdToNameMapping("2", "Bruce");
-            var dory = new IdToNameMapping("3" ,"Dory");
-            var bob = new IdToNameMapping("4", "Bob");
-            return new List<IdToNameMapping>{bruce, dory, bob};
+            var mapping = new Dictionary<string, string> {
+                {"2", "Bruce"}, 
+                {"3", "Dory"},
+                {"4", "Bob"}
+            };
+            return mapping;
         }
     }
 }

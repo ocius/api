@@ -17,47 +17,49 @@ namespace RawDataToClientData
     public class Function
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
-        private static Task<string> xml;
 
         public async Task FunctionHandler(ILambdaContext context)
         {
             var rawDataTableName = "RawData";
             var rawData = Database.ReadAsync(client, rawDataTableName);
-            xml = Api.GetXmlAsync();
+            var xml = Api.GetXmlAsync();
             await Task.WhenAll(rawData, xml);
-            var cleanData = TransformData(rawData.Result);
+            var mappingBetweenNameAndId = MapIdToName(xml.Result);
+            var cleanData = TransformData(rawData.Result, mappingBetweenNameAndId);
             await Database.InsertAsync(client, cleanData);
         }
 
-        public static string TransformData(string rawData)
+        public static string TransformData(string rawData, Dictionary<string, string> mappingBetweenNameAndId)
         {
             var vehicles = GetVehiclesArray(rawData);
-            var mappingBetweenNameAndId = MapIdToName(xml.Result);
-            var drones = vehicles.Select(v => CreateDrone(v)).ToList();
+            var drones = vehicles.Select(v => CreateDrone(v, mappingBetweenNameAndId)).ToList();
             var owner = new Owner(drones);
             return JsonConvert.SerializeObject(owner);
         }
 
-        public static List<IdToNameMapping> MapIdToName(string xml)
+        public static Dictionary<string, string> MapIdToName(string xml)
         {
             var json = GetJson(xml);
             var data = JsonConvert.DeserializeObject(json) as JObject;
             var response = data["Response"];
             var robots = response["robot"];
-            var result = robots.Select(r => {
-                var id = r["sysid"].ToString();
-                var name = r["robotid"].ToString();
-                return new IdToNameMapping(id, name);
-            });
-            return result.ToList();
+            var result = new Dictionary<string, string>();
+            foreach(var robot in robots){
+                var id = robot["sysid"].ToString();
+                var name = robot["robotid"].ToString();
+                result.Add(id, name);
+            }
+            return result;
         }
 
-        private static Drone CreateDrone(JToken vehicle){
+        private static Drone CreateDrone(JToken vehicle, IDictionary<string, string> mapping){
             var data = vehicle["mavpos"];
             var id = data["sysid"]?.ToString();
+            if (id is null) return new Drone("Unknown", "0", "0");
+            var name = mapping[id];
             var lat = data["lat"].ToString();
             var lon = data["lon"].ToString();
-            return new Drone(id, lat, lon);
+            return new Drone(name, lat, lon);
         }
 
         private static JToken GetVehiclesArray(string rawData){
@@ -90,8 +92,9 @@ namespace RawDataToClientData
         public string Name {get;}
         public string Lat {get;}
         public string Lon {get;}  //Long is a reserved word     
-        public Drone(string id, string lat, string lon) 
+        public Drone(string name, string lat, string lon) 
         {
+            Name = name;
             Lat = lat;
             Lon = lon;
         }
