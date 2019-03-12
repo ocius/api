@@ -2,7 +2,7 @@ namespace RawDataToClientData.Tests
 {
     public static class SampleInputData
     {
-        public static string Xml => @"{<?xml version=""1.0"" encoding=""UTF-8"" ?><Response><Status>Succeeded</Status><robot><sysid>2</sysid><robotid>Bruce</robotid></robot><robot><sysid>3</sysid><robotid>Dory</robotid><hassail>false</hassail><hasairmar>false</hasairmar><haswinch>false</haswinch></robot><robot><sysid>4</sysid><robotid>Bob</robotid></robot><robot><sysid>5</sysid><robotid>Beth</robotid></robot><robot><sysid>6</sysid><robotid>GRIM</robotid><steer>skid</steer><hassail>false</hassail><hasairmar>false</hasairmar><haswinch>false</haswinch><maxspeed>12</maxspeed></robot><robot><sysid>80</sysid><robotid>Beluga</robotid><hassail>false</hassail><hasairmar>false</hasairmar><haswinch>false</haswinch></robot><robot><sysid>81</sysid><robotid>Minke</robotid><hassail>false</hassail><hasairmar>false</hasairmar><haswinch>false</haswinch></robot><robot><sysid>151</sysid><robotid>Remus100</robotid><hassail>false</hassail><hasairmar>false</hasairmar><haswinch>false</haswinch></robot><robot><sysid>152</sysid><robotid>Remus600</robotid><hassail>false</hassail><hasairmar>false</hasairmar><haswinch>false</haswinch></robot><ResponseTime>2</ResponseTime></Response>";
+        public static string Xml => @"<?xml version=""1.0"" encoding=""UTF-8"" ?><Response><Status>Succeeded</Status><robot><sysid>2</sysid><robotid>Bruce</robotid></robot><robot><sysid>3</sysid><robotid>Dory</robotid><hassail>false</hassail><hasairmar>false</hasairmar><haswinch>false</haswinch></robot><robot><sysid>4</sysid><robotid>Bob</robotid></robot><ResponseTime>2</ResponseTime></Response>";
 
         public static string Json => @"{
         ""?xml"": {

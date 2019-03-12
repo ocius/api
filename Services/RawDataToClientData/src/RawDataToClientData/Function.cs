@@ -38,13 +38,18 @@ namespace RawDataToClientData
             return JsonConvert.SerializeObject(owner);
         }
 
-        public static IDictionary<string, string> MapIdToName(string xml)
+        public static List<IdToNameMapping> MapIdToName(string xml)
         {
             var json = GetJson(xml);
             var data = JsonConvert.DeserializeObject(json) as JObject;
             var response = data["Response"];
-            var result = new Dictionary<string, string>{{"1", "Bruce"}};
-            return result;
+            var robots = response["robot"];
+            var result = robots.Select(r => {
+                var id = r["sysid"].ToString();
+                var name = r["robotid"].ToString();
+                return new IdToNameMapping(id, name);
+            });
+            return result.ToList();
         }
 
         private static Drone CreateDrone(JToken vehicle){
@@ -68,7 +73,18 @@ namespace RawDataToClientData
             return JsonConvert.SerializeXmlNode(doc);
         }
     }
+    
+    public class IdToNameMapping
+    {
+        public string Id {get;}
+        public string Name {get;}
 
+        public IdToNameMapping(string id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
+    }
     public class Drone
     {
         public string Name {get;}
