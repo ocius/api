@@ -39,6 +39,7 @@ namespace RawDataToClientData
 
         public static Dictionary<string, string> MapIdToName(string xml)
         {
+            Console.WriteLine(xml);
             var json = GetJson(xml);
             var data = JsonConvert.DeserializeObject(json) as JObject;
             var response = data["Response"];
@@ -114,7 +115,7 @@ namespace RawDataToClientData
         public static async Task<string> GetXmlAsync()
         {
             var httpClient = new HttpClient();
-            const string endpoint = "https://dev.ocius.com.au/usvna/oc_server?listrobots";
+            const string endpoint = "https://dev.ocius.com.au/usvna/oc_server?listrobots&nodeflate";
             return await httpClient.GetStringAsync(endpoint);
         }
     }

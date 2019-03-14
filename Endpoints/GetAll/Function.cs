@@ -24,7 +24,7 @@ namespace ociusApi
         {
             var client = new AmazonDynamoDBClient();
             var table = Table.LoadTable(client, "ClientData");
-            var search = table.Query("Bruce", new QueryFilter("timestamp", QueryOperator.GreaterThan, 1550304750));
+            var search = table.Query("Ocius", new QueryFilter("timestamp", QueryOperator.GreaterThan, 1550304750));
             var results = await search.GetRemainingAsync();
             return results.Last().ToJson();
         }
