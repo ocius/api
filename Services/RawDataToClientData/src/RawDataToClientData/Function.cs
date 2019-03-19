@@ -58,9 +58,9 @@ namespace RawDataToClientData
             var id = data["sysid"]?.ToString();
             if (id is null) return new Drone("Unknown", "0", "0");
             var name = mapping[id];
-            var lat = data["lat"].ToString();
-            var lon = data["lon"].ToString();
-            return new Drone(name, lat, lon);
+            var lat = data["home_lat"] ?? 0;
+            var lon = data["home_lon"] ?? 0;
+            return new Drone(name, lat.ToString(), lon.ToString());
         }
 
         private static JToken GetVehiclesArray(string rawData){
