@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Amazon.Lambda.Core;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
@@ -12,8 +13,9 @@ namespace ociusApi
     {
         public async Task<ApiResponse> FunctionHandler(ILambdaContext context)
         {
-            var json = await Database.GetAll();
-            var response = new ApiResponse(200, json);
+            var body = await Database.GetAll();
+            var headers = new Dictionary<string, string>(){ { "Access-Control-Allow-Origin", "*" } };
+            var response = new ApiResponse(200, body, headers);
             return response;
         }
     }
@@ -35,11 +37,13 @@ namespace ociusApi
         public bool isBase64Encoded = false;
         public int statusCode { get; }
         public string body { get; }
+        public IDictionary<string, string> headers {get;}
 
-        public ApiResponse(int responseCode, string json)
+        public ApiResponse(int statusCode, string body, IDictionary<string,string> headers)
         {
-            statusCode = responseCode;
-            body = json;
+            this.statusCode = statusCode;
+            this.body = body;
+            this.headers = headers;
         }
     }
 }
