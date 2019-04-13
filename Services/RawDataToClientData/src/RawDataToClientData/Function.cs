@@ -18,15 +18,16 @@ namespace RawDataToClientData
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 
-        public async Task FunctionHandler(ILambdaContext context)
+        public async Task<string> FunctionHandler(JObject input, ILambdaContext context)
         {
-            var rawDataTableName = "RawData";
-            var rawData = Database.ReadAsync(client, rawDataTableName);
-            var xml = Api.GetXmlAsync();
-            await Task.WhenAll(rawData, xml);
-            var mappingBetweenNameAndId = MapIdToName(xml.Result);
-            var cleanData = TransformData(rawData.Result, mappingBetweenNameAndId);
-            await Database.InsertAsync(client, cleanData);
+            //var rawDataTableName = "RawData";
+            //var rawData = Database.ReadAsync(client, rawDataTableName);
+            //var xml = Api.GetXmlAsync();
+            //await Task.WhenAll(rawData, xml);
+            //var mappingBetweenNameAndId = MapIdToName(xml.Result);
+            //var cleanData = TransformData(rawData.Result, mappingBetweenNameAndId);
+
+            return await Database.InsertAsync(client, input.ToString());
         }
 
         public static string TransformData(string rawData, Dictionary<string, string> mappingBetweenNameAndId)
@@ -131,13 +132,14 @@ namespace RawDataToClientData
             return results.Last().ToJson();
         }
 
-        public async static Task InsertAsync(AmazonDynamoDBClient client, string json)
+        public async static Task<string> InsertAsync(AmazonDynamoDBClient client, string json)
         {
             var table = Table.LoadTable(client, "ClientData");
             var item = Document.FromJson(json);
             item["name"] = "Ocius";
             item["timestamp"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            await table.PutItemAsync(item);
+            var result = await table.PutItemAsync(item);
+            return "foo";
         }
     }
 }
