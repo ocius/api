@@ -2,6 +2,7 @@
 using Amazon.DynamoDBv2.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ociusApi
@@ -31,12 +32,44 @@ namespace ociusApi
             };
 
             var response = await client.QueryAsync(request);
-            return response.Items.Count.ToString();
+
+            var result = "results";
+
+            foreach(var item in response.Items)
+            {
+                result += GetJson(item);
+                result += "##################################################";
+
+            }
+
+            return result;
+        }
+
+        private static string GetJson(Dictionary<string, AttributeValue> attributeList)
+        {
+            var result = "";
+
+            foreach (KeyValuePair<string, AttributeValue> kvp in attributeList)
+            {
+                var attributeName = kvp.Key;
+                var value = kvp.Value;
+
+                result += (
+                    attributeName + " " +
+                    (value.S == null ? "" : "S=[" + value.S + "]") +
+                    (value.N == null ? "" : "N=[" + value.N + "]") +
+                    (value.SS == null ? "" : "SS=[" + string.Join(",", value.SS.ToArray()) + "]") +
+                    (value.NS == null ? "" : "NS=[" + string.Join(",", value.NS.ToArray()) + "]") +
+                    "=============================================================================="
+                );
+            }
+
+            return result;
         }
 
         private static string GetQuery(string timeSpan)
         {
-            if(timeSpan == "hour")
+            if(timeSpan == "day")
             {
                 return DateTime.UtcNow.Date.ToShortDateString();
             }
