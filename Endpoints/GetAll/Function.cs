@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using Amazon.Lambda.Core;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
+using System;
+using Newtonsoft.Json.Linq;
+using Amazon.DynamoDBv2.Model;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
@@ -11,9 +14,10 @@ namespace ociusApi
 {
     public class Function
     {
-        public async Task<ApiResponse> FunctionHandler(ILambdaContext context)
+        public async Task<ApiResponse> FunctionHandler(JObject input)
         {
-            var body = await Database.GetAll();
+            var timespan = input["timespan"];
+            var body = await Database.GetByTimespan(timespan.ToString());
             var headers = new Dictionary<string, string>(){ { "Access-Control-Allow-Origin", "*" } };
             var response = new ApiResponse(200, body, headers);
             return response;
@@ -22,13 +26,23 @@ namespace ociusApi
 
     public static class Database
     {
-        public async static Task<string> GetAll()
+        public async static Task<string> GetByTimespan(string timespan)
         {
             var client = new AmazonDynamoDBClient();
-            var table = Table.LoadTable(client, "ClientData");
-            var search = table.Query("Ocius", new QueryFilter("timestamp", QueryOperator.GreaterThan, 1550304750));
-            var results = await search.GetRemainingAsync();
-            return results.Last().ToJson();
+
+            var request = new QueryRequest
+            {
+                TableName = "OciusDroneData",
+                KeyConditionExpression = "#foo > :timestamp",
+                ExpressionAttributeNames = new Dictionary<String, String> {
+                    {"#foo", "timestamp"}
+                },
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
+                {":timestamp", new AttributeValue { N = timespan }}}
+            };
+
+            var response = await client.QueryAsync(request);
+            return response.Items.Count.ToString();
         }
     }
 
