@@ -18,8 +18,7 @@ namespace XmlToJson
             var data = vehicle["mavpos"];
             var id = data["sysid"]?.ToString();
 
-            if (id is null)
-                return new Drone { Name = "Unknown", Data = vehicle.ToString() };
+            if (id is null) return new Drone { Name = "Unknown", Data = vehicle.ToString() };
 
             var name = mapping[id];
             return new Drone { Name = name, Data = vehicle.ToString() };

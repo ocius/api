@@ -10,10 +10,10 @@ namespace XmlToJson
         public async static Task InsertDrone(string droneData)
         {
             var client = new AmazonDynamoDBClient();
-            var table = Table.LoadTable(client, "OciusDroneData");
+            var table = Table.LoadTable(client, "TimeSeriesDroneData");
             var drone = Document.FromJson(droneData);
-            drone["date"] = DateTime.UtcNow.Date;
-            drone["timestamp"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            drone["Date"] = DateTime.UtcNow.Date.ToShortDateString();
+            drone["Timestamp"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             await table.PutItemAsync(drone);
         }
     }
