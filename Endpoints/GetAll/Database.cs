@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,16 +8,43 @@ using System.Threading.Tasks;
 
 namespace ociusApi
 {
+    public class DroneResponse
+    {
+        public List<Drone> Drones { get; set; }
+    }
+
+    public class Drone
+    {
+        public string Name { get; set; }
+        public int Timestamp { get; set; }
+        public string Data { get; set; }
+    }
+
     public static class Database
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 
         public async static Task<string> GetByTimespan(string timespan)
         {
-
             var query = GetQuery(timespan);
+            var queryRequest = CreateQueryRequest(query);
+            var queryResponse = await client.QueryAsync(queryRequest);
+            return CreateDroneResponse(queryResponse);
+        }
 
-            var request = new QueryRequest
+        private static string GetQuery(string timeSpan)
+        {
+            if (timeSpan == "day")
+            {
+                return DateTime.UtcNow.Date.ToShortDateString();
+            }
+
+            return "live";
+        }
+
+        private static QueryRequest CreateQueryRequest(string query)
+        {
+            return new QueryRequest
             {
 
                 TableName = "TimeSeriesDroneData",
@@ -30,52 +58,48 @@ namespace ociusApi
                     {":query", new AttributeValue { S = query } }
                 }
             };
-
-            var response = await client.QueryAsync(request);
-
-            var result = "results";
-
-            foreach(var item in response.Items)
-            {
-                result += GetJson(item);
-                result += "##################################################";
-
-            }
-
-            return result;
         }
 
-        private static string GetJson(Dictionary<string, AttributeValue> attributeList)
+        private static string CreateDroneResponse(QueryResponse queryResponse)
         {
-            var result = "";
+            var droneResponse = new DroneResponse();
+
+            if (!IsValidResponse(queryResponse)) return "The query response was null or empty";
+
+            foreach (var item in queryResponse.Items)
+            {
+                var drone = CreateDrone(item);
+                droneResponse.Drones.Add(drone);
+            }
+
+            return JsonConvert.SerializeObject(droneResponse);
+        }
+
+        private static bool IsValidResponse(QueryResponse queryResponse)
+        {
+            return queryResponse != null &&
+                    queryResponse.Items != null &&
+                    queryResponse.Items.Any();
+        }
+        
+
+        private static Drone CreateDrone(Dictionary<string, AttributeValue> attributeList)
+        {
+            var drone = new Drone();
 
             foreach (KeyValuePair<string, AttributeValue> kvp in attributeList)
             {
-                var attributeName = kvp.Key;
+                var key = kvp.Key;
                 var value = kvp.Value;
 
-                result += (
-                    attributeName + " " +
-                    (value.S == null ? "" : "S=[" + value.S + "]") +
-                    (value.N == null ? "" : "N=[" + value.N + "]") +
-                    (value.SS == null ? "" : "SS=[" + string.Join(",", value.SS.ToArray()) + "]") +
-                    (value.NS == null ? "" : "NS=[" + string.Join(",", value.NS.ToArray()) + "]") +
-                    "=============================================================================="
-                );
+                if (key == "Timestamp") drone.Timestamp = int.Parse(value?.N);
+                if (key == "Name") drone.Name = value?.S;
+                if (key == "Data") drone.Data = value?.S;
             }
 
-            return result;
+            return drone;
         }
 
-        private static string GetQuery(string timeSpan)
-        {
-            if(timeSpan == "day")
-            {
-                return DateTime.UtcNow.Date.ToShortDateString();
-            }
-
-            return "live";
-        }
 
         //live
         //minute
