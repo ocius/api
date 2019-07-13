@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Amazon.Lambda.Core;
@@ -13,6 +14,7 @@ namespace ociusApi
         {
             var timespan = input["timespan"];
             var body = await Database.GetByTimespan(timespan.ToString());
+            Console.WriteLine("%%%%%%%%%% BODY " + body);
             return CreateResponse(body);
         }
 

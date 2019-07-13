@@ -16,7 +16,7 @@ namespace ociusApi
     public class Drone
     {
         public string Name { get; set; }
-        public int Timestamp { get; set; }
+        public string Timestamp { get; set; }
         public string Data { get; set; }
     }
 
@@ -63,6 +63,8 @@ namespace ociusApi
         private static string CreateDroneResponse(QueryResponse queryResponse)
         {
             var droneResponse = new DroneResponse();
+            var drones = new List<Drone>();
+            droneResponse.Drones = drones;
 
             if (!IsValidResponse(queryResponse)) return "The query response was null or empty";
 
@@ -83,18 +85,18 @@ namespace ociusApi
         }
         
 
-        private static Drone CreateDrone(Dictionary<string, AttributeValue> attributeList)
+        private static Drone CreateDrone(Dictionary<string, AttributeValue> attributes)
         {
             var drone = new Drone();
 
-            foreach (KeyValuePair<string, AttributeValue> kvp in attributeList)
+            foreach (KeyValuePair<string, AttributeValue> kvp in attributes)
             {
                 var key = kvp.Key;
                 var value = kvp.Value;
 
-                if (key == "Timestamp") drone.Timestamp = int.Parse(value?.N);
-                if (key == "Name") drone.Name = value?.S;
-                if (key == "Data") drone.Data = value?.S;
+                if (key == "Timestamp") drone.Timestamp = value?.N ?? "";
+                if (key == "Data") drone.Data = value?.S ?? "";
+                if (key == "Name") drone.Name = value?.S ?? "";
             }
 
             return drone;
