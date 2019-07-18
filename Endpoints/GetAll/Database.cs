@@ -66,7 +66,7 @@ namespace ociusApi
             var drones = new List<Drone>();
             droneResponse.Drones = drones;
 
-            if (!IsValidResponse(queryResponse)) return "The query response was null or empty";
+            if (!IsValidResponse(queryResponse)) return "There were no results for that time range";
 
             foreach (var item in queryResponse.Items)
             {
