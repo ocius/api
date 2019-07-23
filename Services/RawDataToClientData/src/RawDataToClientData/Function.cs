@@ -18,16 +18,31 @@ namespace RawDataToClientData
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 
-        public async Task FunctionHandler(ILambdaContext context)
+        public async Task FunctionHandler(JObject input, ILambdaContext context)
         {
-            var rawDataTableName = "RawData";
-            var rawData = Database.ReadAsync(client, rawDataTableName);
-            var xml = Api.GetXmlAsync();
-            await Task.WhenAll(rawData, xml);
-            var mappingBetweenNameAndId = MapIdToName(xml.Result);
-            var cleanData = TransformData(rawData.Result, mappingBetweenNameAndId);
-            await Database.InsertAsync(client, cleanData);
+            //var rawDataTableName = "RawData";
+            //var rawData = Database.ReadAsync(client, rawDataTableName);
+            //var xml = Api.GetXmlAsync();
+            //await Task.WhenAll(rawData, xml);
+            //var mappingBetweenNameAndId = MapIdToName(xml.Result);
+            //var cleanData = TransformData(rawData.Result, mappingBetweenNameAndId);
+
+            Console.WriteLine(input.ToString());
+
+            var first = input[0];
+            var dynamoDb = first["dynamodb"];
+            var item = dynamoDb["NewImage"];
+            var name = item["Name"].ToString();
+            var data = item["Data"];
+
+            var drone = new Drone(name, "1234", data.ToString());
+
+            var json = JsonConvert.SerializeObject(drone);
+
+            await Database.InsertAsync(client, json);
         }
+
+        
 
         public static string TransformData(string rawData, Dictionary<string, string> mappingBetweenNameAndId)
         {
@@ -131,13 +146,15 @@ namespace RawDataToClientData
             return results.Last().ToJson();
         }
 
-        public async static Task InsertAsync(AmazonDynamoDBClient client, string json)
+        public async static Task<string> InsertAsync(AmazonDynamoDBClient client, string json)
         {
-            var table = Table.LoadTable(client, "ClientData");
+            var table = Table.LoadTable(client, "CleanDroneData");
             var item = Document.FromJson(json);
-            item["name"] = "Ocius";
-            item["timestamp"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            await table.PutItemAsync(item);
+            item["Date"] = DateTime.UtcNow.Date.ToShortDateString();
+            item["Timestamp"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var result = await table.PutItemAsync(item);
+            return "foo";
+            //await table.PutItemAsync(item);
         }
     }
 }
