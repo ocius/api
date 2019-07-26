@@ -3,49 +3,25 @@ using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
-using Amazon.Lambda.D
-
+using Amazon.Lambda.DynamoDBEvents;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Xml;
+using System.IO;
+using System.Text;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
 namespace RawDataToClientData
 {
-
-    public class LambdaRequest
-    {
-        public List<Records> Records { get; set; }
-    }
-
-    public class Records
-    {
-        public DynamoDb DynamoDb { get; set; }
-    }
-
-    public class DynamoDb
-    {
-        public NewImage NewImage { get; set; }
-    }
-
-    public class NewImage
-    {
-        public string Date { get; set; }
-        public string Timestamp { get; set; }
-        public string Name { get; set; }
-        public string Data { get; set; }
-
-    }
-
     public class Function
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 
-        public async Task FunctionHandler(DynamoDbEv input, ILambdaContext context)
+        public async Task FunctionHandler(DynamoDBEvent dynamoEvent, ILambdaContext context)
         {
             //var rawDataTableName = "RawData";
             //var rawData = Database.ReadAsync(client, rawDataTableName);
@@ -58,23 +34,21 @@ namespace RawDataToClientData
 
             //ar jsonResult = Document.FromAttributeMap(streamRecord.Dynamodb.NewImage).ToJson();
 
-            var request = input.ToObject<LambdaRequest>();
 
-            Console.WriteLine("============== records ", request.Records.Count());
+            Console.WriteLine($"=========================== Beginning to process {dynamoEvent.Records.Count} records...");
 
-            request.Records.ForEach(record =>
+            foreach (var record in dynamoEvent.Records)
             {
-                Console.WriteLine("=================== name", record.DynamoDb.NewImage.Name);
+                Console.WriteLine($"Event ID: {record.EventID}");
+                Console.WriteLine($"Event Name: {record.EventName}");
 
-                var drone = new Drone("foo", "1234", "bar");
+                var jsonResult = Document.FromAttributeMap(record.Dynamodb.NewImage).ToJson();
 
-                var json = JsonConvert.SerializeObject(drone);
+                Console.WriteLine($"============================= DynamoDB Record:");
+                Console.WriteLine(jsonResult);
+            }
 
-                Console.WriteLine("================ json", json);
-            });
         }
-
-        
 
         public static string TransformData(string rawData, Dictionary<string, string> mappingBetweenNameAndId)
         {
