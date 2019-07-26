@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.Lambda.D
+
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -14,11 +16,36 @@ using System.Xml;
 
 namespace RawDataToClientData
 {
+
+    public class LambdaRequest
+    {
+        public List<Records> Records { get; set; }
+    }
+
+    public class Records
+    {
+        public DynamoDb DynamoDb { get; set; }
+    }
+
+    public class DynamoDb
+    {
+        public NewImage NewImage { get; set; }
+    }
+
+    public class NewImage
+    {
+        public string Date { get; set; }
+        public string Timestamp { get; set; }
+        public string Name { get; set; }
+        public string Data { get; set; }
+
+    }
+
     public class Function
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 
-        public async Task FunctionHandler(JObject input, ILambdaContext context)
+        public async Task FunctionHandler(DynamoDbEv input, ILambdaContext context)
         {
             //var rawDataTableName = "RawData";
             //var rawData = Database.ReadAsync(client, rawDataTableName);
@@ -27,19 +54,24 @@ namespace RawDataToClientData
             //var mappingBetweenNameAndId = MapIdToName(xml.Result);
             //var cleanData = TransformData(rawData.Result, mappingBetweenNameAndId);
 
-            Console.WriteLine(input.ToString());
+            //var streamRecord = input.Records.First();
 
-            var first = input[0];
-            var dynamoDb = first["dynamodb"];
-            var item = dynamoDb["NewImage"];
-            var name = item["Name"].ToString();
-            var data = item["Data"];
+            //ar jsonResult = Document.FromAttributeMap(streamRecord.Dynamodb.NewImage).ToJson();
 
-            var drone = new Drone(name, "1234", data.ToString());
+            var request = input.ToObject<LambdaRequest>();
 
-            var json = JsonConvert.SerializeObject(drone);
+            Console.WriteLine("============== records ", request.Records.Count());
 
-            await Database.InsertAsync(client, json);
+            request.Records.ForEach(record =>
+            {
+                Console.WriteLine("=================== name", record.DynamoDb.NewImage.Name);
+
+                var drone = new Drone("foo", "1234", "bar");
+
+                var json = JsonConvert.SerializeObject(drone);
+
+                Console.WriteLine("================ json", json);
+            });
         }
 
         
