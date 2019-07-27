@@ -19,83 +19,57 @@ namespace RawDataToClientData
 {
     public class Function
     {
-        private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 
-        public async Task FunctionHandler(DynamoDBEvent dynamoEvent, ILambdaContext context)
+        public async Task FunctionHandler(DynamoDBEvent dynamoEvent)
         {
-            //var rawDataTableName = "RawData";
-            //var rawData = Database.ReadAsync(client, rawDataTableName);
-            //var xml = Api.GetXmlAsync();
-            //await Task.WhenAll(rawData, xml);
-            //var mappingBetweenNameAndId = MapIdToName(xml.Result);
-            //var cleanData = TransformData(rawData.Result, mappingBetweenNameAndId);
-
-            //var streamRecord = input.Records.First();
-
-            //ar jsonResult = Document.FromAttributeMap(streamRecord.Dynamodb.NewImage).ToJson();
-
-
-            Console.WriteLine($"=========================== Beginning to process {dynamoEvent.Records.Count} records...");
 
             foreach (var record in dynamoEvent.Records)
             {
-                Console.WriteLine($"Event ID: {record.EventID}");
-                Console.WriteLine($"Event Name: {record.EventName}");
+                var json = Document.FromAttributeMap(record.Dynamodb.NewImage).ToJson();
 
-                var jsonResult = Document.FromAttributeMap(record.Dynamodb.NewImage).ToJson();
+                Console.WriteLine("============= json " + json);
 
-                Console.WriteLine($"============================= DynamoDB Record:");
-                Console.WriteLine(jsonResult);
+                var drone = JsonConvert.DeserializeObject<Drone>(json);
+
+                Console.WriteLine("============== drone " + drone);
+
+                //get location data
+                var droneLocation = GetDroneLocation(drone.Name, drone.Data);
+
+                await Database.InsertAsync(droneLocation);
             }
 
         }
 
-        public static string TransformData(string rawData, Dictionary<string, string> mappingBetweenNameAndId)
+        public static string GetDroneLocation(string name, string data)
+        { 
+            var drone = CreateDrone(name, data);
+            return JsonConvert.SerializeObject(drone);
+        }
+
+        private static DroneLocation CreateDrone(string name, string data)
         {
-            var vehicles = GetVehiclesArray(rawData);
-            var drones = vehicles.Select(v => CreateDrone(v, mappingBetweenNameAndId)).ToList();
-            var owner = new Owner(drones);
-            return JsonConvert.SerializeObject(owner);
-        }
+            var json = JsonConvert.DeserializeObject(data) as JObject;
 
-        public static Dictionary<string, string> MapIdToName(string xml)
-        {
-            Console.WriteLine(xml);
-            var json = GetJson(xml);
-            var data = JsonConvert.DeserializeObject(json) as JObject;
-            var response = data["Response"];
-            var robots = response["robot"];
-            var result = new Dictionary<string, string>();
-            foreach(var robot in robots){
-                var id = robot["sysid"].ToString();
-                var name = robot["robotid"].ToString();
-                result.Add(id, name);
-            }
-            return result;
-        }
+            Console.WriteLine("===========================json " + json);
 
-        private static Drone CreateDrone(JToken vehicle, IDictionary<string, string> mapping){
-            var data = vehicle["mavpos"];
-            var id = data["sysid"]?.ToString();
-            if (id is null) return new Drone("Unknown", "0", "0");
-            var name = mapping[id];
-            var lat = data["home_lat"] ?? 0;
-            var lon = data["home_lon"] ?? 0;
-            return new Drone(name, lat.ToString(), lon.ToString());
-        }
+            var mavpos = json["mavpos"];
 
-        private static JToken GetVehiclesArray(string rawData){
-            var json = JsonConvert.DeserializeObject(rawData) as JObject;
-            var data = json["Response"]["File"];
-            return data["Vehicle"];
-        }
+            Console.WriteLine("====================mavpos ", mavpos);
 
-        private static string GetJson(string xml)
-        {
-            var doc = new XmlDocument();
-            doc.LoadXml(xml);
-            return JsonConvert.SerializeXmlNode(doc);
+            var lat = mavpos["home_lat"] ?? 0;
+            var lon = mavpos["home_lon"] ?? 0;
+
+            return new DroneLocation(name, lat.ToString(), lon.ToString());
         }
+    }
+
+    public class Drone
+    {
+        public string Date { get; set; }
+        public string Timestamp { get; set; }
+        public string Name { get; set; }
+        public string Data { get; set; }
     }
     
     public class IdToNameMapping
@@ -109,58 +83,16 @@ namespace RawDataToClientData
             Name = name;
         }
     }
-    public class Drone
+    public class DroneLocation
     {
         public string Name {get;}
         public string Lat {get;}
         public string Lon {get;}  //Long is a reserved word     
-        public Drone(string name, string lat, string lon) 
+        public DroneLocation(string name, string lat, string lon) 
         {
             Name = name;
             Lat = lat;
             Lon = lon;
-        }
-    }
-
-    public class Owner
-    {
-        public List<Drone> drones {get;}
-
-        public Owner(List<Drone> _drones)
-        {
-            drones = _drones;
-        }
-    }
-
-    public static class Api {
-        public static async Task<string> GetXmlAsync()
-        {
-            var httpClient = new HttpClient();
-            const string endpoint = "https://dev.ocius.com.au/usvna/oc_server?listrobots&nodeflate";
-            return await httpClient.GetStringAsync(endpoint);
-        }
-    }
-      
-
-    public static class Database
-    {
-        public static async Task<string> ReadAsync(AmazonDynamoDBClient client, string tableName)
-        {
-            var table = Table.LoadTable(client, tableName);
-            var search = table.Query("Bruce", new QueryFilter("timestamp", QueryOperator.GreaterThan, 0));
-            var results = await search.GetRemainingAsync();
-            return results.Last().ToJson();
-        }
-
-        public async static Task<string> InsertAsync(AmazonDynamoDBClient client, string json)
-        {
-            var table = Table.LoadTable(client, "CleanDroneData");
-            var item = Document.FromJson(json);
-            item["Date"] = DateTime.UtcNow.Date.ToShortDateString();
-            item["Timestamp"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            var result = await table.PutItemAsync(item);
-            return "foo";
-            //await table.PutItemAsync(item);
         }
     }
 }
