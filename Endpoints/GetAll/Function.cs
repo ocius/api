@@ -19,11 +19,11 @@ namespace ociusApi
         {
             var queryString = request["queryStringParameters"];
 
-            var input = queryString.ToObject<DroneRequest>();
+            var droneRequest = queryString.ToObject<DroneRequest>();
 
-            Console.WriteLine($"TIMESPAN: {input.Timespan}");
+            Console.WriteLine($"TIMESPAN: {droneRequest.Timespan}");
 
-            var responseBody = await Database.GetByTimespan(input.Timespan);
+            var responseBody = await Database.GetByTimespan(droneRequest.Timespan);
 
             return CreateResponse(responseBody);
         }

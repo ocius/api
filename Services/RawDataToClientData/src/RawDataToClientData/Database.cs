@@ -11,7 +11,7 @@ namespace RawDataToClientData
 
         public async static Task InsertAsync(string json)
         {
-            var table = Table.LoadTable(client, "CleanDroneData");
+            var table = Table.LoadTable(client, "DroneLocations");
             var item = Document.FromJson(json);
 
             item["Date"] = DateTime.UtcNow.Date.ToShortDateString();

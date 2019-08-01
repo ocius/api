@@ -47,7 +47,7 @@ namespace ociusApi
             return new QueryRequest
             {
 
-                TableName = "TimeSeriesDroneData",
+                TableName = "DroneLocations",
                 KeyConditionExpression = "#dt = :query",
                 ExpressionAttributeNames = new Dictionary<string, string>
                 {
