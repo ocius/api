@@ -14,16 +14,16 @@ namespace GetLocations
             return queryString.HasValues ? await GetLocationsByTimespan(queryString): await GetLatestLocations();
         }
 
-        private static async Task<ApiResponse> GetLatestLocations()
-        {
-            var databaseResponse = await Database.GetLatest();
-            return CreateResponse(databaseResponse);
-        }
-
         private static async Task<ApiResponse> GetLocationsByTimespan(JToken queryString)
         {
             var timespan = queryString.ToObject<Timespan>();
             var databaseResponse = await Database.GetByTimespan(timespan.Value);
+            return CreateResponse(databaseResponse);
+        }
+
+        private static async Task<ApiResponse> GetLatestLocations()
+        {
+            var databaseResponse = await Database.GetLatest();
             return CreateResponse(databaseResponse);
         }
 
