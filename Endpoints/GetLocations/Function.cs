@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using Newtonsoft.Json.Linq;
@@ -9,48 +6,15 @@ using Newtonsoft.Json.Linq;
 
 namespace GetLocations
 {
-    public class DroneRequest
-    {
-        public string Timespan { get; set; }
-    }
-
     public class Function
     {
         public async Task<ApiResponse> FunctionHandler(JObject request)
         {
-            var queryString = request["queryStringParameters"];
+            var timespan = request["queryStringParameters"];
 
-            string databaseResponse;
-
-            Console.WriteLine($"=================QUERYSRRING: {queryString}");
-
-            var foo = queryString.GetType();
-
-            Console.WriteLine("================== type " + foo.ToString());
-
-            if (!queryString.Any()) //Get latest
-            {
-                Console.WriteLine("==============reached here");
-                databaseResponse = await Database.GetLatest();
-                return CreateResponse(databaseResponse);
-            }
-
-            Console.WriteLine($"============== AFTER LOOP");
-
-
-            var droneRequest = queryString.ToObject<DroneRequest>();
-
-            Console.WriteLine($"==============TIMESPAN: {droneRequest.Timespan}");
-
-            databaseResponse = await Database.GetByTimespan(droneRequest.Timespan);
-
-            return CreateResponse(databaseResponse);
-        }
-
-        private ApiResponse CreateResponse(string body)
-        {
-            var headers = new Dictionary<string, string>() { { "Access-Control-Allow-Origin", "*" } };
-            return new ApiResponse(200, body, headers);
+            return timespan.HasValues 
+                ? await Drone.GetLocationsByTimespan(timespan)
+                : await Drone.GetLatestLocations();
         }
     }
 }

@@ -14,7 +14,6 @@ namespace GetLocations
 
         public async static Task<string> GetLatest()
         {
-            Console.WriteLine("================ GET LATEST");
             var singleDroneRequest = CreateSingleDroneRequest();
             var queryResponse = await client.QueryAsync(singleDroneRequest);
             return CreateDroneResponse(queryResponse);
@@ -102,7 +101,6 @@ namespace GetLocations
                     queryResponse.Items != null &&
                     queryResponse.Items.Any();
         }
-        
 
         private static Drone CreateDrone(Dictionary<string, AttributeValue> attributes)
         {
@@ -121,14 +119,7 @@ namespace GetLocations
 
             return drone;
         }
-
-
-        //live
         //minute
         //hour
-        //day
-        //week
-        //year
-        //all
     }
 }

@@ -1,21 +1,18 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace GetLocations
 {
     public class ApiResponse
     {
         public bool isBase64Encoded = false;
-        public int statusCode { get; }
-        public string body { get; }
-        public IDictionary<string, string> headers { get; }
+        public int statusCode { get; private set; }
+        public string body { get; private set; }
+        public IDictionary<string, string> headers { get; private set; }
 
-        public ApiResponse(int statusCode, string body, IDictionary<string, string> headers)
+        public static ApiResponse CreateApiResponse(string body)
         {
-            this.statusCode = statusCode;
-            this.body = body;
-            this.headers = headers;
+            var headers = new Dictionary<string, string>() { { "Access-Control-Allow-Origin", "*" } };
+            return new ApiResponse { statusCode = 200, body = body, headers = headers };
         }
     }
 }
