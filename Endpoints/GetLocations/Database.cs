@@ -14,6 +14,7 @@ namespace GetLocations
 
         public async static Task<string> GetLatest()
         {
+            Console.WriteLine("================ GET LATEST");
             var singleDroneRequest = CreateSingleDroneRequest();
             var queryResponse = await client.QueryAsync(singleDroneRequest);
             return CreateDroneResponse(queryResponse);
@@ -40,6 +41,8 @@ namespace GetLocations
         private static QueryRequest CreateSingleDroneRequest()
         {
             var timespan = DateTime.UtcNow.Date.ToShortDateString();
+
+            Console.WriteLine(" ============= SINGE DRONE");
 
             return new QueryRequest
             {

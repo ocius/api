@@ -20,15 +20,23 @@ namespace GetLocations
         {
             var queryString = request["queryStringParameters"];
 
-            Console.WriteLine($"=================QUERYSRRING: {queryString}");
-
             string databaseResponse;
 
-            if (queryString is null) //Get latest
+            Console.WriteLine($"=================QUERYSRRING: {queryString}");
+
+            var foo = queryString.GetType();
+
+            Console.WriteLine("================== type " + foo.ToString());
+
+            if (!queryString.Any()) //Get latest
             {
+                Console.WriteLine("==============reached here");
                 databaseResponse = await Database.GetLatest();
                 return CreateResponse(databaseResponse);
             }
+
+            Console.WriteLine($"============== AFTER LOOP");
+
 
             var droneRequest = queryString.ToObject<DroneRequest>();
 
