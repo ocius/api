@@ -18,8 +18,6 @@ namespace GetLocations
     {
         public async Task<ApiResponse> FunctionHandler(JObject request)
         {
-            Console.WriteLine($"================REQUEST: {request}");
-
             var queryString = request["queryStringParameters"];
 
             Console.WriteLine($"=================QUERYSRRING: {queryString}");

@@ -39,6 +39,8 @@ namespace GetLocations
 
         private static QueryRequest CreateSingleDroneRequest()
         {
+            var timespan = DateTime.UtcNow.Date.ToShortDateString();
+
             return new QueryRequest
             {
 
@@ -46,12 +48,15 @@ namespace GetLocations
                 KeyConditionExpression = "#dt = :timespan",
                 ExpressionAttributeNames = new Dictionary<string, string>
                 {
-                    {"#dt", "Date"}
+                    { "#dt", "Date" }
                 },
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
-                    {":timespan", new AttributeValue { S = timespan } }
-                }
+                    { ":timespan", new AttributeValue { S = timespan } }
+                },
+                ScanIndexForward = false,
+                Limit = 2
+
             };
         }
 
