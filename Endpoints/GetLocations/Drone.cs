@@ -1,9 +1,7 @@
 ﻿using Amazon.DynamoDBv2.Model;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace GetLocations
 {
@@ -14,19 +12,18 @@ namespace GetLocations
         public string Lat { get; private set; }
         public string Lon { get; private set; }
 
-        public static async Task<ApiResponse> GetLatestLocations()
+        public static string ToJson(QueryResponse queryResponse)
         {
-            var databaseResponse = await Database.GetLatest();
-            var droneJson = CreateDroneJson(databaseResponse);
-            return ApiResponse.CreateApiResponse(droneJson);
+            if (!IsValidResponse(queryResponse)) return "There were no results for that time range";
+
+            var drones = queryResponse.Items.Select(item => CreateDrone(item));
+
+            return JsonConvert.SerializeObject(drones);
         }
 
-        public static async Task<ApiResponse> GetLocationsByTimespan(JToken queryString)
+        private static bool IsValidResponse(QueryResponse queryResponse)
         {
-            var droneRequest = queryString.ToObject<DroneRequest>();
-            var databaseResponse = await Database.GetByTimespan(droneRequest.Timespan);
-            var droneJson = CreateDroneJson(databaseResponse);
-            return ApiResponse.CreateApiResponse(droneJson);
+            return queryResponse != null && queryResponse.Items != null && queryResponse.Items.Any();
         }
 
         private static Drone CreateDrone(Dictionary<string, AttributeValue> attributes)
@@ -46,32 +43,5 @@ namespace GetLocations
 
             return drone;
         }
-
-        private static string CreateDroneJson(QueryResponse queryResponse)
-        {
-            var drones = new List<Drone>();
-
-            if (!IsValidResponse(queryResponse)) return "There were no results for that time range";
-
-            foreach (var item in queryResponse.Items)
-            {
-                var drone = CreateDrone(item);
-                drones.Add(drone);
-            }
-
-            return JsonConvert.SerializeObject(drones);
-        }
-
-        private static bool IsValidResponse(QueryResponse queryResponse)
-        {
-            return queryResponse != null &&
-                    queryResponse.Items != null &&
-                    queryResponse.Items.Any();
-        }
-    }
-
-    public class DroneRequest
-    {
-        public string Timespan { get; set; }
     }
 }

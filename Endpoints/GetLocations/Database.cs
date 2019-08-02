@@ -24,10 +24,6 @@ namespace GetLocations
 
         private static string GetDateTime(string timeSpan)
         {
-            //Todo:
-            //add minute
-            //add hour
-
             if (timeSpan == "day")
             {
                 return DateTime.UtcNow.Date.ToShortDateString();
