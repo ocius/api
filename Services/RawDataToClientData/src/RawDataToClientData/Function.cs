@@ -14,6 +14,8 @@ namespace RawDataToClientData
         {
             foreach (var record in dynamoEvent.Records)
             {
+                if (record.EventName != "INSERT") continue;
+
                 var json = Document.FromAttributeMap(record.Dynamodb.NewImage).ToJson();
 
                 var drone = JsonConvert.DeserializeObject<Drone>(json);

@@ -11,6 +11,7 @@ namespace GetLocations
         public string Timestamp { get; private set; }
         public string Lat { get; private set; }
         public string Lon { get; private set; }
+        public string Heading { get; private set; }
 
         public static string ToJson(QueryResponse queryResponse)
         {
@@ -39,6 +40,7 @@ namespace GetLocations
                 if (key == "Lat") drone.Lat = value?.S ?? "";
                 if (key == "Lon") drone.Lon = value?.S ?? "";
                 if (key == "Name") drone.Name = value?.S ?? "";
+                if (key == "Heading") drone.Heading = value?.S ?? "";
             }
 
             return drone;

@@ -12,13 +12,16 @@ namespace RawDataToClientData
 
         public static string GetLocation(string name, string data)
         {
+
             var json = JsonConvert.DeserializeObject(data) as JObject;
 
             var mavpos = json["mavpos"];
-            var lat = mavpos["home_lat"] ?? 0;
-            var lon = mavpos["home_lon"] ?? 0;
+            var compass = mavpos["COMPASS_RAW"];
+            var lat = compass["lat"] ?? 0;
+            var lon = compass["lon"] ?? 0;
+            var heading = compass["heading"] ?? 0;
 
-            var location = new DroneLocation(name, lat.ToString(), lon.ToString());
+            var location = new DroneLocation(name, lat.ToString(), lon.ToString(), heading.ToString());
 
             return JsonConvert.SerializeObject(location);
         }
@@ -29,12 +32,14 @@ namespace RawDataToClientData
         public string Name { get; }
         public string Lat { get; }
         public string Lon { get; }  //Long is a reserved word
-        
-        public DroneLocation(string name, string lat, string lon)
+        public string Heading { get; }
+
+        public DroneLocation(string name, string lat, string lon, string heading)
         {
             Name = name;
             Lat = lat;
             Lon = lon;
+            Heading = heading;
         }
     }
 }
