@@ -21,20 +21,20 @@ namespace RawDataToClientData
             var lon = compass["lon"] ?? 0;
             var heading = compass["heading"] ?? 0;
 
-            var location = new DroneLocation(name, lat.ToString(), lon.ToString(), heading.ToString());
+            var location = new DroneSensors(name, lat.ToString(), lon.ToString(), heading.ToString());
 
             return JsonConvert.SerializeObject(location);
         }
     }
 
-    public class DroneLocation
+    public class DroneSensors
     {
         public string Name { get; }
         public string Lat { get; }
         public string Lon { get; }  //Long is a reserved word
         public string Heading { get; }
 
-        public DroneLocation(string name, string lat, string lon, string heading)
+        public DroneSensors(string name, string lat, string lon, string heading)
         {
             Name = name;
             Lat = lat;
