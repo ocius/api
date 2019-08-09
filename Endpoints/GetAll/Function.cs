@@ -1,37 +1,37 @@
-using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using Amazon.Lambda.Core;
 using Newtonsoft.Json.Linq;
+using Amazon.DynamoDBv2.Model;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
 namespace ociusApi
 {
-    public class DroneRequest
-    {
-        public string Timespan { get; set; }
-    }
-
     public class Function
     {
         public async Task<ApiResponse> FunctionHandler(JObject request)
         {
             var queryString = request["queryStringParameters"];
-
-            var droneRequest = queryString.ToObject<DroneRequest>();
-
-            Console.WriteLine($"TIMESPAN: {droneRequest.Timespan}");
-
-            var responseBody = await Database.GetByTimespan(droneRequest.Timespan);
-
-            return CreateResponse(responseBody);
+            return queryString.HasValues ? await GetLocationsByTimespan(queryString) : await GetLatestLocations();
         }
 
-        private ApiResponse CreateResponse(string body)
+        private static async Task<ApiResponse> GetLocationsByTimespan(JToken queryString)
         {
-            var headers = new Dictionary<string, string>() { { "Access-Control-Allow-Origin", "*" } };
-            return new ApiResponse(200, body, headers);
+            var timespan = queryString.ToObject<Timespan>();
+            var databaseResponse = await Database.GetByTimespan(timespan.Value);
+            return CreateResponse(databaseResponse);
+        }
+
+        private static async Task<ApiResponse> GetLatestLocations()
+        {
+            var databaseResponse = await Database.GetLatest();
+            return CreateResponse(databaseResponse);
+        }
+
+        private static ApiResponse CreateResponse(QueryResponse databaseResponse)
+        {
+            var droneJson = Drone.ToJson(databaseResponse);
+            return ApiResponse.CreateApiResponse(droneJson);
         }
     }
 }
