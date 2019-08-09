@@ -9,9 +9,9 @@ namespace RawDataToClientData
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 
-        public async static Task InsertAsync(string json)
+        public async static Task InsertAsync(string json, string tableName)
         {
-            var table = Table.LoadTable(client, "DroneLocations");
+            var table = Table.LoadTable(client, tableName);
             var item = Document.FromJson(json);
 
             item["Date"] = DateTime.UtcNow.Date.ToShortDateString();

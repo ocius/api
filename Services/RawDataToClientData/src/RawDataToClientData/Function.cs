@@ -17,12 +17,13 @@ namespace RawDataToClientData
                 if (record.EventName != "INSERT") continue;
 
                 var json = Document.FromAttributeMap(record.Dynamodb.NewImage).ToJson();
-
                 var drone = JsonConvert.DeserializeObject<Drone>(json);
 
-                var droneLocation = Drone.GetLocation(drone.Name, drone.Data);
+                var droneLocation = DroneLocation.GetLocation(drone.Name, drone.Data);
+                var droneSensors = DroneSensors.GetSensors(drone.Name, drone.Data);
 
-                await Database.InsertAsync(droneLocation);
+                await Database.InsertAsync(droneLocation, "DroneLocations");
+                await Database.InsertAsync(droneSensors, "DroneSensors");
             }
         }
     }
