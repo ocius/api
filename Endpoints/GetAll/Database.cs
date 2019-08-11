@@ -17,19 +17,30 @@ namespace ociusApi
 
         public async static Task<QueryResponse> GetByTimespan(string timespan)
         {
-            var dateTime = GetDateTime(timespan);
-            var dronesByTimespanRequest = Query.CreateDroneByTimespanRequest(dateTime);
+            if (timespan == "day") return await GetByDay();
+
+            var dateTime = GetTimespan(timespan);
+            var dronesByTimespanRequest = Query.CreateDroneByTimeRequest(dateTime);
             return await client.QueryAsync(dronesByTimespanRequest);
         }
 
-        private static string GetDateTime(string timeSpan)
+        private async static Task<QueryResponse> GetByDay()
         {
-            if (timeSpan == "day")
+            var droneByDayRequest = Query.CreateDroneByDayRequest();
+            return await client.QueryAsync(droneByDayRequest);
+        }
+
+        private static string GetTimespan(string timeSpan)
+        {
+            if(timeSpan == "hour")
             {
-                return DateTime.UtcNow.Date.ToShortDateString();
+                var currentTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                var oneHourAgo = currentTimestamp - 3600;
+                Console.WriteLine(oneHourAgo.ToString());
+                return oneHourAgo.ToString();
             }
 
-            return "hour";
+            return "minute";
         }
     }
 }
