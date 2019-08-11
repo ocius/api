@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ociusApi
 {
-    public class Drone
+    public class DroneSensor
     {
         public string Name { get; set; }
         public string Timestamp { get; set; }
@@ -28,9 +28,9 @@ namespace ociusApi
             return queryResponse != null && queryResponse.Items != null && queryResponse.Items.Any();
         }
 
-        private static Drone CreateDrone(Dictionary<string, AttributeValue> attributes)
+        private static DroneSensor CreateDrone(Dictionary<string, AttributeValue> attributes)
         {
-            var drone = new Drone();
+            var drone = new DroneSensor();
             var coordinates = new Coordinates();
             var location = new Location();
             var props = new Props();

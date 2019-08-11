@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using Newtonsoft.Json.Linq;
@@ -11,10 +13,16 @@ namespace ociusApi
         public async Task<ApiResponse> FunctionHandler(JObject request)
         {
             var queryString = request["queryStringParameters"];
+            var resource = request["resource"].ToString();
+
+            var table = resource.Contains("location") ? "DroneLocations" : "DroneSensors"; //move this inside DB
+
+            Console.WriteLine(resource);
+            Console.WriteLine(table);
 
             return queryString.HasValues 
-                ? await ApiResponse.GetLocationsByTimespan(queryString) 
-                : await ApiResponse.GetLatestLocations();
+                ? await ApiResponse.GetByTimespan(queryString, table) 
+                : await ApiResponse.GetLatest(table);
         }
     }
 }

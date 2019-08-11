@@ -9,24 +9,26 @@ namespace ociusApi
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 
-        public async static Task<QueryResponse> GetLatest()
+        public async static Task<QueryResponse> GetLatest(string resource)
         {
-            var singleDroneRequest = Query.CreateSingleDroneRequest();
+            Console.WriteLine("============ database");
+
+            var singleDroneRequest = Query.CreateSingleDroneRequest(resource);
             return await client.QueryAsync(singleDroneRequest);
         }
 
-        public async static Task<QueryResponse> GetByTimespan(string timespan)
+        public async static Task<QueryResponse> GetByTimespan(string timespan, string resource)
         {
-            if (timespan == "day") return await GetByDay();
+            if (timespan == "day") return await GetByDay(resource);
 
             var dateTime = GetTimespan(timespan);
-            var dronesByTimespanRequest = Query.CreateDroneByTimeRequest(dateTime);
+            var dronesByTimespanRequest = Query.CreateDroneByTimeRequest(dateTime, resource);
             return await client.QueryAsync(dronesByTimespanRequest);
         }
 
-        private async static Task<QueryResponse> GetByDay()
+        private async static Task<QueryResponse> GetByDay(string resource)
         {
-            var droneByDayRequest = Query.CreateDroneByDayRequest();
+            var droneByDayRequest = Query.CreateDroneByDayRequest(resource);
             return await client.QueryAsync(droneByDayRequest);
         }
 

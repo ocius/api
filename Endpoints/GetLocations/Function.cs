@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2.Model;
 using Amazon.Lambda.Core;
@@ -10,6 +11,8 @@ namespace GetLocations
     {
         public async Task<ApiResponse> FunctionHandler(JObject request)
         {
+            Console.WriteLine(request);
+
             var queryString = request["queryStringParameters"];
             return queryString.HasValues ? await GetLocationsByTimespan(queryString): await GetLatestLocations();
         }
