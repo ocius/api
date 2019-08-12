@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace GetLocations
+namespace GetDrones.Models
 {
     public class Timespan
     {
