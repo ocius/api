@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ociusApi
 {
-    public class DroneLocation : Drone
+    public class DroneLocation : Drone, IDrone
     {
         public string Name { get; private set; }
         public string Timestamp { get; private set; }

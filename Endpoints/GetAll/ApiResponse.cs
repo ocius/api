@@ -47,9 +47,8 @@ namespace ociusApi
             Console.WriteLine("============ create drone json");
             Console.WriteLine("============ resource", resource);
 
-            return resource.Contains("Location") 
-                ? new DroneLocation().ToJson(databaseResponse)
-                : new DroneSensor().ToJson(databaseResponse);
+            var drone = DroneFactory.CreateDrone(resource);
+            return drone.ToJson(databaseResponse);
         }
     }
 }

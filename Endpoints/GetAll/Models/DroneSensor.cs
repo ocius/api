@@ -5,6 +5,21 @@ using System.Linq;
 
 namespace ociusApi
 {
+    public interface IDrone
+    {
+        string ToJson(QueryResponse queryResponse);
+    }
+
+    public class DroneFactory
+    {
+        public static IDrone CreateDrone(string droneType)
+        {
+            if (droneType.Contains("Location")) return new DroneLocation();
+            
+            return new DroneSensor();
+        }
+    }
+
     public abstract class Drone
     {
         public string ToJson(QueryResponse queryResponse)
@@ -24,7 +39,7 @@ namespace ociusApi
         }
     }
 
-    public class DroneSensor : Drone
+    public class DroneSensor : Drone, IDrone
     {
         public string Name { get; set; }
         public string Timestamp { get; set; }
