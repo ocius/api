@@ -5,16 +5,9 @@ using System.Linq;
 
 namespace ociusApi
 {
-    public class DroneSensor
+    public abstract class Drone
     {
-        public string Name { get; set; }
-        public string Timestamp { get; set; }
-        public string Status { get; set; }
-        public string Mode { get; set; }
-        public string Sail_mode { get; set; }
-        public Props Props { get; set; }
-        
-        public static string ToJson(QueryResponse queryResponse)
+        public string ToJson(QueryResponse queryResponse)
         {
             if (!IsValidResponse(queryResponse)) return "There were no results for that time range";
 
@@ -23,12 +16,24 @@ namespace ociusApi
             return JsonConvert.SerializeObject(drones);
         }
 
+        public abstract Drone CreateDrone(Dictionary<string, AttributeValue> attributes);
+
         private static bool IsValidResponse(QueryResponse queryResponse)
         {
             return queryResponse != null && queryResponse.Items != null && queryResponse.Items.Any();
         }
+    }
 
-        private static DroneSensor CreateDrone(Dictionary<string, AttributeValue> attributes)
+    public class DroneSensor : Drone
+    {
+        public string Name { get; set; }
+        public string Timestamp { get; set; }
+        public string Status { get; set; }
+        public string Mode { get; set; }
+        public string Sail_mode { get; set; }
+        public Props Props { get; set; }
+        
+        public override Drone CreateDrone(Dictionary<string, AttributeValue> attributes)
         {
             var drone = new DroneSensor();
             var coordinates = new Coordinates();

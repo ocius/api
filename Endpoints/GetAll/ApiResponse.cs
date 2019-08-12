@@ -1,4 +1,5 @@
 ﻿using Amazon.DynamoDBv2.Model;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -8,17 +9,17 @@ namespace ociusApi
 {
     public class ApiResponse
     {
-        public bool isBase64Encoded = false;
-        public int statusCode { get; private set; }
-        public string body { get; private set; }
-        public IDictionary<string, string> headers { get; private set; }
+        [JsonProperty("isBase64Encoded")]
+        public bool IsBase64Encoded = false;
 
-        public static async Task<ApiResponse> GetByTimespan(JToken queryString, string resource)
-        {
-            var timespan = queryString.ToObject<Timespan>();
-            var databaseResponse = await Database.GetByTimespan(timespan.Value, resource);
-            return CreateResponse(databaseResponse, resource);
-        }
+        [JsonProperty("statusCode")]
+        public int StatusCode { get; private set; }
+
+        [JsonProperty("body")]
+        public string Body { get; private set; }
+
+        [JsonProperty("headers")]
+        public IDictionary<string, string> Headers { get; private set; }
 
         public static async Task<ApiResponse> GetLatest(string resource)
         {
@@ -27,11 +28,18 @@ namespace ociusApi
             return CreateResponse(databaseResponse, resource);
         }
 
+        public static async Task<ApiResponse> GetByTimespan(JToken queryString, string resource)
+        {
+            var timespan = queryString.ToObject<Timespan>();
+            var databaseResponse = await Database.GetByTimespan(timespan.Value, resource);
+            return CreateResponse(databaseResponse, resource);
+        }
+
         private static ApiResponse CreateResponse(QueryResponse databaseResponse, string resource)
         {
             var droneJson = CreateDroneJson(databaseResponse, resource);
             var headers = new Dictionary<string, string>() { { "Access-Control-Allow-Origin", "*" } };
-            return new ApiResponse { statusCode = 200, body = droneJson, headers = headers };
+            return new ApiResponse { StatusCode = 200, Body = droneJson, Headers = headers };
         }
 
         private static string CreateDroneJson(QueryResponse databaseResponse, string resource)
@@ -40,8 +48,8 @@ namespace ociusApi
             Console.WriteLine("============ resource", resource);
 
             return resource.Contains("Location") 
-                ? DroneLocation.ToJson(databaseResponse)
-                : DroneSensor.ToJson(databaseResponse);
+                ? new DroneLocation().ToJson(databaseResponse)
+                : new DroneSensor().ToJson(databaseResponse);
         }
     }
 }

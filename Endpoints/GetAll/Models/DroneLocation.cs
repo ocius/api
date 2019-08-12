@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ociusApi
 {
-    public class DroneLocation
+    public class DroneLocation : Drone
     {
         public string Name { get; private set; }
         public string Timestamp { get; private set; }
@@ -13,21 +13,7 @@ namespace ociusApi
         public string Lon { get; private set; }
         public string Heading { get; private set; }
 
-        public static string ToJson(QueryResponse queryResponse)
-        {
-            if (!IsValidResponse(queryResponse)) return "There were no results for that time range";
-
-            var drones = queryResponse.Items.Select(item => CreateDrone(item));
-
-            return JsonConvert.SerializeObject(drones);
-        }
-
-        private static bool IsValidResponse(QueryResponse queryResponse)
-        {
-            return queryResponse != null && queryResponse.Items != null && queryResponse.Items.Any();
-        }
-
-        private static DroneLocation CreateDrone(Dictionary<string, AttributeValue> attributes)
+        public override Drone CreateDrone(Dictionary<string, AttributeValue> attributes)
         {
             var drone = new DroneLocation();
 
