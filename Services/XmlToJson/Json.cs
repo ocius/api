@@ -7,7 +7,7 @@ namespace XmlToJson
     {
         public static string FromXml(string xml)
         {
-            var doc = new XmlDocument();
+            var doc = new XmlDocument { XmlResolver = null }; //Setting resolver to null prevents XXE injection
             doc.LoadXml(xml);
             return JsonConvert.SerializeXmlNode(doc);
         }
