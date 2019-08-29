@@ -1,6 +1,7 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ociusApi
@@ -8,13 +9,34 @@ namespace ociusApi
     public static class Database
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
+        private static readonly List<string> droneNames = new List<string> { "Bob", "Bruce" };
 
         public async static Task<QueryResponse> GetLatest(string resource)
         {
             Console.WriteLine("============ database");
 
-            var singleDroneRequest = Query.CreateSingleDroneRequest(resource);
-            return await client.QueryAsync(singleDroneRequest);
+            var bobRequest = Query.CreateSingleDroneRequest(resource, "Bob");
+            var bruceRequest = Query.CreateSingleDroneRequest(resource, "Bruce");
+
+            var bobTask = client.QueryAsync(bobRequest);
+            var bruceTask = client.QueryAsync(bruceRequest);
+
+            var response = new List<Task<QueryResponse>> { bobTask, bruceTask };
+
+            QueryResponse[] foo = await Task.WhenAll(response);
+
+            var result = new QueryResponse();
+
+            foreach(var bar in foo)
+            {
+                Console.WriteLine("========= items " + result.Items);
+
+                result.Items.AddRange(bar.Items);
+            }
+
+            Console.WriteLine("========= results " + result.Items.Count);
+
+            return result;
         }
 
         public async static Task<QueryResponse> GetByTimespan(string timespan, string resource)

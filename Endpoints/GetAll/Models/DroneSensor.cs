@@ -24,7 +24,7 @@ namespace ociusApi
     {
         public string ToJson(QueryResponse queryResponse)
         {
-            if (!IsValidResponse(queryResponse)) return "There were no results for that time range";
+            if (!IsValidResponse(queryResponse)) return "{}";
 
             var drones = queryResponse.Items.Select(item => CreateDrone(item));
 
