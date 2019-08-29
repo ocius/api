@@ -41,6 +41,10 @@ namespace ociusApi
 
         public async static Task<QueryResponse> GetByTimespan(string timespan, string resource)
         {
+            var validTimespans = new List<string> { "minute", "hour", "day" };
+
+            if (!validTimespans.Contains(timespan)) return new QueryResponse();
+
             if (timespan == "day") return await GetByDay(resource);
 
             var dateTime = GetTimespan(timespan);
