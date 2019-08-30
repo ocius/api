@@ -7,14 +7,28 @@ namespace XmlToJson
 {
     public static class Database
     {
-        public async static Task InsertDrone(string droneData)
+        private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
+        private static readonly Table table = Table.LoadTable(client, "TimeSeriesDroneData");
+
+        public async static Task<bool> InsertDrone(string droneData, string date)
         {
-            var client = new AmazonDynamoDBClient();
-            var table = Table.LoadTable(client, "TimeSeriesDroneData");
-            var drone = Document.FromJson(droneData);
-            drone["Date"] = DateTime.UtcNow.Date.ToShortDateString();
-            drone["Timestamp"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            await table.PutItemAsync(drone);
+            if (string.IsNullOrEmpty(droneData)) return false;
+
+            var droneDocument = CreateDroneDocument(droneData, date);
+            var result = await table.PutItemAsync(droneDocument);
+            Console.WriteLine("Result: " + result);
+            return result.Values.Count > 0; //Ensure a record was inserted
+        }
+
+        private static Document CreateDroneDocument(string droneData, string date)
+        {
+            Console.WriteLine("droneData: "+ droneData.Substring(0,10));
+
+            var droneDocument = Document.FromJson(droneData);
+            droneDocument["Date"] = date;
+            droneDocument["Timestamp"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            Console.WriteLine("dronedoc: " + droneDocument.Values.Count.ToString());
+            return droneDocument;
         }
     }
 }
