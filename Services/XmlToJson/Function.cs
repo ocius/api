@@ -14,13 +14,12 @@ namespace XmlToJson
         public async Task<string> FunctionHandler()
         {
             var date = DateTime.UtcNow.Date.ToShortDateString();
-            var time = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var drones = await Drones.GetDrones();
 
-            return await SaveDrones(drones, date, time);
+            return await SaveDrones(drones, date);
         }
 
-        private async Task<string> SaveDrones(Drones allDrones, string date, long time)
+        private async Task<string> SaveDrones(Drones allDrones, string date)
         {
             var response = new List<string>();
 
@@ -29,6 +28,8 @@ namespace XmlToJson
                 var drone = Drone.Create(data, allDrones.Names);
 
                 if (!supportedDrones.Contains(drone.Name)) continue;
+
+                var time = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
                 var result = await Database.InsertDrone(drone, date, time);
 
