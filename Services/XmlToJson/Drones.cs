@@ -10,16 +10,16 @@ namespace XmlToJson
         public JToken Data { get; private set; }
         public Dictionary<string, string> Names { get; private set; }
 
-        public static async Task<Drones> GetAllDrones()
+        public static async Task<Drones> GetDrones()
         {
-            var data = await GetAllDroneData();
-            var names = await GetAllDroneNames();
+            var data = await GetDroneData();
+            var names = await GetDroneNames();
             return new Drones { Data = data, Names = names };
         }
 
         #region Private methods
 
-        private static async Task<Dictionary<string, string>> GetAllDroneNames()
+        private static async Task<Dictionary<string, string>> GetDroneNames()
         {
             var namesEndpoint = "https://dev.ocius.com.au/usvna/oc_server?listrobots&nodeflate";
             var droneNames = await Api.GetXml(namesEndpoint);
@@ -27,7 +27,7 @@ namespace XmlToJson
             return MapIdToName(nameJson);
         }
 
-        private static async Task<JToken> GetAllDroneData()
+        private static async Task<JToken> GetDroneData()
         {
             var dataEndpoint = "https://dev.ocius.com.au/usvna/oc_server?mavstatus&nodeflate";
             var droneStatus = await Api.GetXml(dataEndpoint);

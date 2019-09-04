@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
+using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
@@ -10,9 +11,9 @@ namespace XmlToJson
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
         private static readonly Table table = Table.LoadTable(client, "TimeSeriesDroneData");
 
-        public async static Task<string> InsertDrone(string droneData, string date)
+        public async static Task<string> InsertDrone(Drone drone, string date, long time)
         {
-            var droneDocument = CreateDroneDocument(droneData, date);
+            var droneDocument = CreateDroneDocument(drone, date, time);
 
             try
             {
@@ -26,12 +27,13 @@ namespace XmlToJson
             }
         }
 
-        private static Document CreateDroneDocument(string droneData, string date)
+        private static Document CreateDroneDocument(Drone drone, string date, long time)
         {
-            var drone = Document.FromJson(droneData);
-            drone["Date"] = date;
-            drone["Timestamp"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            return drone;
+            var droneJson = JsonConvert.SerializeObject(drone);
+            var droneDocument = Document.FromJson(droneJson);
+            droneDocument["Date"] = date;
+            droneDocument["Timestamp"] = time;
+            return droneDocument;
         }
     }
 }
