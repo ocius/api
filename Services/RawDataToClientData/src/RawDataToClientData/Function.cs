@@ -22,8 +22,8 @@ namespace RawDataToClientData
                 var droneLocation = DroneLocation.GetLocation(drone.Name, drone.Data);
                 var droneSensors = DroneSensors.GetSensors(drone.Name, drone.Data);
 
-                await Database.InsertAsync(droneLocation, "DroneLocations");
-                await Database.InsertAsync(droneSensors, "DroneSensors");
+                await Database.InsertAsync(droneLocation, "DroneLocations", drone.Timestamp);
+                await Database.InsertAsync(droneSensors, "DroneSensors", drone.Timestamp);
             }
         }
     }
