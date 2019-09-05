@@ -62,13 +62,21 @@ namespace ociusApi
         {
             if(timeSpan == "hour")
             {
-                var currentTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                var oneHourAgo = currentTimestamp - 3600;
+                var currentTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                var oneHourAgo = currentTimestamp - 3600000;
                 Console.WriteLine(oneHourAgo.ToString());
                 return oneHourAgo.ToString();
             }
 
-            return "minute";
+            return GetByMinute();
+        }
+
+        private static string GetByMinute()
+        {
+            var currentTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            var oneMinuteAgo = currentTimestamp - 60000;
+            Console.WriteLine(oneMinuteAgo.ToString());
+            return oneMinuteAgo.ToString();
         }
     }
 }
