@@ -8,8 +8,6 @@ namespace ociusApi
     {
         public static QueryRequest CreateSingleDroneRequest(string resource, string name)
         {
-            Console.WriteLine("============ query");
-
             var queryRequest = CreateDroneByNameRequest(resource, name);
             queryRequest.ScanIndexForward = false;
             queryRequest.Limit = 1;
@@ -19,13 +17,10 @@ namespace ociusApi
         public static QueryRequest CreateDroneByNameRequest(string resource, string name)
         {
             var date = DateTime.UtcNow.Date.ToShortDateString();
-            var table = resource.Contains("location") ? "DroneLocations" : "DroneSensors";
-
-            Console.WriteLine("============ table", table);
 
             return new QueryRequest
             {
-                TableName = table,
+                TableName = resource,
                 IndexName = "Date-Name-index",
                 KeyConditionExpression = "#date = :date and #name = :name",
                 ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" }, { "#name", "Name" } },

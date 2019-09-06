@@ -1,6 +1,7 @@
 ﻿using Amazon.DynamoDBv2.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ociusApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ namespace ociusApi
 {
     public class ApiResponse
     {
+        #region Properties
+
         [JsonProperty("isBase64Encoded")]
         public bool IsBase64Encoded = false;
 
@@ -21,9 +24,10 @@ namespace ociusApi
         [JsonProperty("headers")]
         public IDictionary<string, string> Headers { get; private set; }
 
+        #endregion
+
         public static async Task<ApiResponse> GetLatest(string resource)
         {
-            Console.WriteLine("============ get latest");
             var databaseResponse = await Database.GetLatest(resource);
             return CreateResponse(databaseResponse, resource);
         }
@@ -35,6 +39,8 @@ namespace ociusApi
             return CreateResponse(databaseResponse, resource);
         }
 
+        #region Private methods
+
         private static ApiResponse CreateResponse(QueryResponse databaseResponse, string resource)
         {
             var droneJson = CreateDroneJson(databaseResponse, resource);
@@ -44,11 +50,10 @@ namespace ociusApi
 
         private static string CreateDroneJson(QueryResponse databaseResponse, string resource)
         {
-            Console.WriteLine("============ create drone json");
-            Console.WriteLine("============ resource", resource);
-
             var drone = DroneFactory.CreateDrone(resource);
             return drone.ToJson(databaseResponse);
         }
+
+        #endregion
     }
 }

@@ -13,8 +13,6 @@ namespace ociusApi
 
         public async static Task<QueryResponse> GetLatest(string resource)
         {
-            Console.WriteLine("============ database");
-
             var bobRequest = Query.CreateSingleDroneRequest(resource, "Bob");
             var bruceRequest = Query.CreateSingleDroneRequest(resource, "Bruce");
 
