@@ -15,14 +15,9 @@ namespace ociusApi
             var queryString = request["queryStringParameters"];
             var resource = request["resource"].ToString();
 
-            var table = resource.Contains("location") ? "DroneLocations" : "DroneSensors"; //move this inside DB
-
-            Console.WriteLine(resource);
-            Console.WriteLine(table);
-
             return queryString.HasValues 
-                ? await ApiResponse.GetByTimespan(queryString, table) 
-                : await ApiResponse.GetLatest(table);
+                ? await ApiResponse.GetByTimespan(queryString, resource) 
+                : await ApiResponse.GetLatest(resource);
         }
     }
 }

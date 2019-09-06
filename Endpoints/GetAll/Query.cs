@@ -16,7 +16,6 @@ namespace ociusApi
             return queryRequest;
         }
 
-
         public static QueryRequest CreateDroneByNameRequest(string resource, string name)
         {
             var date = DateTime.UtcNow.Date.ToShortDateString();
