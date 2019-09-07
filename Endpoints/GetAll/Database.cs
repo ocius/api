@@ -17,36 +17,35 @@ namespace ociusApi
             return await client.QueryAsync(latestDronesRequest);
         }
 
-        public async static Task<QueryResponse> GetByTimespan(string timespan, string resource)
+        public async static Task<QueryResponse> GetByTimespan(string timePeriod, string resource)
         {
-            var validTimespans = new List<string> { "minute", "hour", "day" };
+            if (!IsValidTimePeriod(timePeriod)) return new QueryResponse();
 
-            if (!validTimespans.Contains(timespan)) return new QueryResponse();
+            var timeSpan = GetTimespan(timePeriod);
 
-            if (timespan == "day") return await GetByDay(resource);
-
-            var dateTime = GetTimespan(timespan);
-
-            var dronesByTimespanRequest = Query.CreateDroneByTimeRequest(dateTime, resource);
+            var dronesByTimespanRequest = Query.CreateDroneByTimeRequest(timeSpan, resource);
 
             return await client.QueryAsync(dronesByTimespanRequest);
         }
 
-        private async static Task<QueryResponse> GetByDay(string resource)
+        private static bool IsValidTimePeriod(string timespan)
         {
-            var droneByDayRequest = Query.CreateDroneByDayRequest(resource);
-            return await client.QueryAsync(droneByDayRequest);
+            var validTimespans = new List<string> { "minute", "hour", "day" };
+
+            return (validTimespans.Contains(timespan));
         }
 
         private static string GetTimespan(string timeSpan)
         {
             var oneMinuteMilliseconds = 60000;
             var oneHourMilliseconds = 3600000;
-            
+            var oneDayMilliseconds = 86400000;
+
+            if(timeSpan == "day")
+                return GetByTime(oneDayMilliseconds);
+
             if (timeSpan == "hour")
-            {
                 return GetByTime(oneHourMilliseconds);
-            }
 
             return GetByTime(oneMinuteMilliseconds);
         }
