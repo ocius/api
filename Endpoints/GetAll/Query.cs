@@ -6,42 +6,28 @@ namespace ociusApi
 {
     public class Query
     {
-        public static QueryRequest CreateSingleDroneRequest(string resource, string name)
-        {
-            var queryRequest = CreateDroneByNameRequest(resource, name);
-            queryRequest.ScanIndexForward = false;
-            queryRequest.Limit = 1;
-            return queryRequest;
-        }
-
-        public static QueryRequest CreateDroneByNameRequest(string resource, string name)
+        public static QueryRequest CreateLatestDronesRequest(string resource)
         {
             var date = DateTime.UtcNow.Date.ToShortDateString();
 
             return new QueryRequest
             {
                 TableName = resource,
-                IndexName = "Date-Name-index",
-                KeyConditionExpression = "#date = :date and #name = :name",
-                ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" }, { "#name", "Name" } },
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-                {
-                    { ":date", new AttributeValue { S = date } },
-                    { ":name", new AttributeValue { S = name } }
-                }
+                KeyConditionExpression = "#date = :date",
+                ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" } },
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { S = date } } },
+                ScanIndexForward = false,
+                Limit = 2
             };
         }
+
         public static QueryRequest CreateDroneByDayRequest(string resource)
         {
             var date = DateTime.UtcNow.Date.ToShortDateString();
-            var table = resource.Contains("location") ? "DroneLocations" : "DroneSensors";
-
-            Console.WriteLine("============ table", table);
-
 
             return new QueryRequest
             {
-                TableName = table,
+                TableName = resource,
                 KeyConditionExpression = "#date = :date",
                 ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" } },
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { S = date } } }
@@ -54,7 +40,7 @@ namespace ociusApi
 
             return new QueryRequest
             {
-                TableName = resource, //change this
+                TableName = resource,
                 KeyConditionExpression = "#date = :date and #timespan > :timespan ",
                 ExpressionAttributeNames = new Dictionary<string, string> { { "#timespan", "Timestamp" }, { "#date", "Date" } },
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
