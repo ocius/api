@@ -2,7 +2,7 @@
 {
     public class DroneFactory
     {
-        public static IDrone CreateDrone(string droneType)
+        public static IDrone GetDroneType(string droneType)
         {
             return droneType.Contains("Location") 
                 ? (IDrone)new DroneLocation() 

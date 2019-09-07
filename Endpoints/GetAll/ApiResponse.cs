@@ -39,21 +39,12 @@ namespace ociusApi
             return CreateResponse(databaseResponse, resource);
         }
 
-        #region Private methods
-
         private static ApiResponse CreateResponse(QueryResponse databaseResponse, string resource)
         {
-            var droneJson = CreateDroneJson(databaseResponse, resource);
+            var drone = DroneFactory.GetDroneType(resource);
+            var droneJson = drone.ToJson(databaseResponse);
             var headers = new Dictionary<string, string>() { { "Access-Control-Allow-Origin", "*" } };
             return new ApiResponse { StatusCode = 200, Body = droneJson, Headers = headers };
         }
-
-        private static string CreateDroneJson(QueryResponse databaseResponse, string resource)
-        {
-            var drone = DroneFactory.CreateDrone(resource);
-            return drone.ToJson(databaseResponse);
-        }
-
-        #endregion
     }
 }

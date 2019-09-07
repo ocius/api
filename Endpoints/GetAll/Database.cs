@@ -12,9 +12,9 @@ namespace ociusApi
 
         public async static Task<QueryResponse> GetLatest(string resource)
         {
-            var bobRequest = Query.CreateLatestDronesRequest(resource);
+            var latestDronesRequest = Query.CreateLatestDronesRequest(resource);
 
-            return await client.QueryAsync(bobRequest);
+            return await client.QueryAsync(latestDronesRequest);
         }
 
         public async static Task<QueryResponse> GetByTimespan(string timespan, string resource)
@@ -26,7 +26,9 @@ namespace ociusApi
             if (timespan == "day") return await GetByDay(resource);
 
             var dateTime = GetTimespan(timespan);
+
             var dronesByTimespanRequest = Query.CreateDroneByTimeRequest(dateTime, resource);
+
             return await client.QueryAsync(dronesByTimespanRequest);
         }
 
@@ -38,23 +40,22 @@ namespace ociusApi
 
         private static string GetTimespan(string timeSpan)
         {
-            if(timeSpan == "hour")
+            var oneMinuteMilliseconds = 60000;
+            var oneHourMilliseconds = 3600000;
+            
+            if (timeSpan == "hour")
             {
-                var currentTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                var oneHourAgo = currentTimestamp - 3600000;
-                Console.WriteLine(oneHourAgo.ToString());
-                return oneHourAgo.ToString();
+                return GetByTime(oneHourMilliseconds);
             }
 
-            return GetByMinute();
+            return GetByTime(oneMinuteMilliseconds);
         }
 
-        private static string GetByMinute()
+        private static string GetByTime(int milliseconds)
         {
             var currentTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            var oneMinuteAgo = currentTimestamp - 60000;
-            Console.WriteLine(oneMinuteAgo.ToString());
-            return oneMinuteAgo.ToString();
+            var timePeriod = currentTimestamp - milliseconds;
+            return timePeriod.ToString();
         }
     }
 }
