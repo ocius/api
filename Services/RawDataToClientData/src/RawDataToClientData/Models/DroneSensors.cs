@@ -1,5 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RawDataToClientData
 {
@@ -23,6 +26,8 @@ namespace RawDataToClientData
         public string Heading { get; set; }
         public string Lat { get; set; }
         public string Lon { get; set; }
+        public int BatteryA { get; set; }
+        public int BatteryB { get; set; }
 
         public static string GetSensors(string name, string data)
         {
@@ -40,6 +45,7 @@ namespace RawDataToClientData
             var lat = compass["lat"] ?? "";
             var lon = compass["lon"] ?? "";
             var heading = compass["heading"] ?? "";
+            var batteries = JsonConvert.DeserializeObject<Batteries>(data);
 
             var sensors = new DroneSensors
             {
@@ -53,10 +59,31 @@ namespace RawDataToClientData
                 Wind_direction = wind_direction.ToString(),
                 Heading = heading.ToString(),
                 Lat = lat.ToString(),
-                Lon = lon.ToString()
+                Lon = lon.ToString(),
+                BatteryA = batteries.Tqb.First().Vol,
+                BatteryB = batteries.Tqb.First().Vol
             };
 
             return JsonConvert.SerializeObject(sensors);
         }
+    }
+
+    public class Batteries
+    {
+        public List<Battery> Tqb { get; set; }
+
+        internal object First()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Battery
+    {
+        public int Id { get; set; }
+        public int Vol { get; set; }
+        public int Cur { get; set; }
+        public int Pwr { get; set; }
+        public int Pcnt { get; set; }
     }
 }
