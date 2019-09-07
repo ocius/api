@@ -19,7 +19,7 @@ namespace XmlToJson
             var data = droneData["mavpos"];
             var id = data["sysid"]?.ToString();
 
-            if (id is null) return "Unknown Drone";
+            if (id is null || !droneNames.Keys.Contains(id)) return "Unknown Drone";
 
             return droneNames[id];
         }
