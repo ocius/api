@@ -36,6 +36,8 @@ namespace ociusApi
                 if (key == "Wind_Speed") props.Wind_Speed = value?.S ?? "";
                 if (key == "Wind_direction") props.Wind_direction = value?.S ?? "";
                 if (key == "Heading") props.Heading = value?.S ?? "";
+                if (key == "BatteryA") props.BatteryA = value?.S ?? "";
+                if (key == "BatteryB") props.BatteryB = value?.S ?? "";
 
                 if (key == "Lat") coordinates.Lat = value?.S ?? "";
                 if (key == "Lon") coordinates.Lon = value?.S ?? "";

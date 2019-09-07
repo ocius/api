@@ -14,6 +14,8 @@
         public string Num_Sats { get; set; }
         public string Hdop { get; set; }
         public string Heading { get; set; }
+        public string BatteryA { get; set; }
+        public string BatteryB { get; set; }
         public Location Location { get; set; }
     }
 
