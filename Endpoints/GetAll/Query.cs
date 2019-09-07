@@ -6,38 +6,23 @@ namespace ociusApi
 {
     public class Query
     {
+        private static string Date => DateTime.UtcNow.Date.ToShortDateString();
+
         public static QueryRequest CreateLatestDronesRequest(string resource)
         {
-            var date = DateTime.UtcNow.Date.ToShortDateString();
-
             return new QueryRequest
             {
                 TableName = resource,
                 KeyConditionExpression = "#date = :date",
                 ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" } },
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { S = date } } },
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { S = Date } } },
                 ScanIndexForward = false,
                 Limit = 2
             };
         }
 
-        public static QueryRequest CreateDroneByDayRequest(string resource)
-        {
-            var date = DateTime.UtcNow.Date.ToShortDateString();
-
-            return new QueryRequest
-            {
-                TableName = resource,
-                KeyConditionExpression = "#date = :date",
-                ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" } },
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { S = date } } }
-            };
-        }
-
         public static QueryRequest CreateDroneByTimeRequest(string timespan, string resource)
         {
-            var date = DateTime.UtcNow.Date.ToShortDateString();
-
             return new QueryRequest
             {
                 TableName = resource,
@@ -45,7 +30,7 @@ namespace ociusApi
                 ExpressionAttributeNames = new Dictionary<string, string> { { "#timespan", "Timestamp" }, { "#date", "Date" } },
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
                     { ":timespan", new AttributeValue { N = timespan } },
-                    { ":date", new AttributeValue { S = date } },
+                    { ":date", new AttributeValue { S = Date } },
                 }
             };
         }
