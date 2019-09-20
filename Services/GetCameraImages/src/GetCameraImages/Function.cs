@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -12,40 +14,50 @@ namespace GetCameraImages
 {
     public class Function
     {
-        private const string bucketName = "ocius-images";
-        private const string keyName = "tomamyTest2.jpg";
-
         private static readonly RegionEndpoint bucketRegion = RegionEndpoint.APSoutheast2;
         private static readonly IAmazonS3 s3Client = new AmazonS3Client(bucketRegion);
         private readonly HttpClient client = new HttpClient();
         private readonly TransferUtility fileTransferUtility = new TransferUtility(s3Client);
 
-        public async Task<string> FunctionHandler()
+        private const string bucketName = "ocius-images";
+
+
+        public async Task<List<string>> FunctionHandler()
         {
-            var image = await DownloadImage();
-            await UploadImage(image);
+            var supportedDrones = new List<string> { "bob", "bruce" };
 
-            //get url
-            //url is baseUrl + folderName + keyName
-            //Key name coudl be a timestamp
+            var baseUrl = "https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera=";
+            var cameras = new List<string> { "mast" };
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-            //add to a DB
-            //save url to DB for fetching
+            var result = new List<string>();
 
-            return $"Image {keyName} uploaded";
+            foreach (var drone in supportedDrones)
+            {
+                foreach(var camera in cameras)
+                {
+                    var imageUrl = $"{baseUrl}{drone}%20{camera}";
+                    var image = await DownloadImage(imageUrl);
+                    var path = $"{drone}/{timestamp}/{camera}.jpg";
+                    await UploadImage(image, path);
+                    result.Add(path);
+                }
+            }
+
+            return result;
         }
 
-        private async Task<Stream> DownloadImage()
+        private async Task<Stream> DownloadImage(string url)
         {
-            var response = await client.GetAsync("https://tomamy.co/amytom.jpg");
+            var response = await client.GetAsync(url);
             return await response.Content.ReadAsStreamAsync();
         }
 
-        private async Task UploadImage(Stream image)
+        private async Task UploadImage(Stream image, string path)
         {
             using (image as FileStream)
             {
-                await fileTransferUtility.UploadAsync(image, bucketName, keyName);
+                await fileTransferUtility.UploadAsync(image, bucketName, path);
             }
         }
 
