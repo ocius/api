@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Amazon;
@@ -15,12 +16,12 @@ namespace GetCameraImages
     public class Function
     {
         private static TransferUtility FileTransferUtility => CreateTransferUtility();
-        private readonly HttpClient client = new HttpClient();
+        private static readonly HttpClient client = new HttpClient();
+        private static readonly long timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
 
         public async Task<List<string>> FunctionHandler()
         {
-            var baseUrl = "https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera=";
-            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var supportedDrones = new List<string> { "bob", "bruce" };
             var cameras = new List<string> { "mast" };
             var result = new List<string>();
@@ -33,15 +34,23 @@ namespace GetCameraImages
             {
                 foreach(var camera in cameras)
                 {
-                    var imageUrl = $"{baseUrl}{drone}%20{camera}";
-                    var image = await DownloadImage(imageUrl);
-                    var path = $"{drone}/{timestamp}/{camera}.jpg";
-                    await UploadImage(image, path);
+                    var path = await SaveImage(drone, camera);
                     result.Add(path);
                 }
             }
 
             return result;
+        }
+
+        private static async Task<string> SaveImage(string drone, string camera)
+        {
+            var baseUrl = "https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera=";
+
+            var imageUrl = $"{baseUrl}{drone}%20{camera}";
+            var image = await DownloadImage(imageUrl);
+            var path = $"{drone}/{timestamp}/{camera}.jpg";
+            await UploadImage(image, path);
+            return path;
         }
 
         private static TransferUtility CreateTransferUtility()
@@ -51,13 +60,13 @@ namespace GetCameraImages
             return new TransferUtility(s3Client);
         }
 
-        private async Task<Stream> DownloadImage(string url)
+        private static async Task<Stream> DownloadImage(string url)
         {
             var response = await client.GetAsync(url);
             return await response.Content.ReadAsStreamAsync();
         }
 
-        private async Task UploadImage(Stream image, string path)
+        private static async Task UploadImage(Stream image, string path)
         {
             var bucketName = "ocius-images";
 
