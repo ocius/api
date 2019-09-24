@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Amazon;
@@ -17,34 +18,27 @@ namespace GetCameraImages
         private static TransferUtility FileTransferUtility => CreateTransferUtility();
         private static readonly HttpClient client = new HttpClient();
 
-        public async Task<List<string>> FunctionHandler()
+        public List<string> FunctionHandler()
         {
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
-            var supportedDrones = new List<string> { "bob", "bruce" };
-            var cameras = new List<string> { "mast" };
-            var result = new List<string>();
+            var cameras = new List<string> { "bob%20mast", "bruce%20mast", "bob_360" };
 
-            //Although this code could download the images in paralle, it does not
-            //This is because when performance was measured, it was faster to do in serial
-            //The server was overloaded by parallel calls, and took far longer to respond to the requests
+            //This code does not download the images in parallel because when performance was measured, it was actually slower
+            //The server was overloaded by parallel calls, and total response time was slower
 
-            foreach (var drone in supportedDrones)
-            {
-                foreach(var camera in cameras)
-                {
-                    var path = await SaveImage(drone, camera, timestamp);
-                    result.Add(path);
-                }
-            }
-
-            return result;
+            return cameras
+                    .Select(async camera => await SaveImage(camera, timestamp))
+                    .Select(task => task.Result).ToList();
         }
 
-        private static async Task<string> SaveImage(string drone, string camera, string timestamp)
+        private static async Task<string> SaveImage(string camera, string timestamp)
         {
-            var path = $"{drone}/{timestamp}/{camera}.jpg";
-            var image = await DownloadImage(drone, camera);
+            var image = await DownloadImage(camera);
+
+            var path = $"{timestamp}/{camera}.jpg";
+
             await UploadImage(image, path);
+
             return $"Image saved to {path}";
         }
 
@@ -55,10 +49,9 @@ namespace GetCameraImages
             return new TransferUtility(s3Client);
         }
 
-        private static async Task<Stream> DownloadImage(string drone, string camera)
+        private static async Task<Stream> DownloadImage(string camera)
         {
-            var baseUrl = "https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera=";
-            var imageUrl = $"{baseUrl}{drone}%20{camera}";
+            var imageUrl = $"https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera={camera}";
             var response = await client.GetAsync(imageUrl);
             return await response.Content.ReadAsStreamAsync();
         }
