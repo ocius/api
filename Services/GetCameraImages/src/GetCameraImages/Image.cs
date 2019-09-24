@@ -54,7 +54,7 @@ namespace GetCameraImages
                 await FileTransferUtility.UploadAsync(image, bucketName, path);
             }
 
-            return $"SUCCESS: {path}";
+            return path;
         }
 
         private static TransferUtility CreateTransferUtility()

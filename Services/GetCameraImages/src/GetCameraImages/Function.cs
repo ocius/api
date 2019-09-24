@@ -11,7 +11,8 @@ namespace GetCameraImages
     {
         public async Task<List<string>> FunctionHandler()
         {
-            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var date = DateTime.UtcNow.Date.ToShortDateString();
             var drones = new List<string> { "bob", "bruce" };
             var cameras = new List<string> { "%20mast", "_360" };
             var result = new List<string>();
@@ -23,7 +24,7 @@ namespace GetCameraImages
             {
                 foreach(var camera in cameras)
                 {
-                    var path = await SaveImage(drone, camera, timestamp);
+                    var path = await SaveImage(date, drone, camera, timestamp);
                     result.Add(path);
                 }
             }
@@ -31,13 +32,20 @@ namespace GetCameraImages
             return result;
         }
 
-        private static async Task<string> SaveImage(string drone, string camera, string timestamp)
+        private static async Task<string> SaveImage(string date, string drone, string camera, long timestamp)
         {
             var image = await DroneImage.Download(drone, camera);
 
-            return image.HasData
-                ? await DroneImage.Upload(image.Data, drone, camera, timestamp)
-                : $"ERROR: Could not download {image.Url}";
+            if(image.HasData)
+            {
+                var path = await DroneImage.Upload(image.Data, drone, camera, timestamp.ToString());
+                await Database.InsertDrone(date, timestamp, drone, path);
+                return path;
+            }
+            else
+            {
+                return $"ERROR: Could not download {image.Url}";
+            }
         }
     }
 }
