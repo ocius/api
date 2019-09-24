@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Amazon;
@@ -17,11 +16,10 @@ namespace GetCameraImages
     {
         private static TransferUtility FileTransferUtility => CreateTransferUtility();
         private static readonly HttpClient client = new HttpClient();
-        private static readonly long timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
 
         public async Task<List<string>> FunctionHandler()
         {
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
             var supportedDrones = new List<string> { "bob", "bruce" };
             var cameras = new List<string> { "mast" };
             var result = new List<string>();
@@ -34,7 +32,7 @@ namespace GetCameraImages
             {
                 foreach(var camera in cameras)
                 {
-                    var path = await SaveImage(drone, camera);
+                    var path = await SaveImage(drone, camera, timestamp);
                     result.Add(path);
                 }
             }
@@ -42,15 +40,12 @@ namespace GetCameraImages
             return result;
         }
 
-        private static async Task<string> SaveImage(string drone, string camera)
+        private static async Task<string> SaveImage(string drone, string camera, string timestamp)
         {
-            var baseUrl = "https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera=";
-
-            var imageUrl = $"{baseUrl}{drone}%20{camera}";
-            var image = await DownloadImage(imageUrl);
             var path = $"{drone}/{timestamp}/{camera}.jpg";
+            var image = await DownloadImage(drone, camera);
             await UploadImage(image, path);
-            return path;
+            return $"Image saved to {path}";
         }
 
         private static TransferUtility CreateTransferUtility()
@@ -60,9 +55,11 @@ namespace GetCameraImages
             return new TransferUtility(s3Client);
         }
 
-        private static async Task<Stream> DownloadImage(string url)
+        private static async Task<Stream> DownloadImage(string drone, string camera)
         {
-            var response = await client.GetAsync(url);
+            var baseUrl = "https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera=";
+            var imageUrl = $"{baseUrl}{drone}%20{camera}";
+            var response = await client.GetAsync(imageUrl);
             return await response.Content.ReadAsStreamAsync();
         }
 
