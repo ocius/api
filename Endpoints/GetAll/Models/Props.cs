@@ -1,4 +1,6 @@
-﻿namespace ociusApi
+﻿using System.Collections.Generic;
+
+namespace ociusApi
 {
     public class Props
     {
@@ -16,6 +18,7 @@
         public string Heading { get; set; }
         public string BatteryA { get; set; }
         public string BatteryB { get; set; }
+        public List<string> Cameras { get; set; }
         public Location Location { get; set; }
     }
 

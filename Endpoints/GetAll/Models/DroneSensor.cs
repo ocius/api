@@ -1,6 +1,7 @@
 ﻿using Amazon.DynamoDBv2.Model;
 using ociusApi.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ociusApi
 {
@@ -38,6 +39,7 @@ namespace ociusApi
                 if (key == "Heading") props.Heading = value?.S ?? "";
                 if (key == "BatteryA") props.BatteryA = value?.S ?? "";
                 if (key == "BatteryB") props.BatteryB = value?.S ?? "";
+                if (key == "Cameras") props.Cameras = GetCameras(value?.S ?? "");
 
                 if (key == "Lat") coordinates.Lat = value?.S ?? "";
                 if (key == "Lon") coordinates.Lon = value?.S ?? "";
@@ -48,6 +50,11 @@ namespace ociusApi
             drone.Props = props;
 
             return drone;
+        }
+
+        private List<string> GetCameras(string value)
+        {
+            return value.Split(",").ToList();
         }
     }
 }

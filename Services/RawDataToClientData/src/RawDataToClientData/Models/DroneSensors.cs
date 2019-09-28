@@ -29,9 +29,9 @@ namespace RawDataToClientData
         public string Lon { get; set; }
         public string BatteryA { get; set; }
         public string BatteryB { get; set; }
-        public List<string> Cameras { get; set; }
+        public string Cameras { get; set; }
 
-        public static string GetSensors(string name, string data, List<string> cameras)
+        public static string GetSensors(string name, string data, string cameras)
         {
             var json = JsonConvert.DeserializeObject(data) as JObject;
 

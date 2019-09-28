@@ -23,45 +23,39 @@ namespace RawDataToClientData
             await table.PutItemAsync(item);
         }
 
-        public static async Task<Dictionary<string, List<string>>> GetCameras()
+        public static async Task<Dictionary<string, string>> GetCameras()
         {
             var cameraQuery = CreateCameraQuery();
             var response = await client.QueryAsync(cameraQuery);
             return GetValuesFromResponse(response);
         }
 
-        public static Dictionary<string, List<string>> GetValuesFromResponse(QueryResponse queryResponse)
+        public static Dictionary<string, string> GetValuesFromResponse(QueryResponse queryResponse)
         {
-            if (!IsValidResponse(queryResponse)) return new Dictionary<string, List<string>>();
+            if (!IsValidResponse(queryResponse)) return new Dictionary<string, string>();
 
-            var value = new Dictionary<string, List<string>>();
+            var value = new Dictionary<string, string>();
 
             foreach (var item in queryResponse.Items)
             {
                 var (foo,bar) = GetCameras(item);
+                Console.WriteLine("====================== get cameras result" + foo + bar);
                 value.Add(foo, bar);
             }
 
             return value;
         }
 
-        public static (string, List<string>) GetCameras(Dictionary<string, AttributeValue> attributes)
+        public static (string, string) GetCameras(Dictionary<string, AttributeValue> attributes)
         {
-            string name = string.Empty;
-            List<string> cameras = new List<string>();
+            var name = string.Empty;
+            var cameras = string.Empty;
 
             foreach (KeyValuePair<string, AttributeValue> attribute in attributes)
             {
-                if (attribute.Key == "Name")
-                {
-                    name = attribute.Value?.S ?? "";
-                }
+                if (attribute.Key == "Name") name = attribute.Value?.S ?? "";
 
-                if (attribute.Key == "Cameras")
-                {
-                    var cameraValue = attribute.Value?.S ?? "";
-                    cameras = cameraValue.Split(",").ToList();
-                }
+                if (attribute.Key == "Cameras") cameras = attribute.Value?.S ?? "";
             }
 
             return (name, cameras);
