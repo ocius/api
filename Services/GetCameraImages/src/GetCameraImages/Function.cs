@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 
@@ -9,9 +10,10 @@ namespace GetCameraImages
 {
     public class Function
     {
+        private const string ErrorPrefix = "ERROR: Could not download";
+
         public async Task<List<string>> FunctionHandler()
         {
-            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var date = DateTime.UtcNow.Date.ToShortDateString();
             var drones = new List<string> { "bob", "bruce" };
             var cameras = new List<string> { "%20mast", "_360" };
@@ -22,15 +24,17 @@ namespace GetCameraImages
 
             foreach (var drone in drones)
             {
+                var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 var urls = new List<string>();
 
-                foreach(var camera in cameras)
+                foreach (var camera in cameras)
                 {
                     var url = await SaveImage(drone, camera, timestamp);
                     urls.Add(url);
                 }
 
-                var value = string.Join(",", urls);
+                var validUrls = urls.Where(url => !url.StartsWith(ErrorPrefix));
+                var value = string.Join(",", validUrls);
                 await Database.InsertCameraUrls(date, timestamp, drone, value);
 
                 result.AddRange(urls);
@@ -43,7 +47,7 @@ namespace GetCameraImages
         {
             var image = await DroneImage.Download(drone, camera);
 
-            if(!image.HasData) return $"ERROR: Could not download {image.Url}";
+            if(!image.HasData) return $"{ErrorPrefix} {image.Url}";
 
             return await DroneImage.Upload(image.Data, drone, camera, timestamp.ToString());
         }
