@@ -3,7 +3,6 @@ using Amazon.Lambda.Core;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.Lambda.DynamoDBEvents;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 

@@ -22,30 +22,30 @@ namespace GetCameraImages
 
             foreach (var drone in drones)
             {
+                var urls = new List<string>();
+
                 foreach(var camera in cameras)
                 {
-                    var path = await SaveImage(date, drone, camera, timestamp);
-                    result.Add(path);
+                    var url = await SaveImage(drone, camera, timestamp);
+                    urls.Add(url);
                 }
+
+                var value = string.Join(",", urls);
+                await Database.InsertCameraUrls(date, timestamp, drone, value);
+
+                result.AddRange(urls);
             }
 
             return result;
         }
 
-        private static async Task<string> SaveImage(string date, string drone, string camera, long timestamp)
+        private static async Task<string> SaveImage(string drone, string camera, long timestamp)
         {
             var image = await DroneImage.Download(drone, camera);
 
-            if(image.HasData)
-            {
-                var path = await DroneImage.Upload(image.Data, drone, camera, timestamp.ToString());
-                await Database.InsertDrone(date, timestamp, drone, path);
-                return path;
-            }
-            else
-            {
-                return $"ERROR: Could not download {image.Url}";
-            }
+            if(!image.HasData) return $"ERROR: Could not download {image.Url}";
+
+            return await DroneImage.Upload(image.Data, drone, camera, timestamp.ToString());
         }
     }
 }

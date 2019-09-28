@@ -10,7 +10,7 @@ namespace GetCameraImages
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
         private static readonly Table table = Table.LoadTable(client, "CameraImageUrls");
 
-        public async static Task<string> InsertDrone(string date, long timestamp, string drone, string cameras)
+        public async static Task<string> InsertCameraUrls(string date, long timestamp, string drone, string cameras)
         {
             var cameraImageDocument = CreateCameraDocument(date, timestamp, drone, cameras);
 
