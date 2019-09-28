@@ -3,8 +3,6 @@ using Amazon.Lambda.Core;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.Lambda.DynamoDBEvents;
 using Newtonsoft.Json;
-using System;
-using System.Linq;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
@@ -24,7 +22,6 @@ namespace RawDataToClientData
                 var drone = JsonConvert.DeserializeObject<Drone>(json);
 
                 var droneCameras = cameras[drone.Name];
-                Console.WriteLine("================== drone cameras " + droneCameras);
                 var droneLocation = DroneLocation.GetLocation(drone.Name, drone.Data);
                 var droneSensors = DroneSensors.GetSensors(drone.Name, drone.Data, droneCameras);
 

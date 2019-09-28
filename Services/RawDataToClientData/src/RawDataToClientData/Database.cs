@@ -38,9 +38,8 @@ namespace RawDataToClientData
 
             foreach (var item in queryResponse.Items)
             {
-                var (foo,bar) = GetCameras(item);
-                Console.WriteLine("====================== get cameras result" + foo + bar);
-                value.Add(foo, bar);
+                var (name,cameraUrls) = GetCameras(item);
+                value.Add(name, cameraUrls);
             }
 
             return value;
@@ -70,7 +69,6 @@ namespace RawDataToClientData
 
         private static QueryRequest CreateCameraQuery()
         {
-
             return new QueryRequest
             {
                 TableName = "CameraImageUrls",
