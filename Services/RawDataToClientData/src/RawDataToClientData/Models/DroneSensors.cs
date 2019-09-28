@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RawDataToClientData.Models;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RawDataToClientData
 {
@@ -27,8 +29,9 @@ namespace RawDataToClientData
         public string Lon { get; set; }
         public string BatteryA { get; set; }
         public string BatteryB { get; set; }
+        public List<string> Cameras { get; set; }
 
-        public static string GetSensors(string name, string data)
+        public static string GetSensors(string name, string data, List<string> cameras)
         {
             var json = JsonConvert.DeserializeObject(data) as JObject;
 
@@ -60,7 +63,8 @@ namespace RawDataToClientData
                 Lat = lat.ToString(),
                 Lon = lon.ToString(),
                 BatteryA = batteries.Tqb.First().Vol.Insert(2, "."),
-                BatteryB = batteries.Tqb.First().Vol.Insert(2, ".")
+                BatteryB = batteries.Tqb.First().Vol.Insert(2, "."),
+                Cameras = cameras
             };
 
             return JsonConvert.SerializeObject(sensors);

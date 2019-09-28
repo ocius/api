@@ -3,6 +3,7 @@ using Amazon.Lambda.Core;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.Lambda.DynamoDBEvents;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
@@ -12,6 +13,8 @@ namespace RawDataToClientData
     {
         public async Task FunctionHandler(DynamoDBEvent dynamoEvent)
         {
+            var cameras = await Database.GetCameras();
+
             foreach (var record in dynamoEvent.Records)
             {
                 if (record.EventName != "INSERT") continue;
@@ -19,8 +22,9 @@ namespace RawDataToClientData
                 var json = Document.FromAttributeMap(record.Dynamodb.NewImage).ToJson();
                 var drone = JsonConvert.DeserializeObject<Drone>(json);
 
+                var droneCameras = cameras[drone.Name];
                 var droneLocation = DroneLocation.GetLocation(drone.Name, drone.Data);
-                var droneSensors = DroneSensors.GetSensors(drone.Name, drone.Data);
+                var droneSensors = DroneSensors.GetSensors(drone.Name, drone.Data, droneCameras);
 
                 await Database.InsertAsync(droneLocation, "DroneLocations", drone.Timestamp);
                 await Database.InsertAsync(droneSensors, "DroneSensors", drone.Timestamp);
