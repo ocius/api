@@ -26,7 +26,7 @@ namespace GetCameraImages
 
                 foreach (var camera in cameras)
                 {
-                    var url = await SaveCameraImageToS3(drone, camera, timestamp);
+                    var url = await S3.SaveCameraImage(drone, camera, timestamp);
                     urls.Add(url);
                 }
                 
@@ -35,15 +35,6 @@ namespace GetCameraImages
             }
 
             return result;
-        }
-
-        private static async Task<string> SaveCameraImageToS3(string drone, string camera, long timestamp)
-        {
-            var image = await DroneImage.Download(drone, camera);
-
-            if(!image.HasData) return $"{Constants.ErrorPrefix} {image.Url}";
-
-            return await DroneImage.Upload(image.Data, drone, camera, timestamp.ToString());
         }
     }
 }

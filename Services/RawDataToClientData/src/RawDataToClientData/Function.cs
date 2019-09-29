@@ -21,7 +21,7 @@ namespace RawDataToClientData
                 var json = Document.FromAttributeMap(record.Dynamodb.NewImage).ToJson();
                 var drone = JsonConvert.DeserializeObject<Drone>(json);
 
-                var droneCameras = cameras[drone.Name];
+                var droneCameras = cameras.ContainsKey(drone.Name) ? cameras[drone.Name] : "Camera not found";
                 var droneLocation = DroneLocation.GetLocation(drone.Name, drone.Data);
                 var droneSensors = DroneSensors.GetSensors(drone.Name, drone.Data, droneCameras);
 
