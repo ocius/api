@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using Newtonsoft.Json;
@@ -11,6 +13,7 @@ namespace GetCameraImages
 {
     public class DroneCamera
     {
+        public string DroneId { get; set; }
         public string DroneName { get; set; }
         public string CameraName { get; set; }
     }
@@ -50,76 +53,74 @@ namespace GetCameraImages
         }
 
 
-        private static (string, string) GetName(JToken data, IDictionary<string, string> droneNames)
+        private static DroneCamera GetDroneCamera(JToken data, IDictionary<string, string> droneNames)
         {
             var foo = data["Name"]?.ToString();
 
             Console.WriteLine(foo);
 
-            var underscoreIndex = foo.IndexOf('_');
+            var bar = foo.Split('_').ToList() ;
 
             //foo_bar
-            var id = foo.Substring(0, underscoreIndex - 1);
-            var cameraName = foo.Substring(underscoreIndex + 1, foo.Length);
+            var id = bar.First();
+            var cameraName = bar.Last();
 
-            if (id is null || !droneNames.Keys.Contains(id)) return (null, null);
+            if (id is null || !droneNames.Keys.Contains(id)) return null;
 
             var name = droneNames[id];
 
-            return (name, cameraName);
+            return new DroneCamera { DroneId = id, DroneName = name, CameraName = cameraName };
 
         }
 
         public async Task<List<string>> FunctionHandler()
         {
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             var date = DateTime.UtcNow.Date.ToShortDateString();
 
-            var xml = await Xml.Get("https://usvna.ocius.com.au/usvna/oc_server?listcameranames");
-            Console.WriteLine(xml);
-            var json = Xml.ToJson(xml);
-            Console.WriteLine(json);
+            var xml = Xml.Get("https://usvna.ocius.com.au/usvna/oc_server?listcameranames&nodeflate");
+            var names = GetDroneNames();
+
+            await Task.WhenAll(xml, names);
+
+            var json = Xml.ToJson(xml.Result);
 
             var data = GetDroneJson(json);
-            var names = await GetDroneNames();
             var result = new List<string>();
 
-            var cameras = new Dictionary<string, List<string>>();
+            stopwatch.Stop();
+            var elapsed = stopwatch.Elapsed;
+
+            Console.WriteLine("Got camera names in " + elapsed.TotalSeconds.ToString());
+
+            var droneCameras = new List<DroneCamera>();
 
             foreach (var drone in data)
             {
-                Console.WriteLine("reached here");
-
-                var (droneName, cameraName) = GetName(drone, names);
-
-                if (cameras.ContainsKey(droneName))
-                {
-                    cameras[droneName].Add(cameraName);
-                }
-                else
-                {
-                    cameras.Add(droneName, new List<string> { cameraName });
-                }
-
-                
+                var droneCamera = GetDroneCamera(drone, names.Result);
+                droneCameras.Add(droneCamera);
             }
 
             //This code does not download the images in parallel because when performance was measured, it was actually slower
             //The server was overloaded by parallel calls, and total response time was much slower
 
-            foreach (var droneCamera in cameras)
+            foreach (var droneCamera in droneCameras)
             {
-                var droneName = droneCamera.Key;
-                var droneCameras = droneCamera.Value;
                 var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 var urls = new List<string>();
 
-                foreach (var camera in droneCameras)
-                {
-                    var url = await S3.SaveCameraImage(droneName, camera, timestamp);
-                    urls.Add(url);
-                }
+                Console.WriteLine("About to save");
 
-                var databaseResponse = await Database.InsertCameraUrls(date, timestamp, droneName, urls);
+                var url = await S3.SaveCameraImage(droneCamera.DroneId, droneCamera.CameraName, timestamp);
+
+                Console.WriteLine("URL " + url);
+
+                urls.Add(url);
+
+                var databaseResponse = await Database.InsertCameraUrls(date, timestamp, droneCamera.DroneName, urls);
                 result.AddRange(databaseResponse);
             }
 
