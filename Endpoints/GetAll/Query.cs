@@ -6,40 +6,33 @@ namespace ociusApi
 {
     public class Query
     {
-        private static string Today => GetDate(0);
-        private static string Yesterday => GetDate(-1);
-
         public static QueryRequest CreateLatestDronesRequest(string resource)
         {
+            var Date = DateTime.UtcNow.ToString("yyyyMMdd");
+
             return new QueryRequest
             {
                 TableName = resource,
                 KeyConditionExpression = "#date = :date",
                 ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" } },
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { N = Today } } },
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { N = Date } } },
                 ScanIndexForward = false,
                 Limit = 2
             };
         }
 
-        public static QueryRequest CreateDroneByTimeRequest(string timespan, string resource)
+        public static QueryRequest CreateDroneByTimeRequest(string date, long timestamp, string resource)
         {
             return new QueryRequest
             {
                 TableName = resource,
-                KeyConditionExpression = "#date > :date and #timespan > :timespan ",
+                KeyConditionExpression = "#date = :date and #timespan > :timespan ",
                 ExpressionAttributeNames = new Dictionary<string, string> { { "#timespan", "Timestamp" }, { "#date", "Date" } },
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
-                    { ":timespan", new AttributeValue { N = timespan } },
-                    { ":date", new AttributeValue { N = Yesterday } },
+                    { ":timespan", new AttributeValue { N = timestamp.ToString() } },
+                    { ":date", new AttributeValue { N = date } },
                 }
             };
-        }
-
-        private static string GetDate(int offset)
-        {
-            var date = DateTime.UtcNow.AddDays(offset).Date.ToShortDateString();
-            return date.Replace("/", string.Empty);
         }
     }
 }

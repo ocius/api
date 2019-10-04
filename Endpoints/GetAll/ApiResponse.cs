@@ -26,6 +26,9 @@ namespace ociusApi
 
         #endregion
 
+        private static string Today => GetDate(0);
+        private static string Yesterday => GetDate(-1);
+
         public static async Task<ApiResponse> GetLatest(string resource)
         {
             var databaseResponse = await Database.GetLatest(resource);
@@ -35,7 +38,26 @@ namespace ociusApi
         public static async Task<ApiResponse> GetByTimespan(JToken queryString, string resource)
         {
             var timespan = queryString.ToObject<Timespan>();
-            var databaseResponse = await Database.GetByTimespan(timespan.Value, resource);
+
+            if (!Database.IsValidTimePeriod(timespan.Value)) return null;
+
+            var ticks = Database.GetTimespan(timespan.Value);
+
+            Console.WriteLine("TICKS " + ticks);
+
+            var utcMidnight = DateTime.Today.Ticks;
+
+            Console.WriteLine("MIDNIGHT " + utcMidnight);
+
+            var databaseResponse = await Database.GetByTimespan(Today, timespan.Value, resource);
+
+            if (ticks < utcMidnight)
+            {
+                Console.WriteLine("FROM YESTERDAY");
+                var dataFromYesterday = await Database.GetByTimespan(Yesterday, timespan.Value, resource);
+                databaseResponse.Items.AddRange(dataFromYesterday.Items);
+            }
+
             return CreateResponse(databaseResponse, resource);
         }
 
@@ -45,6 +67,12 @@ namespace ociusApi
             var droneJson = drone.ToJson(databaseResponse);
             var headers = new Dictionary<string, string>() { { "Access-Control-Allow-Origin", "*" } };
             return new ApiResponse { StatusCode = 200, Body = droneJson, Headers = headers };
+        }
+
+
+        public static string GetDate(int offset)
+        {
+            return DateTime.UtcNow.AddDays(offset).ToString("yyyyMMdd");
         }
     }
 }

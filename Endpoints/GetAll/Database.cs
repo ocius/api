@@ -17,25 +17,25 @@ namespace ociusApi
             return await client.QueryAsync(latestDronesRequest);
         }
 
-        public async static Task<QueryResponse> GetByTimespan(string timePeriod, string resource)
+        public async static Task<QueryResponse> GetByTimespan(string date, string timePeriod, string resource)
         {
             if (!IsValidTimePeriod(timePeriod)) return new QueryResponse();
 
             var timeSpan = GetTimespan(timePeriod);
 
-            var dronesByTimespanRequest = Query.CreateDroneByTimeRequest(timeSpan, resource);
+            var dronesByTimespanRequest = Query.CreateDroneByTimeRequest(date, timeSpan, resource);
 
             return await client.QueryAsync(dronesByTimespanRequest);
         }
 
-        private static bool IsValidTimePeriod(string timespan)
+        public static bool IsValidTimePeriod(string timespan)
         {
             var validTimespans = new List<string> { "minute", "hour", "day" };
 
             return (validTimespans.Contains(timespan));
         }
 
-        private static string GetTimespan(string timeSpan)
+        public static long GetTimespan(string timeSpan)
         {
             var oneMinuteMilliseconds = 60000;
             var oneHourMilliseconds = 3600000;
@@ -50,11 +50,10 @@ namespace ociusApi
             return GetByTime(oneMinuteMilliseconds);
         }
 
-        private static string GetByTime(int milliseconds)
+        private static long GetByTime(int milliseconds)
         {
             var currentTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            var timePeriod = currentTimestamp - milliseconds;
-            return timePeriod.ToString();
+            return currentTimestamp - milliseconds;
         }
     }
 }
