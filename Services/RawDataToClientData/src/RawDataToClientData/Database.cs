@@ -11,13 +11,14 @@ namespace RawDataToClientData
     public static class Database
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
+        private static int Date => int.Parse(DateTime.UtcNow.ToString("yyyyMMdd"));
 
         public async static Task InsertAsync(string json, string tableName, long timestamp)
         {
             var table = Table.LoadTable(client, tableName);
             var item = Document.FromJson(json);
 
-            item["Date"] = DateTime.UtcNow.Date.ToShortDateString();
+            item["Date"] = Date;
             item["Timestamp"] = timestamp;
 
             await table.PutItemAsync(item);
@@ -65,16 +66,17 @@ namespace RawDataToClientData
             return queryResponse != null && queryResponse.Items != null && queryResponse.Items.Any();
         }
 
-        private static string Date => DateTime.UtcNow.Date.ToShortDateString();
 
         private static QueryRequest CreateCameraQuery()
         {
+            var date = DateTime.UtcNow.Date.ToShortDateString();
+
             return new QueryRequest
             {
                 TableName = "CameraImageUrls",
                 KeyConditionExpression = "#date = :date",
                 ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" } },
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { S = Date } } },
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { S = date } } },
                 ScanIndexForward = false,
                 Limit = 2
             };

@@ -36,7 +36,7 @@ namespace ociusApi
                 if (key == "Heading") props.Heading = value?.S ?? "0";
                 if (key == "BatteryA") props.BatteryA = value?.S ?? "0";
                 if (key == "BatteryB") props.BatteryB = value?.S ?? "0";
-                if (key == "Cameras") props.Cameras = GetCameras(value?.S ?? "Not found");
+                if (key == "Cameras") props.Cameras = GetCameras(value?.S ?? "");
 
                 if (key == "Lat") coordinates.Lat = value?.S ?? "0";
                 if (key == "Lon") coordinates.Lon = value?.S ?? "0";

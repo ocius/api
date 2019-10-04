@@ -1,6 +1,7 @@
 ﻿using Amazon;
 using Amazon.S3;
 using Amazon.S3.Transfer;
+using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -18,17 +19,26 @@ namespace GetCameraImages
 
         public static async Task<DroneImage> Download(string drone, string camera)
         {
-            var imageUrl = $"https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera={drone}{camera}";
+            var imageUrl = $"https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera={drone}_{camera}";
+
+            Console.WriteLine(imageUrl);
 
             var response = await client.GetAsync(imageUrl);
 
-            var message = await response.Content.ReadAsStringAsync();
-
-            return message.Contains("Could not access file")
+            return await IsFailedDownload(response)
                 ? CreateEmptyImage(imageUrl)
                 : await CreateImage(imageUrl, response);
         }
 
+        private static async Task<bool> IsFailedDownload(HttpResponseMessage response)
+        {
+            Console.WriteLine(response.StatusCode.ToString());
+            if (response.StatusCode != System.Net.HttpStatusCode.OK) return true;
+            var message = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(message);
+            return message.Contains("Could not access file");
+
+        }
         private static DroneImage CreateEmptyImage(string imageUrl)
         {
             return new DroneImage { Data = Stream.Null, Url = imageUrl };
