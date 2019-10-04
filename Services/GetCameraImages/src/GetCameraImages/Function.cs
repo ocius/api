@@ -38,7 +38,7 @@ namespace GetCameraImages
 
                 foreach (var camera in droneCamera.Cameras)
                 {
-                    var url = await S3.SaveCameraImage(droneCamera.Id, camera, timestamp);
+                    var url = await S3.SaveCameraImage(droneCamera.Id, droneCamera.Name, camera, timestamp);
                     urls.Add(url);
                 }
 

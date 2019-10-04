@@ -6,11 +6,11 @@ namespace GetCameraImages
 {
     public class S3
     {
-        public static async Task<string> SaveCameraImage(string drone, string camera, long timestamp)
+        public static async Task<string> SaveCameraImage(string id, string name, string camera, long timestamp)
         {
             var downloadStopwatch = new Stopwatch();
             downloadStopwatch.Start();
-            var image = await DroneImage.Download(drone, camera);
+            var image = await DroneImage.Download(id, camera);
             downloadStopwatch.Stop();
             var downloadTime = downloadStopwatch.Elapsed.TotalSeconds.ToString();
 
@@ -21,7 +21,7 @@ namespace GetCameraImages
 
             var uploadStopwatch = new Stopwatch();
             uploadStopwatch.Start();
-            var imagePath = await DroneImage.Upload(image.Data, drone, camera, timestamp.ToString());
+            var imagePath = await DroneImage.Upload(image.Data, name, camera, timestamp.ToString());
             uploadStopwatch.Stop();
             var uploadTime = downloadStopwatch.Elapsed.TotalSeconds.ToString();
 

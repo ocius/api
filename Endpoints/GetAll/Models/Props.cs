@@ -6,7 +6,7 @@ namespace ociusApi
     {
         public string Water_depth { get; set; }
         public string Water_temp { get; set; }
-        public string Wind_Speed { get; set; }
+        public string Wind_speed { get; set; }
         public string Wind_direction { get; set; }
         public string Boat_speed { get; set; }
         public string Heading { get; set; }
