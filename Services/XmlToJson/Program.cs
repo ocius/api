@@ -21,7 +21,7 @@ namespace XmlToJson
             stopwatch.Stop();
 
             Console.WriteLine(result);
-            Console.WriteLine(stopwatch.ElapsedMilliseconds.ToString());
+            Console.WriteLine($"Job took {stopwatch.ElapsedMilliseconds.ToString()}ms");
         }
 
         private static async Task<string> SaveDrones(Drones allDrones, string date)

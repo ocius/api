@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace RawDataToClientData
@@ -20,7 +20,8 @@ namespace RawDataToClientData
             var lon = compass["lon"] ?? 0;
             var heading = compass["heading"] ?? 0;
 
-            var location = new DroneLocation {
+            var location = new DroneLocation
+            {
                 Name = name,
                 Lat = lat.ToString(),
                 Lon = lon.ToString(),

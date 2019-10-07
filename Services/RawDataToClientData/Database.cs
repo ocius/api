@@ -1,4 +1,4 @@
-﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using System;
@@ -39,7 +39,7 @@ namespace RawDataToClientData
 
             foreach (var item in queryResponse.Items)
             {
-                var (name,cameraUrls) = GetCameras(item);
+                var (name, cameraUrls) = GetCameras(item);
                 value.Add(name, cameraUrls);
             }
 

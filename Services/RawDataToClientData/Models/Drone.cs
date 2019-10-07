@@ -1,4 +1,4 @@
-﻿namespace RawDataToClientData
+namespace RawDataToClientData
 {
     public class Drone
     {
@@ -8,4 +8,3 @@
         public string Data { get; set; }
     }
 }
-
