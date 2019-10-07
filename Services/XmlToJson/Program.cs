@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace XmlToJson
@@ -10,11 +11,17 @@ namespace XmlToJson
 
         static async Task Main()
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             var date = DateTime.UtcNow.Date.ToShortDateString();
             var drones = await Drones.GetDrones();
 
             var result = await SaveDrones(drones, date);
+            stopwatch.Stop();
+
             Console.WriteLine(result);
+            Console.WriteLine(stopwatch.ElapsedMilliseconds.ToString());
         }
 
         private static async Task<string> SaveDrones(Drones allDrones, string date)
