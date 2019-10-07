@@ -1,2 +1,2 @@
 #!/bin/bash
-while true; do echo "Running"; dotnet XmlToJson.dll sleep 2 ; done
+while true; do echo "Running"; dotnet XmlToJson.dll; echo "Sleeping"; sleep 2 ; done
