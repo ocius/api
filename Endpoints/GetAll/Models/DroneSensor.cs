@@ -7,7 +7,6 @@ namespace ociusApi
 {
     public class DroneSensor : Drone, IDrone
     {
-        public string Name { get; set; }
         public string Timestamp { get; set; }
         public string Status { get; set; }
         public Props Props { get; set; }

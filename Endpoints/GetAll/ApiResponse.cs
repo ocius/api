@@ -32,7 +32,7 @@ namespace ociusApi
         public static async Task<ApiResponse> GetLatest(string resource)
         {
             var databaseResponse = await Database.GetLatest(resource);
-            return CreateResponse(databaseResponse, resource);
+            return CreateResponse(databaseResponse, resource, true);
         }
 
         public static async Task<ApiResponse> GetByTimespan(JToken queryString, string resource)
@@ -61,10 +61,10 @@ namespace ociusApi
             return CreateResponse(databaseResponse, resource);
         }
 
-        private static ApiResponse CreateResponse(QueryResponse databaseResponse, string resource)
+        private static ApiResponse CreateResponse(QueryResponse databaseResponse, string resource, bool isLatest = false)
         {
             var drone = DroneFactory.GetDroneType(resource);
-            var droneJson = drone.ToJson(databaseResponse);
+            var droneJson = drone.ToJson(databaseResponse, isLatest);
             var headers = new Dictionary<string, string>() { { "Access-Control-Allow-Origin", "*" } };
             return new ApiResponse { StatusCode = 200, Body = droneJson, Headers = headers };
         }
