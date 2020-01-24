@@ -7,7 +7,7 @@ namespace ociusApi.Models
 {
     public interface IDrone
     {
-        string ToJson(QueryResponse queryResponse);
+        string ToJson(QueryResponse queryResponse, bool isLatest);
     }
 
     public abstract class Drone

@@ -6,7 +6,6 @@ namespace ociusApi
 {
     public class DroneLocation : Drone, IDrone
     {
-        public string Name { get; private set; }
         public string Timestamp { get; private set; }
         public string Lat { get; private set; }
         public string Lon { get; private set; }
