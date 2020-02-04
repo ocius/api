@@ -7,7 +7,7 @@ namespace ociusApi.Models
 {
     public interface IDrone
     {
-        string ToJson(QueryResponse queryResponse, bool isLatest);
+        string ToJson(QueryResponse queryResponse);
     }
 
     public abstract class Drone
@@ -15,16 +15,13 @@ namespace ociusApi.Models
 
         public string Name { get; set; }
 
-        public string ToJson(QueryResponse queryResponse, bool isLatest)
+        public string ToJson(QueryResponse queryResponse)
         {
             if (!IsValidResponse(queryResponse)) return "{}";
             
             var drones = queryResponse.Items.Select(item => CreateDrone(item));
 
-            if (isLatest)
-            {
-                drones = RemoveDuplicates(drones);
-            }
+            drones = RemoveDuplicates(drones);
 
             return JsonConvert.SerializeObject(drones);
         }
