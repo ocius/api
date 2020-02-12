@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RawDataToClientData.Models;
+using System;
 using System.Linq;
 
 namespace RawDataToClientData
@@ -11,7 +12,7 @@ namespace RawDataToClientData
         public string Status { get; set; }
         public string Water_depth { get; set; }
         public string Water_temp { get; set; }
-        public string Wind_Speed { get; set; }
+        public string Wind_speed { get; set; }
         public string Wind_direction { get; set; }
         public string Boat_speed { get; set; }
         public string Heading { get; set; }
@@ -36,6 +37,11 @@ namespace RawDataToClientData
             var lat = compass["lat"] ?? "0";
             var lon = compass["lon"] ?? "0";
             var heading = compass["heading"] ?? "0";
+
+
+            Console.WriteLine("================== DATA =============");
+            Console.WriteLine(data);
+
             var batteries = JsonConvert.DeserializeObject<Batteries>(data);
 
             var sensors = new DroneSensors
@@ -44,7 +50,7 @@ namespace RawDataToClientData
                 Status = status.ToString(),
                 Water_depth = water_depth.ToString(),
                 Water_temp = water_temp.ToString(),
-                Wind_Speed = wind_speed.ToString(),
+                Wind_speed = wind_speed.ToString(),
                 Wind_direction = wind_direction.ToString(),
                 Boat_speed = boat_speed.ToString(),
                 Heading = heading.ToString(),
