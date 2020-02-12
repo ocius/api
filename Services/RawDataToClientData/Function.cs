@@ -1,27 +1,35 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-
 using Amazon.Lambda.Core;
+using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.Lambda.DynamoDBEvents;
+using Newtonsoft.Json;
 
-// Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
 namespace RawDataToClientData
 {
     public class Function
     {
-        
-        /// <summary>
-        /// A simple function that takes a string and does a ToUpper
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public string FunctionHandler(string input, ILambdaContext context)
+        public async Task FunctionHandler(DynamoDBEvent dynamoEvent)
         {
-            return input?.ToUpper();
+            var cameras = await Database.GetCameras();
+
+            foreach (var record in dynamoEvent.Records)
+            {
+                if (record.EventName != "INSERT") continue;
+
+                var json = Document.FromAttributeMap(record.Dynamodb.NewImage).ToJson();
+                var drone = JsonConvert.DeserializeObject<Drone>(json);
+
+                var droneCameras = cameras.ContainsKey(drone.Name) ? cameras[drone.Name] : "";
+                var droneLocation = DroneLocation.GetLocation(drone.Name, drone.Data);
+                var droneSensors = DroneSensors.GetSensors(drone.Name, drone.Data, droneCameras);
+
+                await Database.InsertAsync(droneLocation, "DroneLocations", drone.Timestamp);
+                await Database.InsertAsync(droneSensors, "DroneSensors", drone.Timestamp);
+            }
         }
     }
 }
+
+
