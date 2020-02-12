@@ -37,11 +37,6 @@ namespace RawDataToClientData
             var lat = compass["lat"] ?? "0";
             var lon = compass["lon"] ?? "0";
             var heading = compass["heading"] ?? "0";
-
-
-            Console.WriteLine("================== DATA =============");
-            Console.WriteLine(data);
-
             var batteries = JsonConvert.DeserializeObject<Batteries>(data);
 
             var sensors = new DroneSensors
