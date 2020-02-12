@@ -16,8 +16,8 @@ namespace RawDataToClientData
 
             var mavpos = json["mavpos"];
             var compass = mavpos["COMPASS_RAW"];
-            var lat = compass["lat"] ?? 0;
-            var lon = compass["lon"] ?? 0;
+            var lat = mavpos["home_lat"] ?? "0";
+            var lon = mavpos["home_lon"] ?? "0";
             var heading = compass["heading"] ?? 0;
 
             var location = new DroneLocation

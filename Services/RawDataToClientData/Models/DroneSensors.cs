@@ -34,8 +34,8 @@ namespace RawDataToClientData
             var wind_direction = mavpos["wind_dir"] ?? "0";
             var boat_speed = mavpos["groundspeed"] ?? "0";
             var compass = mavpos["COMPASS_RAW"] ?? "0";
-            var lat = compass["lat"] ?? "0";
-            var lon = compass["lon"] ?? "0";
+            var lat = mavpos["home_lat"] ?? "0";
+            var lon = mavpos["home_lon"] ?? "0";
             var heading = compass["heading"] ?? "0";
             var batteries = JsonConvert.DeserializeObject<Batteries>(data);
 
