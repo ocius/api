@@ -34,8 +34,8 @@ namespace RawDataToClientData
             var wind_direction = mavpos["wind_dir"] ?? "0";
             var boat_speed = mavpos["groundspeed"] ?? "0";
             var compass = mavpos["COMPASS_RAW"] ?? "0";
-            var lat = mavpos["home_lat"] ?? "0";
-            var lon = mavpos["home_lon"] ?? "0";
+            var lat = mavpos["lat"] ?? "0";
+            var lon = mavpos["lon"] ?? "0";
             var heading = compass["heading"] ?? "0";
             var batteries = JsonConvert.DeserializeObject<Batteries>(data);
 
@@ -49,8 +49,8 @@ namespace RawDataToClientData
                 Wind_direction = wind_direction.ToString(),
                 Boat_speed = boat_speed.ToString(),
                 Heading = heading.ToString(),
-                Lat = lat.ToString(),
-                Lon = lon.ToString(),
+                Lat = DroneUtils.ParseCoordinates(lat),
+                Lon = DroneUtils.ParseCoordinates(lon),
                 BatteryA = batteries.Tqb.First().Vol.Insert(2, "."),
                 BatteryB = batteries.Tqb.First().Vol.Insert(2, "."),
                 Cameras = cameras
