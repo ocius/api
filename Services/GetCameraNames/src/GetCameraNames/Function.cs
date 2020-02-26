@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
@@ -20,19 +21,70 @@ namespace GetCameraNames
 
     public class Function
     {
-        public async Task<string> FunctionHandler(string input, ILambdaContext context)
+        public async Task<string> FunctionHandler()
         {
-            var droneNames = await GetDroneNames();
-            var cameras = await GetCameraNames();
+            var droneCameras = await GetDroneCameras();
+            
+            var isSuccess = await SaveToDatabase(droneCameras);
 
-            var bob = new DroneCamera { Id = "4", Name = "Bob", Cameras = new List<string> { "360", "masthead" } };
-
-            //save to DB
-
-            return input?.ToUpper();
+            return isSuccess ? CreateSuccessResult(droneCameras) : "Failed so save drones";
         }
 
-        private static async Task<JToken> GetCameraNames()
+        public string CreateSuccessResult(IEnumerable<DroneCamera> droneCameras)
+        {
+            var result = droneCameras.Select(drone => $"{drone.Name} has Id {drone.Id} and cameras {string.Join(' ', drone.Cameras)}");
+
+            return string.Join(' ', result);
+        }
+
+        public async Task<IEnumerable<DroneCamera>> GetDroneCameras()
+        {
+            var droneNames = await GetDroneNames();
+
+            var result = new List<DroneCamera>();
+
+            foreach (var drone in droneNames)
+            {
+                var cameras = await GetCameraNames(drone.Id);
+
+                var bob = new DroneCamera { Id = drone.Id, Name = drone.Name, Cameras = drone.Cameras };
+            }
+
+            return result;
+        }
+
+        private async Task<bool> SaveToDatabase(IEnumerable<DroneCamera> drones)
+        {
+            return false;
+        }
+
+        private static async Task<IEnumerable<Drone>> GetDroneNames()
+        {
+            var namesEndpoint = "https://dev.ocius.com.au/usvna/oc_server?listrobots&nodeflate";
+            var droneNames = await Api.GetXml(namesEndpoint);
+            var nameJson = Json.FromXml(droneNames);
+            return MapIdToName(nameJson);
+        }
+
+        private static IEnumerable<Drone> MapIdToName(string nameJson)
+        {
+            var data = JsonConvert.DeserializeObject(nameJson) as JObject;
+            var response = data["Response"];
+            var robots = response["robot"];
+            var result = new List<Drone>();
+
+            foreach (var robot in robots)
+            {
+                var id = robot["sysid"].ToString();
+                var name = robot["robotid"].ToString();
+                var drone = new Drone { Id = id, Name = name };
+                result.Add(drone);
+            }
+
+            return result;
+        }
+
+        private static async Task<JToken> GetCameraNames(string id)
         {
             var dataEndpoint = "https://dev.ocius.com.au/usvna/oc_server?mavstatus&nodeflate";
             var droneStatus = await Api.GetXml(dataEndpoint);
@@ -46,32 +98,13 @@ namespace GetCameraNames
             var data = json["Response"]["File"];
             return data["Vehicle"];
         }
+    }
 
-        private static async Task<Dictionary<string, string>> GetDroneNames()
-        {
-            var namesEndpoint = "https://dev.ocius.com.au/usvna/oc_server?listrobots&nodeflate";
-            var droneNames = await Api.GetXml(namesEndpoint);
-            var nameJson = Json.FromXml(droneNames);
-            return MapIdToName(nameJson);
-        }
-
-        private static Dictionary<string, string> MapIdToName(string nameJson)
-        {
-            var data = JsonConvert.DeserializeObject(nameJson) as JObject;
-            var response = data["Response"];
-            var robots = response["robot"];
-            var result = new Dictionary<string, string>();
-
-            foreach (var robot in robots)
-            {
-                var id = robot["sysid"].ToString();
-                var name = robot["robotid"].ToString();
-                result.Add(id, name);
-            }
-
-            return result;
-        }
-
+    public class Drone
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public List<string> Cameras { get; set; }
     }
 
     public static class Api
@@ -90,7 +123,8 @@ namespace GetCameraNames
         {
             var doc = new XmlDocument { XmlResolver = null }; //Setting resolver to null prevents XXE injection
             doc.LoadXml(xml);
-            return JsonConvert.SerializeXmlNode(doc);
+            //return JsonConvert.SerializeXmlNode(doc);
+            return "foo";
         }
     }
 }

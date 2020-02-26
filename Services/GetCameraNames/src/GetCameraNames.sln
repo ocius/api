@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29424.173
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetCameraNamesTests", "GetCameraNamesTests\GetCameraNamesTests.csproj", "{F4F955BE-5013-4003-9128-12576E207D61}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetCameraNames", "GetCameraNames\GetCameraNames.csproj", "{CF3BEB70-510F-4C1B-AA88-9E065D96A3C1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F7DB1C8B-36FD-4176-8B80-9EEFABAECB48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7DB1C8B-36FD-4176-8B80-9EEFABAECB48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7DB1C8B-36FD-4176-8B80-9EEFABAECB48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7DB1C8B-36FD-4176-8B80-9EEFABAECB48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4F955BE-5013-4003-9128-12576E207D61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4F955BE-5013-4003-9128-12576E207D61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4F955BE-5013-4003-9128-12576E207D61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4F955BE-5013-4003-9128-12576E207D61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF3BEB70-510F-4C1B-AA88-9E065D96A3C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF3BEB70-510F-4C1B-AA88-9E065D96A3C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF3BEB70-510F-4C1B-AA88-9E065D96A3C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF3BEB70-510F-4C1B-AA88-9E065D96A3C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7423F782-D537-4AA8-A33C-FB2FDF9F095A}
+	EndGlobalSection
+EndGlobal
