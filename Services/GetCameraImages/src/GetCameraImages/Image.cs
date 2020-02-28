@@ -19,7 +19,7 @@ namespace GetCameraImages
 
         public static async Task<DroneImage> Download(string drone, string camera)
         {
-            var imageUrl = $"https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera={drone}_{camera}";
+            var imageUrl = $"https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera={drone}_{camera}&nowebp";
 
             Console.WriteLine(imageUrl);
 
