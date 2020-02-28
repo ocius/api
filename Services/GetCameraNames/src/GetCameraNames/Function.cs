@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -23,9 +24,9 @@ namespace GetCameraNames
         {
             var droneCameras = await GetDroneCameras();
             
-            var isSuccess = await SaveToDatabase(droneCameras);
+            var result = await SaveToDatabase(droneCameras);
 
-            return isSuccess ? CreateSuccessResult(droneCameras) : "Failed so save drones";
+            return result == "Success" ? CreateSuccessResult(droneCameras) : result;
         }
 
         public async Task<IEnumerable<Drone>> GetDroneCameras()
@@ -116,9 +117,22 @@ namespace GetCameraNames
             return string.Join(' ', result);
         }
 
-        private async Task<bool> SaveToDatabase(IEnumerable<Drone> drones)
+        public async Task<string> SaveToDatabase(IEnumerable<Drone> drones)
         {
-            return false;
+            var json = JsonConvert.SerializeObject(drones);
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+            try
+            {
+                await Database.InsertAsync(json, "CameraNames", timestamp);
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                var error = "Failed to save drone. Exception: " + ex;
+                Console.WriteLine(error);
+                return error;
+            }
         }
     }
 

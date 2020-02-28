@@ -17,6 +17,8 @@ namespace GetCameraImages
         private static TransferUtility FileTransferUtility => CreateTransferUtility();
         private static readonly HttpClient client = new HttpClient();
 
+
+
         public static async Task<DroneImage> Download(string drone, string camera)
         {
             var imageUrl = $"https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera={drone}_{camera}&nowebp";

@@ -16,6 +16,19 @@ namespace GetCameraImages
 
     public class Function
     {
+
+        //i get the camera names
+        //i have id, name, and cameras
+        //i save them timestamp, id, name, cameras
+        
+            //then here i get them
+            //create a list of drone cameras
+            //i get the two latest records for now
+            //if there is only one drone, the list will be the same
+            //so two images will show
+            //not terrible
+
+
         public async Task<List<string>> FunctionHandler()
         {
             var date = DateTime.UtcNow.Date.ToShortDateString();
@@ -45,7 +58,6 @@ namespace GetCameraImages
                 var databaseResponse = await Database.InsertCameraUrls(date, timestamp, droneCamera.Name, urls);
 
                 Console.WriteLine("database response " + databaseResponse);
-                //if it was empty, throw an error
 
                 result.AddRange(urls);
             }

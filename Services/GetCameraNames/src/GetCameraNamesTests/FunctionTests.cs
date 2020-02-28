@@ -71,6 +71,21 @@ namespace GetCameraNamesTests
             //Assert
             Assert.Contains(bobCamera, bob.Cameras);
         }
+
+        [Fact]
+        public async Task Save()
+        {
+            //Arrange
+            var function = new Function();
+            var drone = new Drone { Id = "3", Name = "Tom", Cameras = new List<string> { "foobar" } };
+            var drones = new List<Drone> { drone };
+
+            //Act
+            var actual = await function.SaveToDatabase(drones);
+
+            //Assert
+            Assert.True(actual);
+        }
     }
 }
 
