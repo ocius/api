@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,16 +12,25 @@ namespace GetCameraNames
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
         private static int Date => int.Parse(DateTime.UtcNow.ToString("yyyyMMdd"));
+        private static readonly Table table = Table.LoadTable(client, "CameraNames");
 
-        public async static Task InsertAsync(string json, string tableName, long timestamp)
+        public async static Task InsertAsync(IEnumerable<Drone> drones)
         {
-            var table = Table.LoadTable(client, tableName);
-            var item = Document.FromJson(json);
+            foreach(var drone in drones)
+            {
+                var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                var document = CreateDroneDocument(drone, timestamp);
+                await table.PutItemAsync(document);
+            }
+        }
 
-            item["Date"] = Date;
-            item["Timestamp"] = timestamp;
-
-            await table.PutItemAsync(item);
+        private static Document CreateDroneDocument(Drone drone, long time)
+        {
+            var droneJson = JsonConvert.SerializeObject(drone);
+            var droneDocument = Document.FromJson(droneJson);
+            droneDocument["Date"] = Date;
+            droneDocument["Timestamp"] = time;
+            return droneDocument;
         }
     }
 }

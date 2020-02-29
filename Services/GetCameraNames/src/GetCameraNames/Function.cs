@@ -119,12 +119,11 @@ namespace GetCameraNames
 
         public async Task<string> SaveToDatabase(IEnumerable<Drone> drones)
         {
-            var json = JsonConvert.SerializeObject(drones);
-            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            
 
             try
             {
-                await Database.InsertAsync(json, "CameraNames", timestamp);
+                await Database.InsertAsync(drones);
                 return "Success";
             }
             catch (Exception ex)
