@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,56 @@ namespace GetCameraImages
             }
         }
 
+        public async static Task<List<DroneCamera>> GetDroneCameras()
+        {
+            var cameraQuery = CreateCameraQuery();
+            var response = await client.QueryAsync(cameraQuery);
+            return GetValuesFromResponse(response);
+        }
+
+
+        public static List<DroneCamera> GetValuesFromResponse(QueryResponse queryResponse)
+        {
+            var result = new List<DroneCamera>();
+
+            if (!IsValidResponse(queryResponse)) return result;
+
+
+            foreach (var item in queryResponse.Items)
+            {
+                var drone = ParseResponse(item);
+                result.Add(drone);
+            }
+
+            return result;
+        }
+
+        public static DroneCamera ParseResponse(Dictionary<string, AttributeValue> attributes)
+        {
+            var result = new DroneCamera();
+
+            foreach (KeyValuePair<string, AttributeValue> attribute in attributes)
+            {
+                if (attribute.Key == "Id") result.Id = attribute.Value?.S ?? "";
+
+                if (attribute.Key == "Name") result.Name = attribute.Value?.S ?? "";
+
+                if (attribute.Key == "Cameras")
+                {
+                    var rawCameras = attribute.Value?.S ?? "";
+                    var cameras = rawCameras.Trim(',').Split(',').ToList();
+                    result.Cameras = cameras;
+                }
+            }
+
+            return result;
+        }
+
+        private static bool IsValidResponse(QueryResponse queryResponse)
+        {
+            return queryResponse != null && queryResponse.Items != null && queryResponse.Items.Any();
+        }
+
         private static Document CreateCameraDocument(string date, long timestamp, string drone, string cameras)
         {
             return new Document
@@ -39,6 +90,21 @@ namespace GetCameraImages
                 ["Timestamp"] = timestamp,
                 ["Name"] = drone, 
                 ["Cameras"] = cameras
+            };
+        }
+
+        private static QueryRequest CreateCameraQuery()
+        {
+            var date = DateTime.UtcNow.ToString("yyyyMMdd");
+
+            return new QueryRequest
+            {
+                TableName = "CameraNames",
+                KeyConditionExpression = "#date = :date",
+                ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" } },
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { N = date } } },
+                ScanIndexForward = false,
+                Limit = 2
             };
         }
     }

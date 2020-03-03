@@ -40,7 +40,7 @@ namespace GetCameraNames
                 if (drones.ContainsKey(camera.Id))
                 {
                     var drone = drones[camera.Id];
-                    drone.Cameras.Add(camera.Name);
+                    drone.Cameras += $"{camera.Name},";
                     result.Add(drone);
                 }
             }
@@ -58,7 +58,7 @@ namespace GetCameraNames
 
             foreach(var drone in drones)
             {
-                drone.Cameras = new List<string>();
+                drone.Cameras = string.Empty;
                 result.Add(drone.Id, drone);
             }
 
@@ -139,7 +139,7 @@ namespace GetCameraNames
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public List<string> Cameras { get; set; }
+        public string Cameras { get; set; }
     }
 
     public static class Api

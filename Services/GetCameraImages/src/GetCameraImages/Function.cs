@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 
@@ -17,30 +18,15 @@ namespace GetCameraImages
     public class Function
     {
 
-        //i get the camera names
-        //i have id, name, and cameras
-        //i save them timestamp, id, name, cameras
-        
-            //then here i get them
-            //create a list of drone cameras
-            //i get the two latest records for now
-            //if there is only one drone, the list will be the same
-            //so two images will show
-            //not terrible
-
-
         public async Task<List<string>> FunctionHandler()
         {
             var date = DateTime.UtcNow.Date.ToShortDateString();
             var result = new List<string>();
 
-            var bob = new DroneCamera { Id = "4", Name = "Bob", Cameras = new List<string> { "360", "masthead" } };
-            var bruce = new DroneCamera { Id = "2", Name = "Bruce", Cameras = new List<string> { "masthead" } };
-            var droneCameras = new List<DroneCamera> { bob, bruce };
+            var droneCameras = await Database.GetDroneCameras();
 
             //This code does not download the images in parallel because when performance was measured, it was actually slower
             //The server was overloaded by parallel calls, and total response time was much slower
-
 
             Console.WriteLine("starting");
 
