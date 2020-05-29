@@ -8,18 +8,18 @@ namespace RawDataToClientData
     {
         public string Name { get; set; }
         public string Lat { get; set; }
-        public string Lon { get; set; }  //Long is a reserved word
+        public string Lon { get; set; }
         public string Heading { get; set; }
 
         public static string GetLocation(string name, string data)
         {
             var json = JsonConvert.DeserializeObject(data) as JObject;
 
-            var mavpos = json["mavpos"];
-            var compass = mavpos["COMPASS_RAW"];
+            var mavpos = json["mavpos"] ?? new JObject();
+            var compass = mavpos["COMPASS_RAW"] ?? new JObject();
             var lat = mavpos["lat"] ?? "0";
             var lon = mavpos["lon"] ?? "0";
-            var heading = compass["heading"] ?? 0;
+            var heading = compass["heading"] ?? "0";
 
             var location = new DroneLocation
             {
@@ -31,7 +31,5 @@ namespace RawDataToClientData
 
             return JsonConvert.SerializeObject(location);
         }
-
-        
     }
 }

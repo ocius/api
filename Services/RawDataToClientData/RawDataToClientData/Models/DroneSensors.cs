@@ -26,14 +26,14 @@ namespace RawDataToClientData
         {
             var json = JsonConvert.DeserializeObject(data) as JObject;
 
-            var mavpos = json["mavpos"];
+            var mavpos = json["mavpos"] ?? new JObject();
             var status = mavpos["status"] ?? "Inactive";
             var water_depth = mavpos["water_dep"] ?? "0";
             var water_temp = mavpos["water_tmp"] ?? "0";
             var wind_speed = mavpos["wind_spd"] ?? "0";
             var wind_direction = mavpos["wind_dir"] ?? "0";
             var boat_speed = mavpos["groundspeed"] ?? "0";
-            var compass = mavpos["COMPASS_RAW"] ?? "0";
+            var compass = mavpos["COMPASS_RAW"] ?? new JObject();
             var lat = mavpos["lat"] ?? "0";
             var lon = mavpos["lon"] ?? "0";
             var heading = compass["heading"] ?? "0";
