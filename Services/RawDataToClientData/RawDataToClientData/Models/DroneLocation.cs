@@ -11,25 +11,29 @@ namespace RawDataToClientData
         public string Lon { get; set; }
         public string Heading { get; set; }
 
-        public static string GetLocation(string name, string data)
+        public static string GetLocationJson(string name, string data)
+        {
+            var location = GetLocation(name, data);
+
+            return JsonConvert.SerializeObject(location);
+        }
+
+        public static DroneLocation GetLocation(string name, string data)
         {
             var json = JsonConvert.DeserializeObject(data) as JObject;
 
             var mavpos = json["mavpos"] ?? new JObject();
-            var compass = mavpos["COMPASS_RAW"] ?? new JObject();
             var lat = mavpos["lat"] ?? "0";
             var lon = mavpos["lon"] ?? "0";
-            var heading = compass["heading"] ?? "0";
+            var heading = mavpos["vfr_hdg"] ?? "0";
 
-            var location = new DroneLocation
+            return new DroneLocation
             {
                 Name = name,
-                Lat = DroneUtils.ParseCoordinates(lat),
-                Lon = DroneUtils.ParseCoordinates(lon),
+                Lat = DroneUtils.ParseDecimal(lat),
+                Lon = DroneUtils.ParseDecimal(lon),
                 Heading = heading.ToString()
             };
-
-            return JsonConvert.SerializeObject(location);
         }
     }
 }

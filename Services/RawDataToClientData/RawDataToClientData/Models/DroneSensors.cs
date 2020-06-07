@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RawDataToClientData.Models;
-using System;
 using System.Linq;
 
 namespace RawDataToClientData
@@ -24,8 +23,9 @@ namespace RawDataToClientData
 
         public static string GetSensors(string name, string data, string cameras)
         {
-            var json = JsonConvert.DeserializeObject(data) as JObject;
+            var batteries = JsonConvert.DeserializeObject<Batteries>(data);
 
+            var json = JsonConvert.DeserializeObject(data) as JObject;
             var mavpos = json["mavpos"] ?? new JObject();
             var status = mavpos["status"] ?? "Inactive";
             var water_depth = mavpos["water_dep"] ?? "0";
@@ -33,24 +33,24 @@ namespace RawDataToClientData
             var wind_speed = mavpos["wind_spd"] ?? "0";
             var wind_direction = mavpos["wind_dir"] ?? "0";
             var boat_speed = mavpos["groundspeed"] ?? "0";
-            var compass = mavpos["COMPASS_RAW"] ?? new JObject();
-            var lat = mavpos["lat"] ?? "0";
-            var lon = mavpos["lon"] ?? "0";
-            var heading = compass["heading"] ?? "0";
-            var batteries = JsonConvert.DeserializeObject<Batteries>(data);
+
+            var location = DroneLocation.GetLocation(name, data);
+            var lat = location.Lat;
+            var lon = location.Lon;
+            var heading = location.Heading;
 
             var sensors = new DroneSensors
             {
                 Name = name,
                 Status = status.ToString(),
-                Water_depth = water_depth.ToString(),
+                Water_depth = DroneUtils.ParseDecimal(water_depth),
                 Water_temp = water_temp.ToString(),
                 Wind_speed = wind_speed.ToString(),
                 Wind_direction = wind_direction.ToString(),
                 Boat_speed = boat_speed.ToString(),
                 Heading = heading.ToString(),
-                Lat = DroneUtils.ParseCoordinates(lat),
-                Lon = DroneUtils.ParseCoordinates(lon),
+                Lat = lat,
+                Lon = lon,
                 BatteryA = batteries.Tqb.First().Vol.Insert(2, "."),
                 BatteryB = batteries.Tqb.First().Vol.Insert(2, "."),
                 Cameras = cameras

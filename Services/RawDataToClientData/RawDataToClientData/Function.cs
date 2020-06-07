@@ -22,7 +22,7 @@ namespace RawDataToClientData
                 var drone = JsonConvert.DeserializeObject<Drone>(json);
 
                 var droneCameras = cameras.ContainsKey(drone.Name) ? cameras[drone.Name] : "";
-                var droneLocation = DroneLocation.GetLocation(drone.Name, drone.Data);
+                var droneLocation = DroneLocation.GetLocationJson(drone.Name, drone.Data);
                 var droneSensors = DroneSensors.GetSensors(drone.Name, drone.Data, droneCameras);
 
                 await Database.InsertAsync(droneLocation, "DroneLocations", drone.Timestamp);

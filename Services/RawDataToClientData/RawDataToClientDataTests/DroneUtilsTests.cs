@@ -18,7 +18,7 @@ namespace RawDataToClientDataTests.Models
             var expected = 151.2346666.ToString();
 
             //Act
-            var actual = DroneUtils.ParseCoordinates(token);
+            var actual = DroneUtils.ParseDecimal(token);
 
             //Assert
             Assert.Equal(expected, actual);

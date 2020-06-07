@@ -4,11 +4,11 @@ namespace RawDataToClientData.Models
 {
     public class DroneUtils
     {
-        public static string ParseCoordinates(JToken token)
+        public static string ParseDecimal(JToken token)
         {
             var offset = 10000000;
-            var coordinate = token.ToObject<decimal>();
-            return (coordinate / offset).ToString();
+            var decimalValue = token.ToObject<decimal>();
+            return (decimalValue / offset).ToString();
         }
     }
 }
