@@ -1,8 +1,5 @@
 using Newtonsoft.Json.Linq;
 using RawDataToClientData.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace RawDataToClientDataTests.Models
@@ -10,7 +7,7 @@ namespace RawDataToClientDataTests.Models
     public class DroneUtilsTests
     {
         [Fact]
-        public void Foo()
+        public void ParseDecimal_WhenCoordinate_ReturnsLat()
         {
             //Arrange
             var coord = 1512346666;
