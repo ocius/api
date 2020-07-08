@@ -35,9 +35,26 @@ namespace GetCameraNames
 
     public class CameraResponse
     {
+        public string Response { get; set; }
         public string Name { get; set; }
-        public string CameraType { get; set; }
     }
+
+    public class XmlResponse
+    {
+        public Response Response { get; set; }
+    }
+
+    public class Response
+    {
+        public List<CameraItem> Camera { get; set; }
+    }
+
+    public class CameraItem
+    {
+        public string Response { get; set; }
+        public string Name { get; set; }
+    }
+
 
     public class Function
     {
@@ -119,18 +136,16 @@ namespace GetCameraNames
 
             var cameraJson = Json.FromXml(cameraXml);
 
-            var data = JsonConvert.DeserializeObject(cameraJson) as JObject;
-            var response = data["Response"];
-            var cameras = response["Camera"];
+            var response = JsonConvert.DeserializeObject<XmlResponse>(cameraJson);
 
-            var foo = cameras.ToObject<Dictionary<string, object>>();
+            foreach(var camera in response.Response.Camera)
+            {
+                var name = camera.Name.Split('_');
+                var drone = new DroneCamera { Id = name.First(), Name = name.Last() };
+                result.Add(drone);
+            }
 
-            var cameraResponse = JsonConvert.DeserializeObject<CameraResponse>(cameras.ToString());
-        
-            var name = cameraResponse.Name.Split('_');
-            var drone = new DroneCamera { Id = name.First(), Name = name.Last() };
 
-            result.Add(drone);
             return result;
         }
 
