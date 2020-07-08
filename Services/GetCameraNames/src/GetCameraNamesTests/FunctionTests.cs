@@ -8,23 +8,23 @@ namespace GetCameraNamesTests
 {
     public class FunctionTests
     {
-        //[Fact]
-        //public void CreateSuccessResult_WhenValidInput_ShouldCreateSuccessString()
-        //{
-        //    //Arrange
-        //    var function = new Function();
-        //    var cameraA = new Drone { Id = ""1"", Name = ""Bob"", Cameras = new List<string> { ""foo"", ""bar"" } };
-        //    var cameraB = new Drone { Id = ""2"", Name = ""Bruce"", Cameras = new List<string> { ""hello"", ""world"" } };
-        //    var cameras = new List<Drone> { cameraA, cameraB };
+        [Fact]
+        public void CreateSuccessResult_WhenValidInput_ShouldCreateSuccessString()
+        {
+            //Arrange
+            var function = new Function();
+            var cameraA = new Drone { Id = "1", Name = "Bob", Cameras = "foo bar" };
+            var cameraB = new Drone { Id = "2", Name = "Bruce", Cameras = "hello world" };
+            var cameras = new List<Drone> { cameraA, cameraB };
 
-        //    var expected = ""Bob has Id 1 and cameras foo bar Bruce has Id 2 and cameras hello world"";
+            var expected = "Bob has Id 1 and cameras foo bar Bruce has Id 2 and cameras hello world";
 
-        //    //Act
-        //    var actual = function.CreateSuccessResult(cameras);
+            //Act
+            var actual = function.CreateSuccessResult(cameras);
 
-        //    //Assert
-        //    Assert.Equal(expected, actual);
-        //}
+            //Assert
+            Assert.Equal(expected, actual);
+        }
 
         [Fact]
         public void MapIdToCameras_WhenOneDrone_ReturnsCorrectOutput()
@@ -109,20 +109,21 @@ namespace GetCameraNamesTests
             Assert.Contains(bobCamera, bob.Cameras);
         }
 
-        //[Fact]
-        //public async Task Save()
-        //{
-        //    //Arrange
-        //    var function = new Function();
-        //    var drone = new Drone { Id = ""3"", Name = ""Tom"", Cameras = new List<string> { ""foobar"" } };
-        //    var drones = new List<Drone> { drone };
+        [Fact]
+        public async Task Save()
+        {
+            //Arrange
+            var expected = "Success";
+            var function = new Function();
+            var drone = new Drone { Id = "3", Name = "Tom", Cameras = "Some camera" };
+            var drones = new List<Drone> { drone };
 
-        //    //Act
-        //    var actual = await function.SaveToDatabase(drones);
+            //Act
+            var actual = await function.SaveToDatabase(drones);
 
-        //    //Assert
-        //    Assert.True(actual);
-        //}
+            //Assert
+            Assert.Equal(expected, actual);
+        }
     }
 }
 

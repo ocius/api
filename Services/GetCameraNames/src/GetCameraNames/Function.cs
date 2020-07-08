@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Amazon.Lambda.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -134,17 +135,14 @@ namespace GetCameraNames
         {
             var result = new List<DroneCamera>();
 
-            var cameraJson = Json.FromXml(cameraXml);
+            var xdoc = XDocument.Parse(cameraXml);
 
-            var response = JsonConvert.DeserializeObject<XmlResponse>(cameraJson);
-
-            foreach(var camera in response.Response.Camera)
+            foreach (var elem in xdoc.Descendants("Name"))
             {
-                var name = camera.Name.Split('_');
+                var name = elem.Value.Split('_');
                 var drone = new DroneCamera { Id = name.First(), Name = name.Last() };
                 result.Add(drone);
             }
-
 
             return result;
         }
@@ -158,8 +156,6 @@ namespace GetCameraNames
 
         public async Task<string> SaveToDatabase(IEnumerable<Drone> drones)
         {
-            
-
             try
             {
                 await Database.InsertAsync(drones);
