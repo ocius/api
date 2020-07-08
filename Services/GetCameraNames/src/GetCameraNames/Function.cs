@@ -110,7 +110,6 @@ namespace GetCameraNames
 
             var droneStatus = await Api.GetXml(dataEndpoint);
 
-
             return MapIdToCameras(droneStatus);
         }
 
@@ -124,6 +123,8 @@ namespace GetCameraNames
             var response = data["Response"];
             var cameras = response["Camera"];
 
+            var foo = cameras.ToObject<Dictionary<string, object>>();
+
             var cameraResponse = JsonConvert.DeserializeObject<CameraResponse>(cameras.ToString());
         
             var name = cameraResponse.Name.Split('_');
@@ -131,16 +132,6 @@ namespace GetCameraNames
 
             result.Add(drone);
             return result;
-
-           
-
-            //foreach (var camera in cameras)
-            //{
-            //    var fullName = camera["Name"].ToString();
-            //    var name = fullName.Split('_');
-            //    var drone = new DroneCamera { Id = name.First(), Name = name.Last() };
-            //    result.Add(drone);
-            //}
         }
 
         public string CreateSuccessResult(IEnumerable<Drone> droneCameras)

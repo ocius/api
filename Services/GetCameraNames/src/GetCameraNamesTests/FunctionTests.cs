@@ -51,7 +51,7 @@ namespace GetCameraNamesTests
             var expected = new List<DroneCamera> { bobCamera, bruceCamera };
 
 
-            var input = @"<?xml version=""1.0"" encoding=""UTF - 8"" ?><Response><Status>Succeeded</Status><USVName>Ocius USV Server</USVName><Camera><Name>4_masthead</Name><CameraType>None</CameraType></Camera><Camera><Name>2_masthead</Name><CameraType>None</CameraType></Camera><ResponseTime>0</ResponseTime></Response>";
+            var input = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><Response><Status>Succeeded</Status><USVName>Ocius USV Server</USVName><Camera><Name>4_masthead</Name><CameraType>None</CameraType></Camera><Camera><Name>2_masthead</Name><CameraType>None</CameraType></Camera><ResponseTime>0</ResponseTime></Response>";
 
             //Act
             var actual = Function.MapIdToCameras(input);
