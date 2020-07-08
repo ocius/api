@@ -109,54 +109,38 @@ namespace GetCameraNames
             var dataEndpoint = "https://usvna.ocius.com.au/usvna/oc_server?listcameranames&nodeflate";
 
             var droneStatus = await Api.GetXml(dataEndpoint);
-            Console.WriteLine("////////////////////DRONE STATUS///////////////////////");
-            Console.WriteLine(droneStatus);
 
-            var statusJson = Json.FromXml(droneStatus);
-            Console.WriteLine("////////////////////STATUS JSON///////////////////////");
-            Console.WriteLine(statusJson);
 
-            return MapIdToCameras(statusJson);
+            return MapIdToCameras(droneStatus);
         }
 
-        public static IEnumerable<DroneCamera> MapIdToCameras(string cameraJson)
+        public static IEnumerable<DroneCamera> MapIdToCameras(string cameraXml)
         {
-            var data = JsonConvert.DeserializeObject(cameraJson) as JObject;
-
-            var response = data["Response"];
-            Console.WriteLine("////////////////////response CHILDREN///////////////////////");
-            Console.WriteLine(response.Children());
-
-            var cameras = response["Camera"];
             var result = new List<DroneCamera>();
 
-            Console.WriteLine("////////////////////CAMERAS COUNT AND STRING///////////////////////");
-            Console.WriteLine(cameras.Count());
-            Console.WriteLine(cameras.ToString());
+            var cameraJson = Json.FromXml(cameraXml);
 
+            var data = JsonConvert.DeserializeObject(cameraJson) as JObject;
+            var response = data["Response"];
+            var cameras = response["Camera"];
 
-            foreach (var camera in cameras)
-            {
-                Console.WriteLine("////////////////////SINGLE CAMERA///////////////////////");
-                Console.WriteLine(camera.ToString());
+            var cameraResponse = JsonConvert.DeserializeObject<CameraResponse>(cameras.ToString());
+        
+            var name = cameraResponse.Name.Split('_');
+            var drone = new DroneCamera { Id = name.First(), Name = name.Last() };
 
-                Console.WriteLine("////////////////////TOKEN CHILDREN///////////////////////");
-                Console.WriteLine(camera.Children());
-
-                var droneCamera = JsonConvert.DeserializeObject<CameraResponse>(camera.ToString());
-                var name = droneCamera.Name.Split('_');
-                var drone = new DroneCamera { Id = name.First(), Name = name.Last() };
-
-                Console.WriteLine("////////////////////DRONE NAME///////////////////////");
-                Console.WriteLine(drone.Name);
-
-                result.Add(drone);
-                Console.WriteLine("////////////////////Result count ///////////////////////");
-                Console.WriteLine(result.Count());
-            }
-
-            Console.WriteLine("////////////////////END OF LOOP///////////////////////");
+            result.Add(drone);
             return result;
+
+           
+
+            //foreach (var camera in cameras)
+            //{
+            //    var fullName = camera["Name"].ToString();
+            //    var name = fullName.Split('_');
+            //    var drone = new DroneCamera { Id = name.First(), Name = name.Last() };
+            //    result.Add(drone);
+            //}
         }
 
         public string CreateSuccessResult(IEnumerable<Drone> droneCameras)
