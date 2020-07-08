@@ -10,12 +10,33 @@ using Newtonsoft.Json.Linq;
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
+/*
+ Current state of XML response is: 
+
+    <Response>
+        <Status>Succeeded</Status>
+        <USVName>Ocius USV Server</USVName>
+        <Camera>
+            <Name>4_masthead</Name>
+            <CameraType>None</CameraType>
+        </Camera>
+        <ResponseTime>0</ResponseTime>
+    </Response>
+ */
+
+
 namespace GetCameraNames
 {
     public class DroneCamera
     {
         public string Id { get; set; }
         public string Name { get; set; }
+    }
+
+    public class CameraResponse
+    {
+        public string Name { get; set; }
+        public string CameraType { get; set; }
     }
 
     public class Function
@@ -86,27 +107,55 @@ namespace GetCameraNames
         public async Task<IEnumerable<DroneCamera>> AddCameraNames()
         {
             var dataEndpoint = "https://usvna.ocius.com.au/usvna/oc_server?listcameranames&nodeflate";
+
             var droneStatus = await Api.GetXml(dataEndpoint);
+            Console.WriteLine("////////////////////DRONE STATUS///////////////////////");
+            Console.WriteLine(droneStatus);
+
             var statusJson = Json.FromXml(droneStatus);
+            Console.WriteLine("////////////////////STATUS JSON///////////////////////");
+            Console.WriteLine(statusJson);
+
             return MapIdToCameras(statusJson);
         }
 
-        private static IEnumerable<DroneCamera> MapIdToCameras(string cameraJson)
+        public static IEnumerable<DroneCamera> MapIdToCameras(string cameraJson)
         {
             var data = JsonConvert.DeserializeObject(cameraJson) as JObject;
-            var response = data["Response"];
-            var cameras = response["Camera"];
 
+            var response = data["Response"];
+            Console.WriteLine("////////////////////response CHILDREN///////////////////////");
+            Console.WriteLine(response.Children());
+
+            var cameras = response["Camera"];
             var result = new List<DroneCamera>();
+
+            Console.WriteLine("////////////////////CAMERAS COUNT AND STRING///////////////////////");
+            Console.WriteLine(cameras.Count());
+            Console.WriteLine(cameras.ToString());
+
 
             foreach (var camera in cameras)
             {
-                var fullName = camera["Name"].ToString();
-                var name = fullName.Split('_');
+                Console.WriteLine("////////////////////SINGLE CAMERA///////////////////////");
+                Console.WriteLine(camera.ToString());
+
+                Console.WriteLine("////////////////////TOKEN CHILDREN///////////////////////");
+                Console.WriteLine(camera.Children());
+
+                var droneCamera = JsonConvert.DeserializeObject<CameraResponse>(camera.ToString());
+                var name = droneCamera.Name.Split('_');
                 var drone = new DroneCamera { Id = name.First(), Name = name.Last() };
+
+                Console.WriteLine("////////////////////DRONE NAME///////////////////////");
+                Console.WriteLine(drone.Name);
+
                 result.Add(drone);
+                Console.WriteLine("////////////////////Result count ///////////////////////");
+                Console.WriteLine(result.Count());
             }
 
+            Console.WriteLine("////////////////////END OF LOOP///////////////////////");
             return result;
         }
 
