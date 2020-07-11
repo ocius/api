@@ -1,7 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
-using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +37,8 @@ namespace GetCameraImages
             var cameraQuery = CreateCameraQuery();
             var response = await client.QueryAsync(cameraQuery);
             var duplicates = GetValuesFromResponse(response);
-            return duplicates.DistinctBy(drone => drone.Name).ToList();
+            //remove duplicates
+            return duplicates.GroupBy(x => x.Name).Select(x => x.First()).ToList();
         }
 
 
