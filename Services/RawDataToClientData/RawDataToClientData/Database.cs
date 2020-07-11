@@ -40,7 +40,7 @@ namespace RawDataToClientData
             foreach (var item in queryResponse.Items)
             {
                 var (name, cameraUrls) = GetCameras(item);
-                value.Add(name, cameraUrls);
+                value.TryAdd(name, cameraUrls);
             }
 
             return value;
@@ -78,7 +78,7 @@ namespace RawDataToClientData
                 ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" } },
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { S = date } } },
                 ScanIndexForward = false,
-                Limit = 2
+                Limit = 10 //TODO: make this handle any number of drone cameras
             };
         }
     }
