@@ -1,6 +1,7 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
+using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,8 @@ namespace GetCameraImages
         {
             var cameraQuery = CreateCameraQuery();
             var response = await client.QueryAsync(cameraQuery);
-            return GetValuesFromResponse(response);
+            var duplicates = GetValuesFromResponse(response);
+            return duplicates.DistinctBy(drone => drone.Name).ToList();
         }
 
 
@@ -104,7 +106,7 @@ namespace GetCameraImages
                 ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" } },
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { N = date } } },
                 ScanIndexForward = false,
-                Limit = 2
+                Limit = 5 //If we have more than 5 drones, we'll need to revist this solution
             };
         }
     }
