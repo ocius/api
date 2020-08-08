@@ -10,5 +10,9 @@ namespace RawDataToClientData.Models
             var decimalValue = token.ToObject<decimal>();
             return (decimalValue / offset).ToString();
         }
-    }
+        public static string ParseBattery(Battery battery)
+        {
+            return battery.Vol.Insert(2, ".");
+        }
+  }
 }

@@ -10,8 +10,7 @@ namespace ociusApi
         public string Wind_direction { get; set; }
         public string Boat_speed { get; set; }
         public string Heading { get; set; }
-        public string BatteryA { get; set; }
-        public string BatteryB { get; set; }
+        public List<string> Batteries { get; set; }
         public List<string> Cameras { get; set; }
         public Location Location { get; set; }
     }

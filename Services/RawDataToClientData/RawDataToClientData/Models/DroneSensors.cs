@@ -17,14 +17,12 @@ namespace RawDataToClientData
         public string Heading { get; set; }
         public string Lat { get; set; }
         public string Lon { get; set; }
-        public string BatteryA { get; set; }
-        public string BatteryB { get; set; }
+        public List <string> Batteries { get; set; }
         public string Cameras { get; set; }
 
         public static string GetSensors(string name, string data, string cameras)
         {
             var batteries = JsonConvert.DeserializeObject<Batteries>(data);
-
             var json = JsonConvert.DeserializeObject(data) as JObject;
             var mavpos = json["mavpos"] ?? new JObject();
             var status = mavpos["status"] ?? "Inactive";
@@ -38,7 +36,6 @@ namespace RawDataToClientData
             var lat = location.Lat;
             var lon = location.Lon;
             var heading = location.Heading;
-
             var sensors = new DroneSensors
             {
                 Name = name,
@@ -51,8 +48,7 @@ namespace RawDataToClientData
                 Heading = heading.ToString(),
                 Lat = lat,
                 Lon = lon,
-                BatteryA = batteries.Tqb.First().Vol.Insert(2, "."),
-                BatteryB = batteries.Tqb.First().Vol.Insert(2, "."),
+                Batteries = batteries.ConvertAll(new Converter<Battery, string>(DroneUtils.ParseVoltage),
                 Cameras = cameras
             };
 
