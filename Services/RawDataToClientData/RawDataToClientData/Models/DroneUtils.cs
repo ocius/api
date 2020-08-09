@@ -11,8 +11,9 @@ namespace RawDataToClientData.Models
             return (decimalValue / offset).ToString();
         }
         public static string ParseBattery(Battery battery)
-        {
-            return battery.Vol.Insert(2, ".");
+            var voltage = battery.Vol;
+            voltage.Insert(voltage.count - 1, '.');
+            return voltage;
         }
   }
 }
