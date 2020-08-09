@@ -32,6 +32,13 @@ GetAll
 - GetAll (API Gateway)
   - querys the database for USVS sensor data (locations, battery, etc)
 
+## Dependencies
+See https://github.com/ocius/api/master/API%20Example%20XML for example API data
+- https://usvna.ocius.com.au/usvna/oc_server?listcameranames&nodeflate
+- https://dev.ocius.com.au/usvna/oc_server?listrobots&nodeflate
+- https://dev.ocius.com.au/usvna/oc_server?mavstatus&nodeflate
+- https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera={drone}_{camera}&nowebp
+
 ## FAQ
 
 Q: Why is data only coming in every 2 minutes
