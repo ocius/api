@@ -17,6 +17,8 @@ namespace RawDataToClientData
         public string Heading { get; set; }
         public string Lat { get; set; }
         public string Lon { get; set; }
+        public string BatteryA { get; set; }
+        public string BatteryB { get; set; }
         public List <string> Batteries { get; set; }
         public string Cameras { get; set; }
 
@@ -49,7 +51,9 @@ namespace RawDataToClientData
                 Heading = heading.ToString(),
                 Lat = lat,
                 Lon = lon,
-                Batteries = String.Join(',', batteries);
+                Batteries = String.Join(',', batteries),
+                BatteryA = batteryData.Tqb.First().Vol.Insert(2, "."),
+                BatteryB = batteryData.Tqb.First().Vol.Insert(2, "."),
                 Cameras = cameras
             };
 

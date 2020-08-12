@@ -33,6 +33,8 @@ namespace ociusApi
                 if (key == "Wind_direction") props.Wind_direction = value?.S ?? "0";
                 if (key == "Boat_speed") props.Boat_speed = value?.S ?? "0";
                 if (key == "Heading") props.Heading = value?.S ?? "0";
+                if (key == "BatteryA") props.BatteryA = value?.S ?? "0";
+                if (key == "BatteryB") props.BatteryB = value?.S ?? "0";
                 if (key == "Batteries") props.Batteries = value?.S ?? new List<string>();
                 if (key == "Cameras") props.Cameras = GetCameras(value?.S ?? "");
 
