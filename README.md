@@ -2,16 +2,15 @@
 
 **Extract** (AWS Lambda)
 
-XmlToJson (Cloud Watch cron)  --> TimeSeriesDroneData Table --> Triggers RawDataToClientData (lambda) --> saves to drone locations and drone sensors into DynamoDB table
+XmlToJson (Cloud Watch cron/process)  --> saves to TimeSeriesDroneData table --> insertion triggers RawDataToClientData (lambda) --> saves to drone locations and drone sensors into DroneSensors and DroneLocations table
 
 
-**Load** (AWS Lambda/running process)
+**Load** (AWS Lambda)
 
 GetCameraNames (Cloud Watch cron) --> saves to CameraNamesTable --> GetCameraImages (on schedule) --> will download image from ocius and then upload to S3 and put s3 url into table --> CameraImageUrls stores s3 urls
 
 **Serve** (API Gateway)
-
-GetAll
+GetAll -> fetches most recent entry in DroneLocations and DroneSensors
 
 
 ## Services
