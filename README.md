@@ -32,12 +32,13 @@ GetAll
 - GetAll (API Gateway)
   - querys the database for USVS sensor data (locations, battery, etc)
 
-## Dependencies
+## API Dependencies
 See https://github.com/ocius/api/master/API%20Example%20XML for example API data
 - https://usvna.ocius.com.au/usvna/oc_server?listcameranames&nodeflate
 - https://dev.ocius.com.au/usvna/oc_server?listrobots&nodeflate
 - https://dev.ocius.com.au/usvna/oc_server?mavstatus&nodeflate
 - https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera={drone}_{camera}&nowebp
+
 
 ## FAQ
 
@@ -49,3 +50,12 @@ A: It's an AWS lambda limitation, use an actual process to if you need more freq
 Q: Are things breaking?
 
 A: Happens often when the XML API changes, see logs for RawDataToClient
+
+
+# Development
+
+## Dependencies
+- .NET Core 2.1
+- AWS cli
+https://aws.amazon.com/blogs/developer/creating-net-core-aws-lambda-projects-without-visual-studio/
+
