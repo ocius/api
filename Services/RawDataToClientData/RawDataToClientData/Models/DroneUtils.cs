@@ -13,8 +13,7 @@ namespace RawDataToClientData.Models
         public static string ParseVoltage(Battery battery)
         {
             var voltage = battery.Vol;
-            voltage.Insert(voltage.Length - 1, ".");
-            return voltage;
+            return voltage.Insert(voltage.Length - 1, ".");
         }
   }
 }
