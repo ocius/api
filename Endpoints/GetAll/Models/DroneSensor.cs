@@ -35,7 +35,7 @@ namespace ociusApi
                 if (key == "Heading") props.Heading = value?.S ?? "0";
                 if (key == "BatteryA") props.BatteryA = value?.S ?? "0";
                 if (key == "BatteryB") props.BatteryB = value?.S ?? "0";
-                if (key == "Batteries") props.Batteries = value?.S ?? new List<string>();
+                if (key == "Batteries") props.Batteries = GetBatteries(value?.S ?? "");
                 if (key == "Cameras") props.Cameras = GetCameras(value?.S ?? "");
 
                 if (key == "Lat") coordinates.Lat = value?.S ?? "0";
@@ -47,6 +47,10 @@ namespace ociusApi
             drone.Props = props;
 
             return drone;
+        }
+        private List<string> GetBatteries(string value)
+        {
+            return value.Split(",").ToList();
         }
 
         private List<string> GetCameras(string value)
