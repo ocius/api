@@ -10,10 +10,10 @@ namespace RawDataToClientData.Models
             var decimalValue = token.ToObject<decimal>();
             return (decimalValue / offset).ToString();
         }
-        public static string ParseBattery(Battery battery)
+        public static string ParseVoltage(Battery battery)
         {
             var voltage = battery.Vol;
-            voltage.Insert(voltage.count - 1, '.');
+            voltage.Insert(voltage.Length - 1, ".");
             return voltage;
         }
   }

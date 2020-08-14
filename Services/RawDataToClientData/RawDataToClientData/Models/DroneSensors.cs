@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RawDataToClientData.Models;
 using System.Linq;
+using System;
 
 namespace RawDataToClientData
 {
@@ -19,13 +20,13 @@ namespace RawDataToClientData
         public string Lon { get; set; }
         public string BatteryA { get; set; }
         public string BatteryB { get; set; }
-        public List <string> Batteries { get; set; }
+        public string Batteries { get; set; }
         public string Cameras { get; set; }
 
         public static string GetSensors(string name, string data, string cameras)
         {
             var batteryData = JsonConvert.DeserializeObject<Batteries>(data);
-            var batteries = batteryData.Select(battery => DroneUtils.ParseVoltage(battery));
+            var batteries = batteryData.Tqb.Select(battery => DroneUtils.ParseVoltage(battery));
             var json = JsonConvert.DeserializeObject(data) as JObject;
             var mavpos = json["mavpos"] ?? new JObject();
             var status = mavpos["status"] ?? "Inactive";
@@ -56,7 +57,6 @@ namespace RawDataToClientData
                 BatteryB = batteryData.Tqb.First().Vol.Insert(2, "."),
                 Cameras = cameras
             };
-
             return JsonConvert.SerializeObject(sensors);
         }
     }
