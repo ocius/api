@@ -12,6 +12,7 @@ namespace ociusApi
         public string Heading { get; set; }
         public string BatteryA { get; set; }
         public string BatteryB { get; set; }
+        public List<string> Batteries { get; set; }
         public List<string> Cameras { get; set; }
         public Location Location { get; set; }
     }
