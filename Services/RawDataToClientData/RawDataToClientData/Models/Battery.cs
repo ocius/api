@@ -4,7 +4,7 @@ namespace RawDataToClientData.Models
 {
     public class Batteries
     {
-        public List <Battery> Tqb { get; set; }
+        public List<Battery> Tqb { get; set; }
     }
 
     public class Battery
