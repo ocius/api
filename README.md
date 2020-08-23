@@ -32,6 +32,14 @@ GetAll
 - GetAll (API Gateway)
   - querys the database for USVS sensor data (locations, battery, etc)
 
+## Development
+For linux users
+```
+cd docker
+sudo sh build.sh
+sudo sh run.sh /path/to/api/repository
+```
+
 ## FAQ
 
 Q: Why is data only coming in every 2 minutes
