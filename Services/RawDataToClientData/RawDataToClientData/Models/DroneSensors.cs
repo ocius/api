@@ -44,7 +44,7 @@ namespace RawDataToClientData
             {
                 Name = name,
                 Status = status.ToString(),
-                Water_depth = DroneUtils.ParseDecimal(water_depth),
+                Water_depth = water_depth.ToString(),
                 Water_temp = water_temp.ToString(),
                 Wind_speed = wind_speed.ToString(),
                 Wind_direction = wind_direction.ToString(),
