@@ -53,8 +53,6 @@ namespace RawDataToClientData
                 Lat = lat,
                 Lon = lon,
                 Batteries = String.Join(',', batteries),
-                BatteryA = batteryData.Tqb.First().Vol.Insert(2, "."),
-                BatteryB = batteryData.Tqb.First().Vol.Insert(2, "."),
                 Cameras = cameras
             };
             return JsonConvert.SerializeObject(sensors);
