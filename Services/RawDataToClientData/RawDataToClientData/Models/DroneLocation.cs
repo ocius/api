@@ -10,6 +10,7 @@ namespace RawDataToClientData
         public string Lat { get; set; }
         public string Lon { get; set; }
         public string Heading { get; set; }
+        public string WaterTemp { get; set; }
 
         public static string GetLocationJson(string name, string data)
         {
@@ -26,13 +27,15 @@ namespace RawDataToClientData
             var lat = mavpos["lat"] ?? "0";
             var lon = mavpos["lon"] ?? "0";
             var heading = mavpos["vfr_hdg"] ?? "0";
+            var waterTemp = mavpos["water_tmp"] ?? "0";
 
             return new DroneLocation
             {
                 Name = name,
                 Lat = DroneUtils.ParseDecimal(lat),
                 Lon = DroneUtils.ParseDecimal(lon),
-                Heading = heading.ToString()
+                Heading = heading.ToString(),
+                WaterTemp = waterTemp.ToString()
             };
         }
     }
