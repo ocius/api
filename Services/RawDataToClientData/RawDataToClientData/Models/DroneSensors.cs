@@ -18,8 +18,6 @@ namespace RawDataToClientData
         public string Heading { get; set; }
         public string Lat { get; set; }
         public string Lon { get; set; }
-        public string BatteryA { get; set; }
-        public string BatteryB { get; set; }
         public string Batteries { get; set; }
         public string Cameras { get; set; }
 
