@@ -19,12 +19,14 @@ namespace RawDataToClientData
         public string Lat { get; set; }
         public string Lon { get; set; }
         public string Batteries { get; set; }
+        public string BatteryPercentages { get; set; }
         public string Cameras { get; set; }
 
         public static string GetSensors(string name, string data, string cameras)
         {
             var batteryData = JsonConvert.DeserializeObject<Batteries>(data);
-            var batteries = batteryData.Tqb.Select(battery => DroneUtils.ParseVoltage(battery));
+            var batteryVoltages = batteryData.Tqb.Select(battery => DroneUtils.ParseVoltage(battery));
+            var batteryPercentages = batteryData.Tqb.Select(battery => DroneUtils.ParsePercentage(battery));
             var json = JsonConvert.DeserializeObject(data) as JObject;
             var mavpos = json["mavpos"] ?? new JObject();
             var status = mavpos["status"] ?? "Inactive";
@@ -50,7 +52,8 @@ namespace RawDataToClientData
                 Heading = heading.ToString(),
                 Lat = lat,
                 Lon = lon,
-                Batteries = String.Join(',', batteries),
+                Batteries = String.Join(',', batteryVoltages),
+                BatteryPercentages = String.Join(',', batteryPercentages),
                 Cameras = cameras
             };
             return JsonConvert.SerializeObject(sensors);
