@@ -15,5 +15,12 @@ namespace RawDataToClientData.Models
             var voltage = battery.Vol;
             return voltage.Insert(voltage.Length - 1, ".");
         }
-  }
+        public static string ParseBattery(Battery battery)
+        {
+            return new Dictionary<string, AttributeValue>(){
+                { "Voltage", new AttributeValue {"S" = battery.ParseVoltage(battery)}},
+                { "Percentage", new  AttributeValue {"S" = battery.Pcnt}}
+            };
+        }
+    }
 }

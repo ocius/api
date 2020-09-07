@@ -16,8 +16,8 @@ namespace ociusApi
             var drone = new DroneSensor();
             var coordinates = new Coordinates();
             var location = new Location();
+            var batteries = new List<Battery>();
             var props = new Props();
-
             foreach (KeyValuePair<string, AttributeValue> kvp in attributes)
             {
                 var key = kvp.Key;
@@ -33,24 +33,35 @@ namespace ociusApi
                 if (key == "Wind_direction") props.Wind_direction = value?.S ?? "0";
                 if (key == "Boat_speed") props.Boat_speed = value?.S ?? "0";
                 if (key == "Heading") props.Heading = value?.S ?? "0";
-                if (key == "Batteries") props.Batteries = GetBatteries(value?.S ?? "");
                 if (key == "Cameras") props.Cameras = GetCameras(value?.S ?? "");
-
                 if (key == "Lat") coordinates.Lat = value?.S ?? "0";
                 if (key == "Lon") coordinates.Lon = value?.S ?? "0";
+                if (key == "Batteries") batteries = GetBatteries(value?.L);
             }
 
             location.Coordinates = coordinates;
             props.Location = location;
+            props.Batteries = batteries;
             drone.Props = props;
 
             return drone;
         }
-        private List<string> GetBatteries(string value)
+        private List<Battery> GetBatteries(List<AttributeValue> batteries)
         {
-            return value.Split(",").ToList();
+            return batteries.Select(battery => ParseBattery(battery)).ToList();
         }
-
+        private Battery ParseBattery(AttributeValue batteryAttrbute)
+        {
+            var batteryData = new Battery();
+            foreach (KeyValuePair<string, AttributeValue> kvp in batteryAttrbute?.M)
+            {
+                var key = kvp.Key;
+                var value = kvp.Value;
+                if (key == "Voltage") batteryData.Voltage = value?.S ?? "0";
+                if (key == "Percentage") batteryData.Percentage = value?.S ?? "0";
+            }
+            return batteryData;
+        }
         private List<string> GetCameras(string value)
         {
             return value.Split(",").ToList();
