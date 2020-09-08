@@ -21,7 +21,7 @@ namespace XmlToJson
 
         private static async Task<Dictionary<string, string>> GetDroneNames()
         {
-            var namesEndpoint = "https://dev.ocius.com.au/usvna/oc_server?listrobots&nodeflate";
+            var namesEndpoint = "https://usvna.ocius.com.au/usvna/oc_server?listrobots&nodeflate";
             var droneNames = await Api.GetXml(namesEndpoint);
             var nameJson = Json.FromXml(droneNames);
             return MapIdToName(nameJson);
@@ -29,7 +29,7 @@ namespace XmlToJson
 
         private static async Task<JToken> GetDroneData()
         {
-            var dataEndpoint = "https://dev.ocius.com.au/usvna/oc_server?mavstatus&nodeflate";
+            var dataEndpoint = "https://usvna.ocius.com.au/usvna/oc_server?mavstatus&nodeflate";
             var droneStatus = await Api.GetXml(dataEndpoint);
             var statusJson = Json.FromXml(droneStatus);
             return GetDroneJson(statusJson);

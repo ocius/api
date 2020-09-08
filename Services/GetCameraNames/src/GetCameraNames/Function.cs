@@ -88,7 +88,7 @@ namespace GetCameraNames
 
         public async Task<IDictionary<string, Drone>> GetDroneNames()
         {
-            var namesEndpoint = "https://dev.ocius.com.au/usvna/oc_server?listrobots&nodeflate";
+            var namesEndpoint = "https://usvna.ocius.com.au/usvna/oc_server?listrobots&nodeflate";
             var droneNames = await Api.GetXml(namesEndpoint);
             var nameJson = Json.FromXml(droneNames);
             var drones = MapIdToName(nameJson);
