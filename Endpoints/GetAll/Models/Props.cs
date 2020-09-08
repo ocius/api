@@ -11,6 +11,7 @@ namespace ociusApi
         public string Boat_speed { get; set; }
         public string Heading { get; set; }
         public List<string> Batteries { get; set; }
+        public List<string> BatteryPercentages { get; set; }
         public List<string> Cameras { get; set; }
         public Location Location { get; set; }
     }
