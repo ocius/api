@@ -34,7 +34,7 @@ namespace ociusApi
                 if (key == "Boat_speed") props.Boat_speed = value?.S ?? "0";
                 if (key == "Heading") props.Heading = value?.S ?? "0";
                 if (key == "Batteries") props.Batteries = StringToList(value?.S ?? "");
-                if (key == "BatteryPercentages") props.Batteries = StringToList(value?.S ?? "");
+                if (key == "BatteryPercentages") props.BatteryPercentages = StringToList(value?.S ?? "");
                 if (key == "Cameras") props.Cameras = StringToList(value?.S ?? "");
 
                 if (key == "Lat") coordinates.Lat = value?.S ?? "0";

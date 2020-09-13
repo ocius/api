@@ -26,7 +26,7 @@ namespace RawDataToClientData
         {
             var batteryData = JsonConvert.DeserializeObject<Batteries>(data);
             var batteryVoltages = batteryData.Tqb.Select(battery => DroneUtils.ParseVoltage(battery));
-            var batteryPercentages = batteryData.Tqb.Select(battery => DroneUtils.ParsePercentage(battery));
+            var batteryPercentages = batteryData.Tqb.Select(battery => battery.Pcnt);
             var json = JsonConvert.DeserializeObject(data) as JObject;
             var mavpos = json["mavpos"] ?? new JObject();
             var status = mavpos["status"] ?? "Inactive";
