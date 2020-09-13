@@ -9,7 +9,6 @@ namespace ociusApi
         public string Timestamp { get; private set; }
         public string Lat { get; private set; }
         public string Lon { get; private set; }
-        public string Heading { get; private set; }
         public string WaterTemp { get; private set; }
 
         public override Drone CreateDrone(Dictionary<string, AttributeValue> attributes)
@@ -25,7 +24,6 @@ namespace ociusApi
                 if (key == "Lat") drone.Lat = value?.S ?? "";
                 if (key == "Lon") drone.Lon = value?.S ?? "";
                 if (key == "Name") drone.Name = value?.S ?? "";
-                if (key == "Heading") drone.Heading = value?.S ?? "";
                 if (key == "WaterTemp") drone.WaterTemp = value?.S ?? "";
             }
 
