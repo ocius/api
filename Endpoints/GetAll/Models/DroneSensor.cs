@@ -33,10 +33,9 @@ namespace ociusApi
                 if (key == "Wind_direction") props.Wind_direction = value?.S ?? "0";
                 if (key == "Boat_speed") props.Boat_speed = value?.S ?? "0";
                 if (key == "Heading") props.Heading = value?.S ?? "0";
-                if (key == "BatteryA") props.BatteryA = value?.S ?? "0";
-                if (key == "BatteryB") props.BatteryB = value?.S ?? "0";
-                if (key == "Batteries") props.Batteries = GetBatteries(value?.S ?? "");
-                if (key == "Cameras") props.Cameras = GetCameras(value?.S ?? "");
+                if (key == "Batteries") props.Batteries = StringToList(value?.S ?? "");
+                if (key == "BatteryPercentages") props.Batteries = StringToList(value?.S ?? "");
+                if (key == "Cameras") props.Cameras = StringToList(value?.S ?? "");
 
                 if (key == "Lat") coordinates.Lat = value?.S ?? "0";
                 if (key == "Lon") coordinates.Lon = value?.S ?? "0";
@@ -48,12 +47,7 @@ namespace ociusApi
 
             return drone;
         }
-        private List<string> GetBatteries(string value)
-        {
-            return value.Split(",").ToList();
-        }
-
-        private List<string> GetCameras(string value)
+        private List<string> StringToList(string value)
         {
             return value.Split(",").ToList();
         }

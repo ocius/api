@@ -18,15 +18,15 @@ namespace RawDataToClientData
         public string Heading { get; set; }
         public string Lat { get; set; }
         public string Lon { get; set; }
-        public string BatteryA { get; set; }
-        public string BatteryB { get; set; }
         public string Batteries { get; set; }
+        public string BatteryPercentages { get; set; }
         public string Cameras { get; set; }
 
         public static string GetSensors(string name, string data, string cameras)
         {
             var batteryData = JsonConvert.DeserializeObject<Batteries>(data);
-            var batteries = batteryData.Tqb.Select(battery => DroneUtils.ParseVoltage(battery));
+            var batteryVoltages = batteryData.Tqb.Select(battery => DroneUtils.ParseVoltage(battery));
+            var batteryPercentages = batteryData.Tqb.Select(battery => DroneUtils.ParsePercentage(battery));
             var json = JsonConvert.DeserializeObject(data) as JObject;
             var mavpos = json["mavpos"] ?? new JObject();
             var status = mavpos["status"] ?? "Inactive";
@@ -44,7 +44,7 @@ namespace RawDataToClientData
             {
                 Name = name,
                 Status = status.ToString(),
-                Water_depth = DroneUtils.ParseDecimal(water_depth),
+                Water_depth = water_depth.ToString(),
                 Water_temp = water_temp.ToString(),
                 Wind_speed = wind_speed.ToString(),
                 Wind_direction = wind_direction.ToString(),
@@ -52,9 +52,8 @@ namespace RawDataToClientData
                 Heading = heading.ToString(),
                 Lat = lat,
                 Lon = lon,
-                Batteries = String.Join(',', batteries),
-                BatteryA = batteryData.Tqb.First().Vol.Insert(2, "."),
-                BatteryB = batteryData.Tqb.First().Vol.Insert(2, "."),
+                Batteries = String.Join(',', batteryVoltages),
+                BatteryPercentages = String.Join(',', batteryPercentages),
                 Cameras = cameras
             };
             return JsonConvert.SerializeObject(sensors);
