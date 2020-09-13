@@ -21,10 +21,6 @@ RUN echo "Installing .NET Core" \
     && rm dotnet.tar.gz \
     && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
 
-RUN echo "Installing .NET tools" \
-    && dotnet tool install -g Amazon.Lambda.Tools \ 
-    && export PATH="$PATH:$HOME/.dotnet/tools/"
-
 RUN echo "Installing AWS CLI" \
    && apt-get install -y zip \
    && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
@@ -32,6 +28,11 @@ RUN echo "Installing AWS CLI" \
    && ./aws/install \
    && rm -rf ./aws awscliv2.zip 
    
+RUN echo "Installing .NET tools" \
+    && dotnet tool install -g Amazon.Lambda.Tools \ 
+
+ENV PATH="{$PATH}:/home/ocius/.dotnet/tools/"
+
 RUN rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m ocius
@@ -40,3 +41,6 @@ USER ocius
 
 WORKDIR /home/ocius
 
+ENV AWS_ACCESS_KEY_ID="REPLACE ME BEFORE BUILD THEN REMOVE ME"
+ENV AWS_SECRET_ACCESS_KEY="REPLACE ME BEFORE BUILD THEN REMOVE ME"
+ENV AWS_DEFAULT_REGION="ap-southeast-2"
