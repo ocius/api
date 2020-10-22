@@ -9,7 +9,7 @@ namespace XmlToJson
 {
     public class Function
     {
-        private readonly List<string> supportedDrones = new List<string> { "Bob", "Bruce" };
+        private readonly List<string> supportedDrones = new List<string> { "Bob", "Bruce", "Beth" };
 
         public async Task<string> FunctionHandler()
         {
