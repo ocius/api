@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using RawDataToClientData.Models;
 using System.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace RawDataToClientData
 {
@@ -24,9 +25,6 @@ namespace RawDataToClientData
 
         public static string GetSensors(string name, string data, string cameras)
         {
-            var batteryData = JsonConvert.DeserializeObject<Batteries>(data);
-            var batteryVoltages = batteryData.Tqb.Select(battery => DroneUtils.ParseVoltage(battery));
-            var batteryPercentages = batteryData.Tqb.Select(battery => battery.Pcnt);
             var json = JsonConvert.DeserializeObject(data) as JObject;
             var mavpos = json["mavpos"] ?? new JObject();
             var status = mavpos["status"] ?? "Inactive";
@@ -35,6 +33,16 @@ namespace RawDataToClientData
             var wind_speed = mavpos["wind_spd"] ?? "0";
             var wind_direction = mavpos["wind_dir"] ?? "0";
             var boat_speed = mavpos["groundspeed"] ?? "0";
+
+            var batteryVoltages = new List<string>();
+            var batteryPercentages = new List<string>();
+            if (json.ContainsKey("tqb"))
+            {
+                Console.WriteLine($"found tqb for {name}");
+                var batteryData = JsonConvert.DeserializeObject<Batteries>(data);
+                batteryVoltages = batteryData.Tqb.Select(battery => DroneUtils.ParseVoltage(battery)).ToList();
+                batteryPercentages = batteryData.Tqb.Select(battery => battery.Pcnt).ToList();
+             }
 
             var location = DroneLocation.GetLocation(name, data);
             var lat = location.Lat;
