@@ -17,7 +17,7 @@ namespace ociusApi
                 ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" } },
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { N = Date } } },
                 ScanIndexForward = false,
-                Limit = 2
+                Limit = 3 // This should come from the database
             };
         }
 
