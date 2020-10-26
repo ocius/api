@@ -7,7 +7,7 @@ namespace XmlToJson
 {
     class Program
     {
-        private static readonly List<string> supportedDrones = new List<string> { "Bob", "Bruce" };
+        private static readonly List<string> supportedDrones = new List<string> { "Bob", "Bruce", "Beth" };
 
         static async Task Main()
         {
