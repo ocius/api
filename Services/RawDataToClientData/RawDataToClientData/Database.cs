@@ -31,7 +31,7 @@ namespace RawDataToClientData
             return GetValuesFromResponse(response);
         }
 
-        public static Dictionary<string, string> GetValuesFromResponse(QueryResponse queryResponse)
+        private static Dictionary<string, string> GetValuesFromResponse(QueryResponse queryResponse)
         {
             if (!IsValidResponse(queryResponse)) return new Dictionary<string, string>();
 
@@ -39,14 +39,14 @@ namespace RawDataToClientData
 
             foreach (var item in queryResponse.Items)
             {
-                var (name, cameraUrls) = GetCameras(item);
+                var (name, cameraUrls) = ParseCameraResponse(item);
                 value.TryAdd(name, cameraUrls);
             }
 
             return value;
         }
 
-        public static (string, string) GetCameras(Dictionary<string, AttributeValue> attributes)
+        private static (string, string) ParseCameraResponse(Dictionary<string, AttributeValue> attributes)
         {
             var name = string.Empty;
             var cameras = string.Empty;
