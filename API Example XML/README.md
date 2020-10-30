@@ -9,3 +9,8 @@ This folder contains a list of sample XML files from usvna.ocius, use these file
 
 **https://usvna.ocius.com.au/usvna/oc_server?mavstatus&nodeflate**
 ./ExampleMavStatus.xml
+
+**https://usvna.ocius.com.au/usvna/oc_server?mavstatus&nodeflate**
+
+**https://usvna.ocius.com.au/usvna/oc_server?getliveimage&camera=4_masthead&nowebp**
+JPEG binary
