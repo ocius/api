@@ -33,13 +33,18 @@ namespace RawDataToClientData
 
         private static Dictionary<string, string> GetValuesFromResponse(QueryResponse queryResponse)
         {
-            if (!IsValidResponse(queryResponse)) return new Dictionary<string, string>();
+            if (!IsValidResponse(queryResponse))
+            {
+                Console.WriteLine("Invalid camera query response, returning empty dictionary");
+                return new Dictionary<string, string>();
+            }
 
             var value = new Dictionary<string, string>();
 
             foreach (var item in queryResponse.Items)
             {
                 var (name, cameraUrls) = ParseCameraResponse(item);
+                Console.WriteLine($"Found camera for {name} with with URL {cameraUrls}");
                 value.TryAdd(name, cameraUrls);
             }
 
