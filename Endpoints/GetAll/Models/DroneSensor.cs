@@ -2,6 +2,7 @@
 using ociusApi.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace ociusApi
 {
@@ -17,6 +18,10 @@ namespace ociusApi
             var coordinates = new Coordinates();
             var location = new Location();
             var props = new Props();
+
+            props.Batteries = new List<string>();
+            props.BatteryPercentages = new List<string>();
+            props.Cameras = new List<string>();
 
             foreach (KeyValuePair<string, AttributeValue> kvp in attributes)
             {

@@ -31,22 +31,27 @@ namespace RawDataToClientData
             return GetValuesFromResponse(response);
         }
 
-        public static Dictionary<string, string> GetValuesFromResponse(QueryResponse queryResponse)
+        private static Dictionary<string, string> GetValuesFromResponse(QueryResponse queryResponse)
         {
-            if (!IsValidResponse(queryResponse)) return new Dictionary<string, string>();
+            if (!IsValidResponse(queryResponse))
+            {
+                Console.WriteLine("Invalid camera query response, returning empty dictionary");
+                return new Dictionary<string, string>();
+            }
 
             var value = new Dictionary<string, string>();
 
             foreach (var item in queryResponse.Items)
             {
-                var (name, cameraUrls) = GetCameras(item);
+                var (name, cameraUrls) = ParseCameraResponse(item);
+                Console.WriteLine($"Found camera for {name} with with URL {cameraUrls}");
                 value.TryAdd(name, cameraUrls);
             }
 
             return value;
         }
 
-        public static (string, string) GetCameras(Dictionary<string, AttributeValue> attributes)
+        private static (string, string) ParseCameraResponse(Dictionary<string, AttributeValue> attributes)
         {
             var name = string.Empty;
             var cameras = string.Empty;
@@ -69,14 +74,14 @@ namespace RawDataToClientData
 
         private static QueryRequest CreateCameraQuery()
         {
-            var date = DateTime.UtcNow.Date.ToShortDateString();
-
+            var date = DateTime.UtcNow;
+            var formattedDateToPrimaryKey = $"{date.Month}/{date.Day}/{date.Year.ToString().Substring(2)}";
             return new QueryRequest
             {
                 TableName = "CameraImageUrls",
                 KeyConditionExpression = "#date = :date",
                 ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" } },
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { S = date } } },
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { S = formattedDateToPrimaryKey } } },
                 ScanIndexForward = false,
                 Limit = 10 //TODO: make this handle any number of drone cameras
             };
