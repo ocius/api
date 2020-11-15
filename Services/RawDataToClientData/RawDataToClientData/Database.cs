@@ -74,14 +74,14 @@ namespace RawDataToClientData
 
         private static QueryRequest CreateCameraQuery()
         {
-            var date = DateTime.UtcNow.Date.ToShortDateString();
-
+            var date = DateTime.UtcNow;
+            var formattedDateToPrimaryKey = $"{date.Month}/{date.Day}/{date.Year.ToString().Substring(2)}";
             return new QueryRequest
             {
                 TableName = "CameraImageUrls",
                 KeyConditionExpression = "#date = :date",
                 ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" } },
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { S = date } } },
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { S = formattedDateToPrimaryKey } } },
                 ScanIndexForward = false,
                 Limit = 10 //TODO: make this handle any number of drone cameras
             };
