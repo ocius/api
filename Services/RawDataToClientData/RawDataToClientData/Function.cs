@@ -14,7 +14,7 @@ namespace RawDataToClientData
         public async Task FunctionHandler(DynamoDBEvent dynamoEvent)
         {
             var cameras = await Database.GetCameras();
-
+            
             Console.WriteLine("Camera count: " + cameras.Count);
 
             foreach (var record in dynamoEvent.Records)
@@ -23,6 +23,8 @@ namespace RawDataToClientData
 
                 var json = Document.FromAttributeMap(record.Dynamodb.NewImage).ToJson();
                 var drone = JsonConvert.DeserializeObject<Drone>(json);
+                var isSensitive = await Database.GetDroneSensitivity(drone.Name);
+                if (isSensitive) continue;
 
                 Console.WriteLine("Drone name: " + drone.Name);
 
@@ -37,6 +39,7 @@ namespace RawDataToClientData
                 var droneLocation = DroneLocation.GetLocationJson(drone.Name, drone.Data);
                 var droneSensors = DroneSensors.GetSensors(drone.Name, drone.Data, droneCameras);
 
+                await Database.InsertAsyncWithCompositeKey(droneLocation, "DroneDataLocations", drone.Timestamp);
                 await Database.InsertAsync(droneLocation, "DroneLocations", drone.Timestamp);
                 await Database.InsertAsync(droneSensors, "DroneSensors", drone.Timestamp);
             }
