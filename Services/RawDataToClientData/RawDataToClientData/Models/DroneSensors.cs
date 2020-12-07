@@ -5,6 +5,7 @@ using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using RawDataToClientData.Repositories;
 
 namespace RawDataToClientData
 {
@@ -44,9 +45,9 @@ namespace RawDataToClientData
                 var batteryData = JsonConvert.DeserializeObject<Batteries>(data);
                 batteryVoltages = batteryData.Tqb.Select(battery => DroneUtils.ParseVoltage(battery)).ToList();
                 batteryPercentages = batteryData.Tqb.Select(battery => battery.Pcnt).ToList();
-             }
+            }
 
-            var isSensitive = await Database.GetDroneSensitivity(name);
+            var isSensitive = await SensitivityRepository.GetDroneSensitivity(name);
 
             var location = await DroneLocation.GetLocation(name, data);
             var lat = location.Lat;

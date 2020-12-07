@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RawDataToClientData.Models;
+using RawDataToClientData.Repositories;
 using System.Threading.Tasks;
 
 namespace RawDataToClientData
@@ -31,7 +32,7 @@ namespace RawDataToClientData
             var heading = mavpos["vfr_hdg"] ?? "0";
             var waterTemp = mavpos["water_tmp"] ?? "0";
 
-            var isSensitive = await Database.GetDroneSensitivity(name);
+            var isSensitive = await SensitivityRepository.GetDroneSensitivity(name);
 
             return new DroneLocation
             {

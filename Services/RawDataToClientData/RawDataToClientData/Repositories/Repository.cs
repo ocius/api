@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RawDataToClientData
 {
-    public static class Database
+    public static class Repository
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
         private static int Date => int.Parse(DateTime.UtcNow.ToString("yyyyMMdd"));
@@ -51,6 +51,7 @@ namespace RawDataToClientData
             return value;
         }
 
+        //Maybe camera repository
         private static (string, string) ParseCameraResponse(Dictionary<string, AttributeValue> attributes)
         {
             var name = string.Empty;
@@ -70,7 +71,6 @@ namespace RawDataToClientData
         {
             return queryResponse != null && queryResponse.Items != null && queryResponse.Items.Any();
         }
-
 
         private static QueryRequest CreateCameraQuery()
         {
@@ -98,37 +98,6 @@ namespace RawDataToClientData
             await table.PutItemAsync(item);
         }
 
-        private static bool parseDroneSensitivityQuery(QueryResponse queryResponse)
-        {
-            if (queryResponse == null || queryResponse.Items == null || !queryResponse.Items.Any()){
-                Console.WriteLine($"Could not query data for drone sensitivty");
-            }
-            Dictionary<string, AttributeValue> item = queryResponse.Items[0];
-            AttributeValue av = null;
-            if (item.TryGetValue("Sensitivity", out av)){
-                return av.BOOL;
-            }
-            return false;
-        }
-
-        private static QueryRequest CreateDroneSensitivityQuery(string droneName)
-        {
-            return new QueryRequest
-            {
-                TableName = "DroneStatus",
-                KeyConditionExpression = "#DroneName = :DroneName",
-                ExpressionAttributeNames = new Dictionary<string, string> { { "#DroneName", "DroneName" } },
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":DroneName", new AttributeValue { S = droneName } } },
-                ScanIndexForward = false,
-            };
-        }
-
-        public static async Task<bool> GetDroneSensitivity(string droneName)
-        {
-            var droneSensitivityQuery = CreateDroneSensitivityQuery(droneName);
-            var response = await client.QueryAsync(droneSensitivityQuery);
-            return parseDroneSensitivityQuery(response);
-        }
         
     }
 }

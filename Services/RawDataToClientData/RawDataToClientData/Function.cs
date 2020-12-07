@@ -13,7 +13,7 @@ namespace RawDataToClientData
     {
         public async Task FunctionHandler(DynamoDBEvent dynamoEvent)
         {
-            var cameras = await Database.GetCameras();
+            var cameras = await Repository.GetCameras();
             
             Console.WriteLine("Camera count: " + cameras.Count);
 
@@ -37,10 +37,10 @@ namespace RawDataToClientData
                 var droneLocation = await DroneLocation.GetLocationJson(drone.Name, drone.Data);
                 var droneSensors = await DroneSensors.GetSensors(drone.Name, drone.Data, droneCameras);
 
-                await Database.InsertAsyncWithCompositeKey(droneLocation, "DroneDataLocations", drone.Timestamp);
-                await Database.InsertAsyncWithCompositeKey(droneSensors, "DroneDataSensors", drone.Timestamp);
-                await Database.InsertAsync(droneLocation, "DroneLocations", drone.Timestamp);
-                await Database.InsertAsync(droneSensors, "DroneSensors", drone.Timestamp);
+                await Repository.InsertAsyncWithCompositeKey(droneLocation, "DroneDataLocations", drone.Timestamp);
+                await Repository.InsertAsyncWithCompositeKey(droneSensors, "DroneDataSensors", drone.Timestamp);
+                await Repository.InsertAsync(droneLocation, "DroneLocations", drone.Timestamp);
+                await Repository.InsertAsync(droneSensors, "DroneSensors", drone.Timestamp);
             }
         }
     }
