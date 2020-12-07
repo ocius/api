@@ -24,7 +24,7 @@ namespace RawDataToClientData
                 var json = Document.FromAttributeMap(record.Dynamodb.NewImage).ToJson();
                 var drone = JsonConvert.DeserializeObject<Drone>(json);
                 var isSensitive = await Database.GetDroneSensitivity(drone.Name);
-                if (isSensitive) continue;
+                drone.isSensitive = isSensitive;
 
                 Console.WriteLine("Drone name: " + drone.Name);
 
@@ -36,10 +36,11 @@ namespace RawDataToClientData
 
                 Console.WriteLine("Drone cameras " + droneCameras);
 
-                var droneLocation = DroneLocation.GetLocationJson(drone.Name, drone.Data);
-                var droneSensors = DroneSensors.GetSensors(drone.Name, drone.Data, droneCameras);
+                var droneLocation = DroneLocation.GetLocationJson(drone.Name, drone.Data, drone.isSensitive);
+                var droneSensors = DroneSensors.GetSensors(drone.Name, drone.Data, droneCameras, drone.isSensitive));
 
                 await Database.InsertAsyncWithCompositeKey(droneLocation, "DroneDataLocations", drone.Timestamp);
+                await Database.InsertAsyncWithCompositeKey(droneSensors, "DroneDataSensors", drone.Timestamp);
                 await Database.InsertAsync(droneLocation, "DroneLocations", drone.Timestamp);
                 await Database.InsertAsync(droneSensors, "DroneSensors", drone.Timestamp);
             }

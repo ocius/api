@@ -22,8 +22,9 @@ namespace RawDataToClientData
         public string Batteries { get; set; }
         public string BatteryPercentages { get; set; }
         public string Cameras { get; set; }
+        public bool IsSensitive { get; set; }
 
-        public static string GetSensors(string name, string data, string cameras)
+        public static string GetSensors(string name, string data, string cameras, bool isSensitive))
         {
             var json = JsonConvert.DeserializeObject(data) as JObject;
             var mavpos = json["mavpos"] ?? new JObject();
@@ -63,6 +64,7 @@ namespace RawDataToClientData
                 Batteries = String.Join(',', batteryVoltages),
                 BatteryPercentages = String.Join(',', batteryPercentages),
                 Cameras = cameras
+                IsSensitive = isSensitive
             };
             return JsonConvert.SerializeObject(sensors);
         }

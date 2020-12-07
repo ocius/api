@@ -11,6 +11,7 @@ namespace RawDataToClientData
         public string Lon { get; set; }
         public string Heading { get; set; }
         public string WaterTemp { get; set; }
+        public bool IsSensitive { get; set; }
 
         public static string GetLocationJson(string name, string data)
         {
@@ -19,7 +20,7 @@ namespace RawDataToClientData
             return JsonConvert.SerializeObject(location);
         }
 
-        public static DroneLocation GetLocation(string name, string data)
+        public static DroneLocation GetLocation(string name, string data, bool isSensitive)
         {
             var json = JsonConvert.DeserializeObject(data) as JObject;
 
@@ -35,7 +36,8 @@ namespace RawDataToClientData
                 Lat = DroneUtils.ParseDecimal(lat),
                 Lon = DroneUtils.ParseDecimal(lon),
                 Heading = heading.ToString(),
-                WaterTemp = waterTemp.ToString()
+                WaterTemp = waterTemp.ToString(),
+                IsSensitive = isSensitive
             };
         }
     }
