@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RawDataToClientData.Models;
+using System.Threading.Tasks;
 
 namespace RawDataToClientData
 {
@@ -13,14 +14,14 @@ namespace RawDataToClientData
         public string WaterTemp { get; set; }
         public bool IsSensitive { get; set; }
 
-        public static string GetLocationJson(string name, string data)
-        {
-            var location = GetLocation(name, data);
+        public async static Task<string> GetLocationJson(string name, string data)
+        { 
+            var location = await GetLocation(name, data);
 
             return JsonConvert.SerializeObject(location);
         }
 
-        public static DroneLocation GetLocation(string name, string data, bool isSensitive)
+        public async static Task<DroneLocation> GetLocation(string name, string data)
         {
             var json = JsonConvert.DeserializeObject(data) as JObject;
 
@@ -29,6 +30,8 @@ namespace RawDataToClientData
             var lon = mavpos["lon"] ?? "0";
             var heading = mavpos["vfr_hdg"] ?? "0";
             var waterTemp = mavpos["water_tmp"] ?? "0";
+
+            var isSensitive = await Database.GetDroneSensitivity(name);
 
             return new DroneLocation
             {
