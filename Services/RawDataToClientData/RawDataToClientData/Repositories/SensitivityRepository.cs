@@ -19,7 +19,7 @@ namespace RawDataToClientData.Repositories
             }
             Dictionary<string, AttributeValue> item = queryResponse.Items[0];
             AttributeValue av = null;
-            if (item.TryGetValue("Sensitivity", out av))
+            if (item.TryGetValue("isSensitive", out av))
             {
                 return av.BOOL;
             }
