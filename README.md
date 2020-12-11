@@ -31,8 +31,8 @@ GetAll
 ## Endpoints
 ### GetAll (API Gateway)
 Queries the database for USVS sensor data (locations, battery, etc)
-  - Function.cs: The main body of the program, returns the type of API response (timespan data/live sensor data) based on the GET request paramters
-  - APIresponse.cs: A APIGateway wrapper for database interactions. Defines the desired resources from the database. Also supplies HTTP response headers that go back to the client.
+  - Function.cs: The main body of the program. Parses the request into C# data structures. Returns the type of API response (timespan data/live sensor data) based on the GET request paramters
+  - APIresponse.cs: An API Gateway wrapper for database interactions. Defines the desired resources from the database. Also supplies HTTP response headers that go back to the client.
   - Database.cs: A centralised interface for requesting resources from the database. This will translate requests into concrete Command/Query implementations following the CQRS pattern (https://docs.microsoft.com/en-us/azure/architecture/patterns/cqrs)
 
 ## Development
