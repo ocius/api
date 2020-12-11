@@ -9,12 +9,26 @@ namespace ociusApi
     public static class Database
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
-
-        public async static Task<QueryResponse> GetLatest(string resource)
+       
+        public async Task<string> GetSupportedDrones()
         {
-            var latestDronesRequest = Query.CreateLatestDronesRequest(resource);
+            ScanRequest supportedDronesScanRequest = Query.CreateSupportedDronesRequest();
+            var response = await client.Scan(supportedDronesScanRequest);
+            return Query.parseSupportedDroneResponse(response);
+        }
 
-            return await client.QueryAsync(latestDronesRequest);
+        public async static Task<QueryResponse> GetLatestDeprecated(string resource)
+        {
+            var latestDronesRequest = Query.CreateLatestDronesRequestDeprecated(resource);
+            var databaseResponse = await client.QueryAsync(latestDronesRequest);
+            return Query.ParseLatestDroneRequest(databaseResponse); 
+        }
+
+        public async static DroneSensor GetLatest(string resource, string droneName)
+        {
+            var latestDronesRequest = Query.CreateLatestDronesRequest(resource, droneName);
+            var databaseResponse = await client.QueryAsync(latestDronesRequest);
+            return Query.ParseLatestDroneRequest(databaseResponse); 
         }
 
         public async static Task<QueryResponse> GetByTimespan(string date, string timePeriod, string resource)

@@ -28,11 +28,18 @@ namespace ociusApi
 
         private static string Today => GetDate(0);
         private static string Yesterday => GetDate(-1);
+        private static List<string> SupportedDroneNames => Database.GetSupportedDrones();
 
         public static async Task<ApiResponse> GetLatest(string resource)
         {
-            var databaseResponse = await Database.GetLatest(resource);
-            return CreateResponse(databaseResponse, resource);
+            var drones = new List<DroneSensors>();
+            foreach (var droneName in SupportedDroneNames)
+            {
+                var databaseResponse = await Database.GetLatest(resource, droneName);
+                drones.add(drone);
+            }
+            var droneJson = JsonConvert.SerializeObject(drones);
+            return CreateResponse(droneJson);
         }
 
         public static async Task<ApiResponse> GetByTimespan(JToken queryString, string resource)
@@ -57,16 +64,15 @@ namespace ociusApi
                 var dataFromYesterday = await Database.GetByTimespan(Yesterday, timespan.Value, resource);
                 databaseResponse.Items.AddRange(dataFromYesterday.Items);
             }
-
-            return CreateResponse(databaseResponse, resource);
-        }
-
-        private static ApiResponse CreateResponse(QueryResponse databaseResponse, string resource)
-        {
             var drone = DroneFactory.GetDroneType(resource);
             var droneJson = drone.ToJson(databaseResponse);
+            return CreateResponse(droneJson);
+        }
+
+        private static ApiResponse CreateApiResponse(string json)
+        {
             var headers = new Dictionary<string, string>() { { "Access-Control-Allow-Origin", "*" } };
-            return new ApiResponse { StatusCode = 200, Body = droneJson, Headers = headers };
+            return new ApiResponse { StatusCode = 200, Body = json, Headers = headers };
         }
 
 

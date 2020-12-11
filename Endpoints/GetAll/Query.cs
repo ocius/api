@@ -6,7 +6,26 @@ namespace ociusApi
 {
     public class Query
     {
-        public static QueryRequest CreateLatestDronesRequest(string resource)
+        private static bool IsValidResponse(QueryResponse queryResponse)
+        {
+            return queryResponse != null && queryResponse.Items != null && queryResponse.Items.Any();
+        }
+        private static ScanRequest CreateSupportedDronesRequest()
+        {
+            return new ScanRequest(
+                TableName = "DroneStatus"
+            );
+
+        }
+        private static List<string> parseSupportedDronesResponse(ScanResponse supportedDronesResponse)
+        {
+            // assumes every drone has a name, this is a valid assumpuption since the name is the partition key
+            // If the table is changed, this may not be a valid assumption
+            if (!IsValidResponse(supportedDronesResponse)) return new List<string>();
+            return supportedDronesResponse.Items.Select(item => item["Name"]);
+        }
+
+        public static QueryRequest CreateLatestDroneRequestDeprecated(string resource)
         {
             var Date = DateTime.UtcNow.ToString("yyyyMMdd");
 
@@ -19,6 +38,29 @@ namespace ociusApi
                 ScanIndexForward = false,
                 Limit = 3 // This should come from the database
             };
+        }
+
+        public static QueryRequest CreateLatestDroneRequest(string resource, string droneName)
+        {
+            var date = DateTime.UtcNow.ToString("yyyyMMdd");
+            var partitionKey = droneName + date;
+            return new QueryRequest
+            {
+                TableName = resource,
+                KeyConditionExpression = "DroneName+Date = :partitionKey",
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue> {
+                    { ":partitionKey", new AttributeValue { N = partitionKey } }
+                },
+                FilterExpression = "NOT IsSensitive",
+                ScanIndexForward = false,
+                Limit = 1
+            };
+        }
+
+        public static DroneSensor ParseLatestDroneRequest(QueryResponse response)
+        {
+            if (!IsValidResponse(supportedDronesResponse)) return new DroneSensor();
+            return DroneSensors.createDrone(response);
         }
 
         public static QueryRequest CreateDroneByTimeRequest(string date, long timestamp, string resource)

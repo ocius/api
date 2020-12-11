@@ -8,8 +8,8 @@ namespace ociusApi
 {
     public class DroneSensor : Drone, IDrone
     {
-        public string Timestamp { get; set; }
-        public string Status { get; set; }
+        public string Timestamp { get; set; } = "0";
+        public string Status { get; set; } = "INVALID";
         public Props Props { get; set; }
         
         public override Drone CreateDrone(Dictionary<string, AttributeValue> attributes)
