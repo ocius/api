@@ -28,18 +28,13 @@ namespace ociusApi
 
         private static string Today => GetDate(0);
         private static string Yesterday => GetDate(-1);
-        private static List<string> SupportedDroneNames => Database.GetSupportedDrones();
 
         public static async Task<ApiResponse> GetLatest(string resource)
         {
-            var drones = new List<DroneSensors>();
-            foreach (var droneName in SupportedDroneNames)
-            {
-                var databaseResponse = await Database.GetLatest(resource, droneName);
-                drones.add(drone);
-            }
-            var droneJson = JsonConvert.SerializeObject(drones);
-            return CreateResponse(droneJson);
+            var supportedDroneNames = await Database.GetSupportedDrones();
+            var drones = await Database.GetLatest(resource, supportedDroneNames);
+            var dronesJson = JsonConvert.SerializeObject(drones);
+            return CreateApiResponse(dronesJson);
         }
 
         public static async Task<ApiResponse> GetByTimespan(JToken queryString, string resource)
@@ -66,7 +61,7 @@ namespace ociusApi
             }
             var drone = DroneFactory.GetDroneType(resource);
             var droneJson = drone.ToJson(databaseResponse);
-            return CreateResponse(droneJson);
+            return CreateApiResponse(droneJson);
         }
 
         private static ApiResponse CreateApiResponse(string json)

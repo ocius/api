@@ -3,6 +3,8 @@ using Amazon.DynamoDBv2.Model;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
+using ociusApi.Models;
 
 namespace ociusApi
 {
@@ -10,25 +12,30 @@ namespace ociusApi
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
        
-        public async Task<string> GetSupportedDrones()
+        public async static Task<List<string>> GetSupportedDrones()
         {
             ScanRequest supportedDronesScanRequest = Query.CreateSupportedDronesRequest();
-            var response = await client.Scan(supportedDronesScanRequest);
+            var response = await client.ScanAsync(supportedDronesScanRequest);
             return Query.parseSupportedDroneResponse(response);
         }
 
         public async static Task<QueryResponse> GetLatestDeprecated(string resource)
         {
-            var latestDronesRequest = Query.CreateLatestDronesRequestDeprecated(resource);
-            var databaseResponse = await client.QueryAsync(latestDronesRequest);
-            return Query.ParseLatestDroneRequest(databaseResponse); 
+            var latestDronesRequest = Query.CreateLatestDroneRequestDeprecated(resource);
+            return await client.QueryAsync(latestDronesRequest);; 
         }
 
-        public async static DroneSensor GetLatest(string resource, string droneName)
-        {
-            var latestDronesRequest = Query.CreateLatestDronesRequest(resource, droneName);
-            var databaseResponse = await client.QueryAsync(latestDronesRequest);
-            return Query.ParseLatestDroneRequest(databaseResponse); 
+        public async static Task<List<DroneSensor>> GetLatest(string resource, List<string> supportedDroneNames)
+        {            
+            var drones = new List<DroneSensor>();
+            foreach (var droneName in supportedDroneNames)
+            {
+                var latestDronesRequest = Query.CreateLatestDronesRequest(resource, droneName);
+                var databaseResponse = await client.QueryAsync(latestDronesRequest);
+                var drone = Query.ParseLatestDroneRequest(databaseResponse);
+                drones.Add(drone);
+            }
+            return drones; 
         }
 
         public async static Task<QueryResponse> GetByTimespan(string date, string timePeriod, string resource)

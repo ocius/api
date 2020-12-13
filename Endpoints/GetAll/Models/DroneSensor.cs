@@ -6,13 +6,14 @@ using System;
 
 namespace ociusApi
 {
-    public class DroneSensor : Drone, IDrone
+    public class DroneSensor
     {
+        public string Name { get; set; }
         public string Timestamp { get; set; } = "0";
         public string Status { get; set; } = "INVALID";
         public Props Props { get; set; }
         
-        public override Drone CreateDrone(Dictionary<string, AttributeValue> attributes)
+        public static DroneSensor CreateDrone(Dictionary<string, AttributeValue> attributes)
         {
             var drone = new DroneSensor();
             var coordinates = new Coordinates();
@@ -44,6 +45,7 @@ namespace ociusApi
 
                 if (key == "Lat") coordinates.Lat = value?.S ?? "0";
                 if (key == "Lon") coordinates.Lon = value?.S ?? "0";
+                if (key == "IsSensitive")  Console.WriteLine(value?.BOOL);
             }
 
             location.Coordinates = coordinates;
@@ -52,7 +54,7 @@ namespace ociusApi
 
             return drone;
         }
-        private List<string> StringToList(string value)
+        private static List<string> StringToList(string value)
         {
             return value.Split(",").ToList();
         }
