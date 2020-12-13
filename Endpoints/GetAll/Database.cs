@@ -14,8 +14,8 @@ namespace ociusApi
        
         public async static Task<List<string>> GetSupportedDrones()
         {
-            ScanRequest supportedDronesScanRequest = Query.CreateSupportedDronesRequest();
-            var response = await client.ScanAsync(supportedDronesScanRequest);
+            var supportedDronesRequest = Query.CreateSupportedDronesRequest();
+            var response = await client.QueryAsync(supportedDronesRequest);
             return Query.parseSupportedDroneResponse(response);
         }
 
@@ -25,28 +25,53 @@ namespace ociusApi
             return await client.QueryAsync(latestDronesRequest);; 
         }
 
-        public async static Task<List<DroneSensor>> GetLatest(string resource, List<string> supportedDroneNames)
+        public async static Task<List<DroneSensor>> GetLatest(string date, List<string> supportedDroneNames)
         {            
             var drones = new List<DroneSensor>();
             foreach (var droneName in supportedDroneNames)
             {
-                var latestDronesRequest = Query.CreateLatestDronesRequest(resource, droneName);
+                var latestDronesRequest = Query.CreateLatestDronesRequest(date, droneName);
                 var databaseResponse = await client.QueryAsync(latestDronesRequest);
+                if (!Query.IsValidResponse(databaseResponse)){
+                    Console.WriteLine($"No entries found for {droneName}");
+                    continue;
+                }
                 var drone = Query.ParseLatestDroneRequest(databaseResponse);
                 drones.Add(drone);
             }
             return drones; 
         }
 
-        public async static Task<QueryResponse> GetByTimespan(string date, string timePeriod, string resource)
+        public async static Task<QueryResponse> GetByTimespanDeprecated(string date, string timePeriod, string resource)
         {
             if (!IsValidTimePeriod(timePeriod)) return new QueryResponse();
 
             var timeSpan = GetTimespan(timePeriod);
 
-            var dronesByTimespanRequest = Query.CreateDroneByTimeRequest(date, timeSpan, resource);
+            var dronesByTimespanRequest = Query.CreateDroneByTimeRequestDeprecated(date, timeSpan, resource);
 
             return await client.QueryAsync(dronesByTimespanRequest);
+        }
+
+        public async static Task<List<DroneLocation>> GetByTimespan(string date, List<string> supportedDroneNames, string timePeriod)
+        {
+            var droneTimespans = new List<DroneLocation>();
+
+            if (!IsValidTimePeriod(timePeriod)) return droneTimespans;
+            var timeSpan = GetTimespan(timePeriod);
+
+            foreach (var droneName in supportedDroneNames)
+            {
+                var dronesByTimespanRequest = Query.CreateDroneByTimeRequest(date, droneName, timeSpan);
+                var databaseResponse = await client.QueryAsync(dronesByTimespanRequest);
+                if (!Query.IsValidResponse(databaseResponse)){
+                    Console.WriteLine($"No timeline found for {droneName} from {date} to {timeSpan}");
+                    continue;
+                }
+                var droneTimespan = Query.ParseDroneByTimeRequest(databaseResponse);
+                droneTimespans.AddRange(droneTimespan);
+            }
+            return droneTimespans;
         }
 
         public static bool IsValidTimePeriod(string timespan)

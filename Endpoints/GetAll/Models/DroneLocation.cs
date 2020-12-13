@@ -4,14 +4,15 @@ using System.Collections.Generic;
 
 namespace ociusApi
 {
-    public class DroneLocation : Drone, IDrone
+    public class DroneLocation
     {
-        public string Timestamp { get; private set; }
-        public string Lat { get; private set; }
-        public string Lon { get; private set; }
-        public string WaterTemp { get; private set; }
+        public string Name { get; set; } = "Unknown Name";
+        public string Timestamp { get; private set; } = "0";
+        public string Lat { get; private set; } = "0";
+        public string Lon { get; private set; } = "0";
+        public string WaterTemp { get; private set; } = "0";
 
-        public override Drone CreateDrone(Dictionary<string, AttributeValue> attributes)
+        public static DroneLocation CreateDrone(Dictionary<string, AttributeValue> attributes)
         {
             var drone = new DroneLocation();
 

@@ -8,10 +8,10 @@ namespace ociusApi
 {
     public class DroneSensor
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = "Unknown Name";
         public string Timestamp { get; set; } = "0";
         public string Status { get; set; } = "INVALID";
-        public Props Props { get; set; }
+        public Props Props { get; set; } = new Props();
         
         public static DroneSensor CreateDrone(Dictionary<string, AttributeValue> attributes)
         {
@@ -45,7 +45,6 @@ namespace ociusApi
 
                 if (key == "Lat") coordinates.Lat = value?.S ?? "0";
                 if (key == "Lon") coordinates.Lon = value?.S ?? "0";
-                if (key == "IsSensitive")  Console.WriteLine(value?.BOOL);
             }
 
             location.Coordinates = coordinates;

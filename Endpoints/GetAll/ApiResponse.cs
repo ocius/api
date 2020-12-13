@@ -29,16 +29,19 @@ namespace ociusApi
         private static string Today => GetDate(0);
         private static string Yesterday => GetDate(-1);
 
-        public static async Task<ApiResponse> GetLatest(string resource)
+        public static async Task<ApiResponse> GetLatest()
         {
+            Console.WriteLine("Loading latest data");
             var supportedDroneNames = await Database.GetSupportedDrones();
-            var drones = await Database.GetLatest(resource, supportedDroneNames);
+            var drones = await Database.GetLatest(Today, supportedDroneNames);
             var dronesJson = JsonConvert.SerializeObject(drones);
             return CreateApiResponse(dronesJson);
         }
 
-        public static async Task<ApiResponse> GetByTimespan(JToken queryString, string resource)
+        public static async Task<ApiResponse> GetByTimespan(JToken queryString)
         {
+            Console.WriteLine("Loading timespan data");
+            var supportedDroneNames = await Database.GetSupportedDrones();
             var timespan = queryString.ToObject<Timespan>();
 
             if (!Database.IsValidTimePeriod(timespan.Value)) return null;
@@ -51,17 +54,15 @@ namespace ociusApi
 
             Console.WriteLine("MIDNIGHT " + utcMidnight);
 
-            var databaseResponse = await Database.GetByTimespan(Today, timespan.Value, resource);
-
+            var droneTimespans = await Database.GetByTimespan(Today, supportedDroneNames, timespan.Value);
             if (ticks < utcMidnight)
             {
                 Console.WriteLine("FROM YESTERDAY");
-                var dataFromYesterday = await Database.GetByTimespan(Yesterday, timespan.Value, resource);
-                databaseResponse.Items.AddRange(dataFromYesterday.Items);
+                var dataFromYesterday = await Database.GetByTimespan(Yesterday, supportedDroneNames, timespan.Value);
+                droneTimespans.AddRange(dataFromYesterday);
             }
-            var drone = DroneFactory.GetDroneType(resource);
-            var droneJson = drone.ToJson(databaseResponse);
-            return CreateApiResponse(droneJson);
+            var dronesJson = JsonConvert.SerializeObject(droneTimespans);
+            return CreateApiResponse(dronesJson);
         }
 
         private static ApiResponse CreateApiResponse(string json)
