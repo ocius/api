@@ -27,19 +27,33 @@ namespace ociusApi
 
         public async static Task<List<DroneSensor>> GetLatest(string date, List<string> supportedDroneNames)
         {            
-            var drones = new List<DroneSensor>();
+            var droneTasks = new List<Task<DroneSensor>>();
+
             foreach (var droneName in supportedDroneNames)
             {
-                var latestDronesRequest = Query.CreateLatestDronesRequest(date, droneName);
-                var databaseResponse = await client.QueryAsync(latestDronesRequest);
-                if (!Query.IsValidResponse(databaseResponse)){
+                var latestDroneQuery = Query.CreateLatestDronesRequest(date, droneName);
+
+                var databaseResponse = client.QueryAsync(latestDroneQuery);
+
+                droneTasks.Add(databaseResponse);
+            }
+
+            var drones = Task.WhenAll(droneTasks);
+
+            var foo = new List<<DroneSensor>();
+
+            foreach (var drone in drones.ToList())
+            {
+                if (!Query.IsValidResponse(databaseResponse))
+                {
                     Console.WriteLine($"No entries found for {droneName}");
                     continue;
                 }
                 var drone = Query.ParseLatestDroneRequest(databaseResponse);
-                drones.Add(drone);
+                foo.Add(drone);
             }
-            return drones; 
+
+            return foo; 
         }
 
         public async static Task<QueryResponse> GetByTimespanDeprecated(string date, string timePeriod, string resource)
