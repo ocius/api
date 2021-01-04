@@ -23,7 +23,7 @@ namespace ociusApi
             };
         }
 
-        public static List<string> parseSupportedDroneResponse(QueryResponse supportedDronesResponse)
+        public static List<string> ParseSupportedDroneResponse(QueryResponse supportedDronesResponse)
         {
             // assumes every drone has a name, this is a valid assumpuption since the name is the partition key
             // If the table is changed, this may not be a valid assumption

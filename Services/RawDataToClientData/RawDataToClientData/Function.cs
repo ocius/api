@@ -37,10 +37,8 @@ namespace RawDataToClientData
                 var droneLocation = await DroneLocation.GetLocationJson(drone.Name, drone.Data);
                 var droneSensors = await DroneSensors.GetSensors(drone.Name, drone.Data, droneCameras);
 
-                await Repository.InsertAsyncWithCompositeKey(droneLocation, "DroneDataLocations", drone.Timestamp);
-                await Repository.InsertAsyncWithCompositeKey(droneSensors, "DroneDataSensors", drone.Timestamp);
-                await Repository.InsertAsync(droneLocation, "DroneLocations", drone.Timestamp);
-                await Repository.InsertAsync(droneSensors, "DroneSensors", drone.Timestamp);
+                await Repository.InsertDrone(droneLocation, "DroneDataLocations", drone.Timestamp);
+                await Repository.InsertDrone(droneSensors, "DroneDataSensors", drone.Timestamp);
             }
         }
     }

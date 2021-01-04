@@ -16,7 +16,7 @@ namespace ociusApi
         {
             var supportedDronesRequest = Query.CreateSupportedDronesRequest();
             var response = await client.QueryAsync(supportedDronesRequest);
-            return Query.parseSupportedDroneResponse(response);
+            return Query.ParseSupportedDroneResponse(response);
         }
 
         public async static Task<QueryResponse> GetLatestDeprecated(string resource)

@@ -13,7 +13,7 @@ namespace RawDataToClientData
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
         private static int Date => int.Parse(DateTime.UtcNow.ToString("yyyyMMdd"));
 
-        public async static Task InsertAsync(string json, string tableName, long timestamp)
+        public async static Task InsertAsyncDeprecated(string json, string tableName, long timestamp)
         {
             var table = Table.LoadTable(client, tableName);
             var item = Document.FromJson(json);
@@ -87,7 +87,7 @@ namespace RawDataToClientData
             };
         }
 
-        public async static Task InsertAsyncWithCompositeKey(string json, string tableName, long timestamp)
+        public async static Task InsertDrone(string json, string tableName, long timestamp)
         {
             var table = Table.LoadTable(client, tableName);
             var item = Document.FromJson(json);

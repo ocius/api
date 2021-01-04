@@ -11,19 +11,22 @@ namespace RawDataToClientData.Repositories
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 
-        private static bool parseDroneSensitivityQuery(QueryResponse queryResponse)
+        public static async Task<bool> GetDroneSensitivity(string droneName)
+        {
+            var droneSensitivityQuery = CreateDroneSensitivityQuery(droneName);
+            var response = await client.QueryAsync(droneSensitivityQuery);
+            return IsDroneSensitive(response);
+        }
+
+        private static bool IsDroneSensitive(QueryResponse queryResponse)
         {
             if (queryResponse == null || queryResponse.Items == null || !queryResponse.Items.Any())
             {
                 Console.WriteLine($"Could not query data for drone sensitivty");
             }
             Dictionary<string, AttributeValue> item = queryResponse.Items[0];
-            AttributeValue av = null;
-            if (item.TryGetValue("isSensitive", out av))
-            {
-                return av.BOOL;
-            }
-            return false;
+
+            return item.ContainsKey("isSensitive") ? item["isSensitive"].BOOL : false;
         }
 
         private static QueryRequest CreateDroneSensitivityQuery(string droneName)
@@ -36,13 +39,6 @@ namespace RawDataToClientData.Repositories
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":DroneName", new AttributeValue { S = droneName } } },
                 ScanIndexForward = false,
             };
-        }
-
-        public static async Task<bool> GetDroneSensitivity(string droneName)
-        {
-            var droneSensitivityQuery = CreateDroneSensitivityQuery(droneName);
-            var response = await client.QueryAsync(droneSensitivityQuery);
-            return parseDroneSensitivityQuery(response);
         }
     }
 }
