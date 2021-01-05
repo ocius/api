@@ -26,14 +26,21 @@ namespace ociusApi
         }
 
         public async static Task<List<DroneSensor>> GetLatest(string date, List<string> supportedDroneNames)
-        {            
+        {
             var drones = new List<DroneSensor>();
+
+            var droneRequestTasks = new List<Task<QueryResponse>>();
+
             foreach (var droneName in supportedDroneNames)
             {
                 var latestDronesRequest = Query.CreateLatestDronesRequest(date, droneName);
-                var databaseResponse = await client.QueryAsync(latestDronesRequest);
-                if (!Query.IsValidResponse(databaseResponse)){
-                    Console.WriteLine($"No entries found for {droneName}");
+                droneRequestTasks.Add(client.QueryAsync(latestDronesRequest));
+            }
+
+            var databaseResponses = await Task.WhenAll(droneRequestTasks);
+
+            foreach (var databaseResponse in databaseResponses) {
+                if (!Query.IsValidResponse(databaseResponse)) {
                     continue;
                 }
                 var drone = Query.ParseLatestDroneRequest(databaseResponse);
