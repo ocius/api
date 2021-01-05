@@ -18,17 +18,6 @@ namespace RawDataToClientData.Repositories
             return IsDroneSensitive(response);
         }
 
-        private static bool IsDroneSensitive(QueryResponse queryResponse)
-        {
-            if (queryResponse == null || queryResponse.Items == null || !queryResponse.Items.Any())
-            {
-                Console.WriteLine($"Could not query data for drone sensitivty");
-            }
-            Dictionary<string, AttributeValue> item = queryResponse.Items[0];
-
-            return item.ContainsKey("isSensitive") ? item["isSensitive"].BOOL : false;
-        }
-
         private static QueryRequest CreateDroneSensitivityQuery(string droneName)
         {
             return new QueryRequest
@@ -39,6 +28,17 @@ namespace RawDataToClientData.Repositories
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":DroneName", new AttributeValue { S = droneName } } },
                 ScanIndexForward = false,
             };
+        }
+
+        private static bool IsDroneSensitive(QueryResponse queryResponse)
+        {
+            if (queryResponse == null || queryResponse.Items == null || !queryResponse.Items.Any())
+            {
+                Console.WriteLine($"Could not query data for drone sensitivty");
+            }
+            Dictionary<string, AttributeValue> item = queryResponse.Items[0];
+
+            return item.ContainsKey("isSensitive") ? item["isSensitive"].BOOL : false;
         }
     }
 }
