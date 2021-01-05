@@ -4,6 +4,7 @@ using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.Lambda.DynamoDBEvents;
 using Newtonsoft.Json;
 using System;
+using RawDataToClientData.Repositories;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
@@ -13,7 +14,7 @@ namespace RawDataToClientData
     {
         public async Task FunctionHandler(DynamoDBEvent dynamoEvent)
         {
-            var cameras = await Repository.GetCameras();
+            var cameras = await CameraRepository.GetCameras();
             
             Console.WriteLine("Camera count: " + cameras.Count);
 
@@ -37,8 +38,8 @@ namespace RawDataToClientData
                 var droneLocation = await DroneLocation.GetLocationJson(drone.Name, drone.Data);
                 var droneSensors = await DroneSensors.GetSensors(drone.Name, drone.Data, droneCameras);
 
-                await Repository.InsertDrone(droneLocation, "DroneDataLocations", drone.Timestamp);
-                await Repository.InsertDrone(droneSensors, "DroneDataSensors", drone.Timestamp);
+                await DroneRepository.InsertDrone(droneLocation, "DroneDataLocations", drone.Timestamp);
+                await DroneRepository.InsertDrone(droneSensors, "DroneDataSensors", drone.Timestamp);
             }
         }
     }
