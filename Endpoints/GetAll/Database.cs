@@ -11,7 +11,7 @@ namespace ociusApi
     public static class Database
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
-       
+
         public async static Task<List<string>> GetSupportedDrones()
         {
             var supportedDronesRequest = Query.CreateSupportedDronesRequest();
@@ -22,7 +22,7 @@ namespace ociusApi
         public async static Task<QueryResponse> GetLatestDeprecated(string resource)
         {
             var latestDronesRequest = Query.CreateLatestDroneRequestDeprecated(resource);
-            return await client.QueryAsync(latestDronesRequest);; 
+            return await client.QueryAsync(latestDronesRequest); ;
         }
 
         public async static Task<List<DroneSensor>> GetLatest(string date, List<string> supportedDroneNames)
@@ -39,14 +39,16 @@ namespace ociusApi
 
             var databaseResponses = await Task.WhenAll(droneRequestTasks);
 
-            foreach (var databaseResponse in databaseResponses) {
-                if (!Query.IsValidResponse(databaseResponse)) {
+            foreach (var databaseResponse in databaseResponses)
+            {
+                if (!Query.IsValidResponse(databaseResponse))
+                {
                     continue;
                 }
                 var drone = Query.ParseLatestDroneRequest(databaseResponse);
                 drones.Add(drone);
             }
-            return drones; 
+            return drones;
         }
 
         public async static Task<QueryResponse> GetByTimespanDeprecated(string date, string timePeriod, string resource)
@@ -67,12 +69,20 @@ namespace ociusApi
             if (!IsValidTimePeriod(timePeriod)) return droneTimespans;
             var timeSpan = GetTimespan(timePeriod);
 
+            var timespanRequestTasks = new List<Task<QueryResponse>>();
             foreach (var droneName in supportedDroneNames)
             {
                 var dronesByTimespanRequest = Query.CreateDroneByTimeRequest(date, droneName, timeSpan);
-                var databaseResponse = await client.QueryAsync(dronesByTimespanRequest);
-                if (!Query.IsValidResponse(databaseResponse)){
-                    Console.WriteLine($"No timeline found for {droneName} from {date} to {timeSpan}");
+                timespanRequestTasks.Add(client.QueryAsync(dronesByTimespanRequest));
+            }
+
+            var databaseResponses = await Task.WhenAll(timespanRequestTasks);
+
+            foreach (var databaseResponse in databaseResponses)
+            {
+                if (!Query.IsValidResponse(databaseResponse))
+                {
+                    //Console.WriteLine($"No timeline found for {droneName} from {date} to {timeSpan}");
                     continue;
                 }
                 var droneTimespan = Query.ParseDroneByTimeRequest(databaseResponse);
@@ -94,7 +104,7 @@ namespace ociusApi
             var oneHourMilliseconds = 3600000;
             var oneDayMilliseconds = 86400000;
 
-            if(timeSpan == "day")
+            if (timeSpan == "day")
                 return GetByTime(oneDayMilliseconds);
 
             if (timeSpan == "hour")
