@@ -1,16 +1,12 @@
 # USV API
 
-**Extract** (AWS Lambda)
+## Data Pipeline
 
-XmlToJson (Cloud Watch cron)  --> TimeSeriesDroneData Table --> Triggers RawDataToClientData (lambda) --> saves to drone locations and drone sensors into DynamoDB table
-
-
-**Load** (AWS Lambda/running process)
+XmlToJsonLambda (Cloud Watch cron)  --> TimeSeriesDroneData Table --> Triggers RawDataToClientData (lambda) --> saves to drone locations and drone sensors into DynamoDB table
 
 GetCameraNames (Cloud Watch cron) --> saves to CameraNamesTable --> GetCameraImages (on schedule) --> will download image from ocius and then upload to S3 and put s3 url into table --> CameraImageUrls stores s3 urls
 
 **Serve** (API Gateway)
-
 GetAll
 
 
