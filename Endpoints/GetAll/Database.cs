@@ -27,28 +27,16 @@ namespace ociusApi
 
         public async static Task<List<DroneSensor>> GetLatest(string date, List<string> supportedDroneNames)
         {
-            var drones = new List<DroneSensor>();
-
-            var droneRequestTasks = new List<Task<QueryResponse>>();
+            var droneRequestTasks = new List<Task<DroneSensor>>();
 
             foreach (var droneName in supportedDroneNames)
             {
-                var latestDronesRequest = Query.CreateLatestDronesRequest(date, droneName);
-                droneRequestTasks.Add(client.QueryAsync(latestDronesRequest));
+                droneRequestTasks.Add(QueryClientForDroneAsync(date, droneName));
             }
 
-            var databaseResponses = await Task.WhenAll(droneRequestTasks);
+            var drones = await Task.WhenAll(droneRequestTasks);
 
-            foreach (var databaseResponse in databaseResponses)
-            {
-                if (!Query.IsValidResponse(databaseResponse))
-                {
-                    continue;
-                }
-                var drone = Query.ParseLatestDroneRequest(databaseResponse);
-                drones.Add(drone);
-            }
-            return drones;
+            return new List<DroneSensor>(drones.Where(drone => drone != null));
         }
 
         public async static Task<QueryResponse> GetByTimespanDeprecated(string date, string timePeriod, string resource)
@@ -67,27 +55,22 @@ namespace ociusApi
             var droneTimespans = new List<DroneLocation>();
 
             if (!IsValidTimePeriod(timePeriod)) return droneTimespans;
-            var timeSpan = GetTimespan(timePeriod);
+            var timespan = GetTimespan(timePeriod);
 
-            var timespanRequestTasks = new List<Task<QueryResponse>>();
+            var timespanRequestTasks = new List<Task<List<DroneLocation>>>();
+
             foreach (var droneName in supportedDroneNames)
             {
-                var dronesByTimespanRequest = Query.CreateDroneByTimeRequest(date, droneName, timeSpan);
-                timespanRequestTasks.Add(client.QueryAsync(dronesByTimespanRequest));
+                timespanRequestTasks.Add(QueryClientForTimespanAsync(date, droneName, timespan));
             }
 
             var databaseResponses = await Task.WhenAll(timespanRequestTasks);
 
-            foreach (var databaseResponse in databaseResponses)
+            foreach (List<DroneLocation> droneTimespan in databaseResponses)
             {
-                if (!Query.IsValidResponse(databaseResponse))
-                {
-                    //Console.WriteLine($"No timeline found for {droneName} from {date} to {timeSpan}");
-                    continue;
-                }
-                var droneTimespan = Query.ParseDroneByTimeRequest(databaseResponse);
                 droneTimespans.AddRange(droneTimespan);
             }
+
             return droneTimespans;
         }
 
@@ -117,6 +100,34 @@ namespace ociusApi
         {
             var currentTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             return currentTimestamp - milliseconds;
+        }
+        private async static Task<DroneSensor> QueryClientForDroneAsync(string date, string droneName)
+        {
+            var latestDronesRequest = Query.CreateLatestDronesRequest(date, droneName);
+            QueryResponse databaseResponse = await client.QueryAsync(latestDronesRequest);
+
+            if (!Query.IsValidResponse(databaseResponse))
+            {
+                // Could throw exception instead here
+                Console.WriteLine($"No entries found for {droneName}");
+                return null;
+            }
+
+            return Query.ParseLatestDroneRequest(databaseResponse);
+        }
+
+        private async static Task<List<DroneLocation>> QueryClientForTimespanAsync(string date, string droneName, long timespan)
+        {
+            var dronesByTimespanRequest = Query.CreateDroneByTimeRequest(date, droneName, timespan);
+            QueryResponse databaseResponse = await client.QueryAsync(dronesByTimespanRequest);
+
+            if (!Query.IsValidResponse(databaseResponse))
+            {
+                Console.WriteLine($"No timeline found for {droneName} from {date} to {timespan}");
+                return new List<DroneLocation>();
+            }
+
+            return Query.ParseDroneByTimeRequest(databaseResponse);
         }
     }
 }
