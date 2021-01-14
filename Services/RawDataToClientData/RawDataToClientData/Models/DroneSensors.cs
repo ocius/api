@@ -30,9 +30,11 @@ namespace RawDataToClientData
             var status = mavpos["status"] ?? "Inactive";
             var water_depth = mavpos["water_dep"] ?? "0";
             var water_temp = mavpos["water_tmp"] ?? "0";
-            var wind_speed = mavpos["wind_spd"] ?? "0";
-            var wind_direction = mavpos["wind_dir"] ?? "0";
             var boat_speed = mavpos["groundspeed"] ?? "0";
+
+            var weatherData = json["WEATHER_DATA"] ?? new JObject();
+            var wind_speed = weatherData["wind_spd"] ?? "0";
+            var wind_direction = weatherData["wind_dir"] ?? "0";
 
             var batteryVoltages = new List<string>();
             var batteryPercentages = new List<string>();
