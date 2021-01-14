@@ -36,6 +36,8 @@ namespace ociusApi
                 if (key == "Water_temp") props.Water_temp = value?.S ?? "0";
                 if (key == "Wind_speed") props.Wind_speed = value?.S ?? "0";
                 if (key == "Wind_direction") props.Wind_direction = value?.S ?? "0";
+                if (key == "Current_speed") props.Current_speed = value?.S ?? "0";
+                if (key == "Current_direction") props.Current_direction = value?.S ?? "0";
                 if (key == "Boat_speed") props.Boat_speed = value?.S ?? "0";
                 if (key == "Heading") props.Heading = value?.S ?? "0";
                 if (key == "Batteries") props.Batteries = StringToList(value?.S ?? "");
