@@ -53,6 +53,11 @@ namespace ociusApi
 
             return drone;
         }
+
+        public static bool IsValidDrone(DroneSensor drone) {
+            return (drone?.Status ?? "INVALID") != "INVALID";
+        }
+
         private static List<string> StringToList(string value)
         {
             return value.Split(",").ToList();

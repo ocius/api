@@ -36,7 +36,7 @@ namespace ociusApi
 
             var drones = await Task.WhenAll(droneRequestTasks);
 
-            return new List<DroneSensor>(drones.Where(drone => drone.Status != "INVALID"));
+            return new List<DroneSensor>(drones.Where(drone => DroneSensor.IsValidDrone(drone)));
         }
 
         public async static Task<QueryResponse> GetByTimespanDeprecated(string date, string timePeriod, string resource)
