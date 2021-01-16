@@ -36,7 +36,7 @@ namespace ociusApi
 
             var drones = await Task.WhenAll(droneRequestTasks);
 
-            return new List<DroneSensor>(drones.Where(drone => drone != null));
+            return new List<DroneSensor>(drones.Where(drone => drone.Status != "INVALID"));
         }
 
         public async static Task<QueryResponse> GetByTimespanDeprecated(string date, string timePeriod, string resource)
@@ -108,9 +108,8 @@ namespace ociusApi
 
             if (!Query.IsValidResponse(databaseResponse))
             {
-                // Could throw exception instead here
                 Console.WriteLine($"No entries found for {droneName}");
-                return null;
+                return new DroneSensor();
             }
 
             return Query.ParseLatestDroneRequest(databaseResponse);
