@@ -1,4 +1,4 @@
-name: "Build"
+name: "Build and Deploy"
 
 on:
   push:
@@ -15,27 +15,30 @@ on:
       - '**/*.md'
       - '**/*.gitignore'
       - '**/*.gitattributes'
+
+env: 
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    DOTNET_NOLOGO: true
+    DOTNET_GENERATE_ASPNET_CERTIFICATE: false
+    DOTNET_ADD_GLOBAL_TOOLS_TO_PATH: false
+    DOTNET_MULTILEVEL_LOOKUP: 0
+    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    AWS_DEFAULT_REGION: ap-southeast-2
       
 jobs:
   build:
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
-    name: Build 
+    name: Deploying RawDataToClientData Lambda 
     runs-on: ubuntu-latest
     defaults: 
       run:
         shell: bash
         working-directory: ./Services/RawDataToClientData/RawDataToClientData
-    env:
-      DOTNET_CLI_TELEMETRY_OPTOUT: 1
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-      DOTNET_NOLOGO: true
-      DOTNET_GENERATE_ASPNET_CERTIFICATE: false
-      DOTNET_ADD_GLOBAL_TOOLS_TO_PATH: false
-      DOTNET_MULTILEVEL_LOOKUP: 0
 
     steps:
     - uses: actions/checkout@v2
-      
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
@@ -52,9 +55,6 @@ jobs:
 
     - name: Install Deployment Tools 
       run: dotnet tool install -g Amazon.Lambda.Tools 
+      
     - name: AWS Lambda Deploy
-      env: 
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ap-southeast-2
       run: dotnet lambda deploy-function --name RawDataToClientDataCD --region ap-southeast-2
