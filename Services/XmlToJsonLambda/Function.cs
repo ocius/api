@@ -14,7 +14,7 @@ namespace XmlToJson
         public async Task<string> FunctionHandler()
         {
             var date = DateTime.UtcNow.Date.ToShortDateString();
-            this.supportedDrones = Database.GetSupportedDrones();
+            this.supportedDrones = await Database.GetSupportedDrones();
             var drones = await Drones.GetDrones();
 
             return await SaveDrones(drones, date);

@@ -1,8 +1,11 @@
-﻿using Amazon.DynamoDBv2;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.Model;
 using Amazon.DynamoDBv2.DocumentModel;
 using Newtonsoft.Json;
-using System;
-using System.Threading.Tasks;
 
 namespace XmlToJson
 {
@@ -27,6 +30,13 @@ namespace XmlToJson
             }
         }
 
+        public async static Task<List<string>> GetSupportedDrones()
+        {
+            ScanRequest supportedDronesScanRequest = CreateSupportedDronesRequest();
+            var response = await client.ScanAsync(supportedDronesScanRequest);
+            return parseSupportDroneResponse(response);
+        }
+
         private static Document CreateDroneDocument(Drone drone, string date, long time)
         {
             var droneJson = JsonConvert.SerializeObject(drone);
@@ -38,23 +48,16 @@ namespace XmlToJson
 
         private static ScanRequest CreateSupportedDronesRequest()
         {
-            return new ScanRequest(
+            return new ScanRequest{
                 TableName = "DroneStatus"
-            );
+            };
         }
 
         private static List<string> parseSupportDroneResponse(ScanResponse supportedDronesResponse)
         {
             // assumes every drone has a name, this is a valid assumpuption since the name is the partition key
             // If the table is changed, this may not be a valid assumption
-            return supportedDronesResponse.Items.Select(item => item["Name"]);
-        }
-
-        public async Task<string> GetSupportedDrones()
-        {
-            ScanRequest supportedDronesScanRequest = CreateSupportedDronesRequest();
-            var response = client.Scan(supportedDronesScanRequest);
-            return parseSupportDroneResponse(response);
+            return supportedDronesResponse.Items.Select(item => item["Name"].S).ToList();
         }
     }
 }
