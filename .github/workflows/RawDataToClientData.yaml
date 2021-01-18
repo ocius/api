@@ -38,13 +38,11 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
-
     - name: Setup .NET 3.1 Core SDK
       uses: actions/checkout@v2
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
-
     - name: Install Deployment Tools 
       run: dotnet tool install -g Amazon.Lambda.Tools 
 
@@ -57,16 +55,12 @@ jobs:
       run:
         shell: bash
         working-directory: ./Services/RawDataToClientData/RawDataToClientData
-
     - name: Restore
       run: dotnet restore
-
     - name: Build
       run: dotnet build --configuration Release --no-restore
-
     - name: Test
       run: dotnet test
-
     - name: AWS Lambda Deploy
       run: dotnet lambda deploy-function --name RawDataToClientData --region ap-southeast-2 --function-role LambdaDynamo
 
@@ -79,15 +73,11 @@ jobs:
       run:
         shell: bash
         working-directory: ./Services/XmlToJsonLambda
-
     - name: Restore
       run: dotnet restore
-
     - name: Build
       run: dotnet build --configuration Release --no-restore
-
     - name: Test
       run: dotnet test
-
     - name: AWS Lambda Deploy
       run: dotnet lambda deploy-function --name XmlToJsonLambda --region ap-southeast-2 --function-role LambdaDynamo
