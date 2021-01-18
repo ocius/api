@@ -30,7 +30,7 @@ env:
 jobs:
   RawDataToClientData:
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
-    name: Building and Deploying RawDataToClientData Lambda 
+    name: RawDataToClientData Lambda 
     runs-on: ubuntu-latest
     defaults: 
       run:
@@ -57,7 +57,7 @@ jobs:
 
   XmlToJsonLambda:
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
-    name: Building and Deploying XmlToJsonLambda Lambda 
+    name: XmlToJsonLambda Lambda 
     runs-on: ubuntu-latest
     defaults: 
       run:
@@ -82,7 +82,7 @@ jobs:
 
   GetCameraNames:
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
-    name: Building and Deploying GetCameraNames Lambda 
+    name: GetCameraNames Lambda 
     runs-on: ubuntu-latest
     defaults: 
       run:
@@ -107,7 +107,7 @@ jobs:
 
   GetCameraImages:
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
-    name: Building and Deploying GetCameraImages Lambda 
+    name: GetCameraImages Lambda 
     runs-on: ubuntu-latest
     defaults: 
       run:
@@ -132,7 +132,7 @@ jobs:
 
   GetAll:
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
-    name: Building and Deploying GetCameraImages Lambda 
+    name: GetCameraImages Lambda 
     runs-on: ubuntu-latest
     defaults: 
       run:
