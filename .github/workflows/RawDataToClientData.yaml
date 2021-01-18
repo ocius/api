@@ -112,7 +112,7 @@ jobs:
     defaults: 
       run:
         shell: bash
-        working-directory: ./Services/GetCameraImages/GetCameraImages
+        working-directory: ./Services/GetCameraImages/src/GetCameraImages
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET 2.1 Core SDK
