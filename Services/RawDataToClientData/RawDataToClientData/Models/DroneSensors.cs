@@ -4,6 +4,8 @@ using RawDataToClientData.Models;
 using System.Linq;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using RawDataToClientData.Repositories;
 
 namespace RawDataToClientData
 {
@@ -22,8 +24,9 @@ namespace RawDataToClientData
         public string Batteries { get; set; }
         public string BatteryPercentages { get; set; }
         public string Cameras { get; set; }
+        public bool IsSensitive { get; set; }
 
-        public static string GetSensors(string name, string data, string cameras)
+        public async static Task<string> GetSensors(string name, string data, string cameras)
         {
             var json = JsonConvert.DeserializeObject(data) as JObject;
             var mavpos = json["mavpos"] ?? new JObject();
@@ -42,9 +45,11 @@ namespace RawDataToClientData
                 var batteryData = JsonConvert.DeserializeObject<Batteries>(data);
                 batteryVoltages = batteryData.Tqb.Select(battery => DroneUtils.ParseVoltage(battery)).ToList();
                 batteryPercentages = batteryData.Tqb.Select(battery => battery.Pcnt).ToList();
-             }
+            }
 
-            var location = DroneLocation.GetLocation(name, data);
+            var isSensitive = await SensitivityRepository.GetDroneSensitivity(name);
+
+            var location = await DroneLocation.GetLocation(name, data);
             var lat = location.Lat;
             var lon = location.Lon;
             var heading = location.Heading;
@@ -62,7 +67,8 @@ namespace RawDataToClientData
                 Lon = lon,
                 Batteries = String.Join(',', batteryVoltages),
                 BatteryPercentages = String.Join(',', batteryPercentages),
-                Cameras = cameras
+                Cameras = cameras,
+                IsSensitive = isSensitive
             };
             return JsonConvert.SerializeObject(sensors);
         }

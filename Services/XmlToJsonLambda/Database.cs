@@ -34,6 +34,27 @@ namespace XmlToJson
             droneDocument["Date"] = date;
             droneDocument["Timestamp"] = time;
             return droneDocument;
+        }      
+
+        private static ScanRequest CreateSupportedDronesRequest()
+        {
+            return new ScanRequest(
+                TableName = "DroneStatus"
+            );
+        }
+
+        private static List<string> parseSupportDroneResponse(ScanResponse supportedDronesResponse)
+        {
+            // assumes every drone has a name, this is a valid assumpuption since the name is the partition key
+            // If the table is changed, this may not be a valid assumption
+            return supportedDronesResponse.Items.Select(item => item["Name"]);
+        }
+
+        public async Task<string> GetSupportedDrones()
+        {
+            ScanRequest supportedDronesScanRequest = CreateSupportedDronesRequest();
+            var response = client.Scan(supportedDronesScanRequest);
+            return parseSupportDroneResponse(response);
         }
     }
 }

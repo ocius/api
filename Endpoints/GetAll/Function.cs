@@ -12,11 +12,10 @@ namespace ociusApi
         {
             var queryString = request["queryStringParameters"];
             var resource = request["resource"].ToString();
-            var dataType = resource.Contains("location") ? "DroneLocations" : "DroneSensors";
 
             return queryString.HasValues 
-                ? await ApiResponse.GetByTimespan(queryString, dataType) 
-                : await ApiResponse.GetLatest(dataType);
+                ? await ApiResponse.GetByTimespan(queryString) 
+                : await ApiResponse.GetLatest();
         }
     }
 }

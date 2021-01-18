@@ -29,14 +29,19 @@ namespace ociusApi
         private static string Today => GetDate(0);
         private static string Yesterday => GetDate(-1);
 
-        public static async Task<ApiResponse> GetLatest(string resource)
+        public static async Task<ApiResponse> GetLatest()
         {
-            var databaseResponse = await Database.GetLatest(resource);
-            return CreateResponse(databaseResponse, resource);
+            Console.WriteLine("Loading latest data");
+            var supportedDroneNames = await Database.GetSupportedDrones();
+            var drones = await Database.GetLatest(Today, supportedDroneNames);
+            var dronesJson = JsonConvert.SerializeObject(drones);
+            return CreateApiResponse(dronesJson);
         }
 
-        public static async Task<ApiResponse> GetByTimespan(JToken queryString, string resource)
+        public static async Task<ApiResponse> GetByTimespan(JToken queryString)
         {
+            Console.WriteLine("Loading timespan data");
+            var supportedDroneNames = await Database.GetSupportedDrones();
             var timespan = queryString.ToObject<Timespan>();
 
             if (!Database.IsValidTimePeriod(timespan.Value)) return null;
@@ -49,24 +54,21 @@ namespace ociusApi
 
             Console.WriteLine("MIDNIGHT " + utcMidnight);
 
-            var databaseResponse = await Database.GetByTimespan(Today, timespan.Value, resource);
-
+            var droneTimespans = await Database.GetByTimespan(Today, supportedDroneNames, timespan.Value);
             if (ticks < utcMidnight)
             {
                 Console.WriteLine("FROM YESTERDAY");
-                var dataFromYesterday = await Database.GetByTimespan(Yesterday, timespan.Value, resource);
-                databaseResponse.Items.AddRange(dataFromYesterday.Items);
+                var dataFromYesterday = await Database.GetByTimespan(Yesterday, supportedDroneNames, timespan.Value);
+                droneTimespans.AddRange(dataFromYesterday);
             }
-
-            return CreateResponse(databaseResponse, resource);
+            var dronesJson = JsonConvert.SerializeObject(droneTimespans);
+            return CreateApiResponse(dronesJson);
         }
 
-        private static ApiResponse CreateResponse(QueryResponse databaseResponse, string resource)
+        private static ApiResponse CreateApiResponse(string json)
         {
-            var drone = DroneFactory.GetDroneType(resource);
-            var droneJson = drone.ToJson(databaseResponse);
             var headers = new Dictionary<string, string>() { { "Access-Control-Allow-Origin", "*" } };
-            return new ApiResponse { StatusCode = 200, Body = droneJson, Headers = headers };
+            return new ApiResponse { StatusCode = 200, Body = json, Headers = headers };
         }
 
 
