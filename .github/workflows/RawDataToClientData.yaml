@@ -29,7 +29,6 @@ env:
      
 jobs:
   RawDataToClientData:
-    needs: Install
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
     name: Building and Deploying RawDataToClientData Lambda 
     runs-on: ubuntu-latest
@@ -57,7 +56,6 @@ jobs:
 
 
   XmlToJsonLambda:
-    needs: Install
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
     name: Building and Deploying XmlToJsonLambda Lambda 
     runs-on: ubuntu-latest
@@ -83,7 +81,6 @@ jobs:
       run: dotnet lambda deploy-function --name XmlToJsonLambda --region ap-southeast-2 --function-role LambdaDynamo
 
   GetCameraNames:
-    needs: Install
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
     name: Building and Deploying GetCameraNames Lambda 
     runs-on: ubuntu-latest
@@ -109,7 +106,6 @@ jobs:
       run: dotnet lambda deploy-function --name GetCameraNames --region ap-southeast-2 --function-role LambdaDynamo
 
   GetCameraImages:
-    needs: Install
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
     name: Building and Deploying GetCameraImages Lambda 
     runs-on: ubuntu-latest
@@ -135,7 +131,6 @@ jobs:
       run: dotnet lambda deploy-function --name GetCameraImages --region ap-southeast-2 --function-role LambdaDynamo
 
   GetAll:
-    needs: Install
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
     name: Building and Deploying GetCameraImages Lambda 
     runs-on: ubuntu-latest
