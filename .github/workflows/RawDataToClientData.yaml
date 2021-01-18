@@ -26,23 +26,37 @@ env:
     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     AWS_DEFAULT_REGION: ap-southeast-2
-      
+     
 jobs:
-  build:
+  Install:
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
-    name: Deploying RawDataToClientData Lambda 
+    name: Installing .NET SDKs and Lambda Tools
     runs-on: ubuntu-latest
+    steps:
+    - name: Setup .NET 3.1 Core SDK
+      uses: actions/checkout@v2
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+
+    - name: Setup .NET 3.1 Core SDK
+      uses: actions/checkout@v2
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+
+    - name: Install Deployment Tools 
+      run: dotnet tool install -g Amazon.Lambda.Tools 
+
+
+  RawDataToClientData:
+    needs: Install
+    if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
+    name: Building and Deploying RawDataToClientData Lambda 
     defaults: 
       run:
         shell: bash
         working-directory: ./Services/RawDataToClientData/RawDataToClientData
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core SDK
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.x
 
     - name: Restore
       run: dotnet restore
@@ -53,8 +67,27 @@ jobs:
     - name: Test
       run: dotnet test
 
-    - name: Install Deployment Tools 
-      run: dotnet tool install -g Amazon.Lambda.Tools 
+    - name: AWS Lambda Deploy
+      run: dotnet lambda deploy-function --name RawDataToClientData --region ap-southeast-2 --function-role LambdaDynamo
+
+
+  XmlToJsonLambda:
+    needs: Install
+    if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
+    name: Building and Deploying XmlToJsonLambda Lambda 
+    defaults: 
+      run:
+        shell: bash
+        working-directory: ./Services/XmlToJsonLambda
+
+    - name: Restore
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test
 
     - name: AWS Lambda Deploy
-      run: dotnet lambda deploy-function --name RawDataToClientDataCD --region ap-southeast-2 --function-role LambdaDynamo
+      run: dotnet lambda deploy-function --name XmlToJsonLambda --region ap-southeast-2 --function-role LambdaDynamo
