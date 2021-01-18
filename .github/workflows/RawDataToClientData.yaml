@@ -28,24 +28,6 @@ env:
     AWS_DEFAULT_REGION: ap-southeast-2
      
 jobs:
-  Install:
-    if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
-    name: Installing .NET SDKs and Lambda Tools
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET 3.1 Core SDK
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.x
-    - name: Setup .NET 2.1 Core SDK
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 2.1.x
-    - name: Install Deployment Tools 
-      run: dotnet tool install -g Amazon.Lambda.Tools 
-
-
   RawDataToClientData:
     needs: Install
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
@@ -56,6 +38,13 @@ jobs:
         shell: bash
         working-directory: ./Services/RawDataToClientData/RawDataToClientData
     steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET 3.1 Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+    - name: Install Amazon Lambda Tools 
+      run: dotnet tool install -g Amazon.Lambda.Tools 
     - uses: actions/checkout@v2
     - name: Restore
       run: dotnet restore
@@ -78,6 +67,12 @@ jobs:
         working-directory: ./Services/XmlToJsonLambda
     steps:
     - uses: actions/checkout@v2
+    - name: Setup .NET 2.1 Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.1.x
+    - name: Install Amazon Lambda Tools 
+      run: dotnet tool install -g Amazon.Lambda.Tools 
     - name: Restore
       run: dotnet restore
     - name: Build
@@ -86,3 +81,81 @@ jobs:
       run: dotnet test
     - name: AWS Lambda Deploy
       run: dotnet lambda deploy-function --name XmlToJsonLambda --region ap-southeast-2 --function-role LambdaDynamo
+
+  GetCameraNames:
+    needs: Install
+    if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
+    name: Building and Deploying GetCameraNames Lambda 
+    runs-on: ubuntu-latest
+    defaults: 
+      run:
+        shell: bash
+        working-directory: ./Services/GetCameraNames/src/GetCameraNames
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET 2.1 Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.1.x
+    - name: Install Amazon Lambda Tools 
+      run: dotnet tool install -g Amazon.Lambda.Tools 
+    - name: Restore
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test
+    - name: AWS Lambda Deploy
+      run: dotnet lambda deploy-function --name GetCameraNames --region ap-southeast-2 --function-role LambdaDynamo
+
+  GetCameraImages:
+    needs: Install
+    if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
+    name: Building and Deploying GetCameraImages Lambda 
+    runs-on: ubuntu-latest
+    defaults: 
+      run:
+        shell: bash
+        working-directory: ./Services/GetCameraImages/GetCameraImages
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET 2.1 Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.1.x
+    - name: Install Amazon Lambda Tools 
+      run: dotnet tool install -g Amazon.Lambda.Tools 
+    - name: Restore
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test
+    - name: AWS Lambda Deploy
+      run: dotnet lambda deploy-function --name GetCameraImages --region ap-southeast-2 --function-role LambdaDynamo
+
+  GetAll:
+    needs: Install
+    if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
+    name: Building and Deploying GetCameraImages Lambda 
+    runs-on: ubuntu-latest
+    defaults: 
+      run:
+        shell: bash
+        working-directory: ./Endpoints/GetAll
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET 2.1 Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.1.x
+    - name: Install Amazon Lambda Tools 
+      run: dotnet tool install -g Amazon.Lambda.Tools 
+    - name: Restore
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test
+    - name: AWS Lambda Deploy
+      run: dotnet lambda deploy-function --name GetAll --region ap-southeast-2 --function-role LambdaDynamo
