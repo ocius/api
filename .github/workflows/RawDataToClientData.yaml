@@ -3,14 +3,14 @@ name: "Build and Deploy"
 on:
   push:
     branches:
-      - cd-pipeline
+      - master
     paths-ignore:
       - '**/*.md'
       - '**/*.gitignore'
       - '**/*.gitattributes'
   workflow_dispatch:
     branches:
-      - cd-pipeline
+      - master
     paths-ignore:
       - '**/*.md'
       - '**/*.gitignore'
