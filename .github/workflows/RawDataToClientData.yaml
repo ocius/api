@@ -33,13 +33,12 @@ jobs:
     name: Installing .NET SDKs and Lambda Tools
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
     - name: Setup .NET 3.1 Core SDK
-      uses: actions/checkout@v2
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
     - name: Setup .NET 3.1 Core SDK
-      uses: actions/checkout@v2
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
@@ -51,10 +50,13 @@ jobs:
     needs: Install
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
     name: Building and Deploying RawDataToClientData Lambda 
+    runs-on: ubuntu-latest
     defaults: 
       run:
         shell: bash
         working-directory: ./Services/RawDataToClientData/RawDataToClientData
+    steps:
+    - uses: actions/checkout@v2
     - name: Restore
       run: dotnet restore
     - name: Build
@@ -69,10 +71,13 @@ jobs:
     needs: Install
     if: github.event_name == 'push' && contains(toJson(github.event.commits), '***NO_CI***') == false && contains(toJson(github.event.commits), '[ci skip]') == false && contains(toJson(github.event.commits), '[skip ci]') == false
     name: Building and Deploying XmlToJsonLambda Lambda 
+    runs-on: ubuntu-latest
     defaults: 
       run:
         shell: bash
         working-directory: ./Services/XmlToJsonLambda
+    steps:
+    - uses: actions/checkout@v2
     - name: Restore
       run: dotnet restore
     - name: Build
