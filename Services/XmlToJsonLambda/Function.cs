@@ -9,11 +9,12 @@ namespace XmlToJson
 {
     public class Function
     {
-        private readonly List<string> supportedDrones = new List<string> { "Bob", "Bruce", "Beth" };
+        private List<string> supportedDrones = new List<string>();
 
         public async Task<string> FunctionHandler()
         {
             var date = DateTime.UtcNow.Date.ToShortDateString();
+            this.supportedDrones = await Database.GetSupportedDrones();
             var drones = await Drones.GetDrones();
 
             return await SaveDrones(drones, date);

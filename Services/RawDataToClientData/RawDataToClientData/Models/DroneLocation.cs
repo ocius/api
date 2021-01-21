@@ -1,6 +1,8 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RawDataToClientData.Models;
+using RawDataToClientData.Repositories;
+using System.Threading.Tasks;
 
 namespace RawDataToClientData
 {
@@ -11,15 +13,16 @@ namespace RawDataToClientData
         public string Lon { get; set; }
         public string Heading { get; set; }
         public string WaterTemp { get; set; }
+        public bool IsSensitive { get; set; }
 
-        public static string GetLocationJson(string name, string data)
-        {
-            var location = GetLocation(name, data);
+        public async static Task<string> GetLocationJson(string name, string data)
+        { 
+            var location = await GetLocation(name, data);
 
             return JsonConvert.SerializeObject(location);
         }
 
-        public static DroneLocation GetLocation(string name, string data)
+        public async static Task<DroneLocation> GetLocation(string name, string data)
         {
             var json = JsonConvert.DeserializeObject(data) as JObject;
 
@@ -29,13 +32,16 @@ namespace RawDataToClientData
             var heading = mavpos["vfr_hdg"] ?? "0";
             var waterTemp = mavpos["water_tmp"] ?? "0";
 
+            var isSensitive = await SensitivityRepository.GetDroneSensitivity(name);
+
             return new DroneLocation
             {
                 Name = name,
                 Lat = DroneUtils.ParseDecimal(lat),
                 Lon = DroneUtils.ParseDecimal(lon),
                 Heading = heading.ToString(),
-                WaterTemp = waterTemp.ToString()
+                WaterTemp = waterTemp.ToString(),
+                IsSensitive = isSensitive
             };
         }
     }

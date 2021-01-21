@@ -6,13 +6,14 @@ using System;
 
 namespace ociusApi
 {
-    public class DroneSensor : Drone, IDrone
+    public class DroneSensor
     {
-        public string Timestamp { get; set; }
-        public string Status { get; set; }
-        public Props Props { get; set; }
+        public string Name { get; set; } = "Unknown Name";
+        public string Timestamp { get; set; } = "0";
+        public string Status { get; set; } = "INVALID";
+        public Props Props { get; set; } = new Props();
         
-        public override Drone CreateDrone(Dictionary<string, AttributeValue> attributes)
+        public static DroneSensor CreateDrone(Dictionary<string, AttributeValue> attributes)
         {
             var drone = new DroneSensor();
             var coordinates = new Coordinates();
@@ -54,7 +55,12 @@ namespace ociusApi
 
             return drone;
         }
-        private List<string> StringToList(string value)
+
+        public static bool IsValidDrone(DroneSensor drone) {
+            return (drone?.Status ?? "INVALID") != "INVALID";
+        }
+
+        private static List<string> StringToList(string value)
         {
             return value.Split(",").ToList();
         }
