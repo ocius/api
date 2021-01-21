@@ -29,24 +29,25 @@ namespace ociusApi
                 var key = kvp.Key;
                 var value = kvp.Value;
 
-                if (key == "Name") drone.Name = value?.S ?? "Not found";
-                if (key == "Timestamp") drone.Timestamp = value?.N ?? "Not found";
-                if (key == "Status") drone.Status = value?.S ?? "Not found";
-
-                if (key == "Water_depth") props.Water_depth = value?.S ?? "0";
-                if (key == "Water_temp") props.Water_temp = value?.S ?? "0";
-                if (key == "Wind_speed") props.Wind_speed = value?.S ?? "0";
-                if (key == "Wind_direction") props.Wind_direction = value?.S ?? "0";
-                if (key == "Current_speed") props.Current_speed = value?.S ?? "0";
-                if (key == "Current_direction") props.Current_direction = value?.S ?? "0";
-                if (key == "Boat_speed") props.Boat_speed = value?.S ?? "0";
-                if (key == "Heading") props.Heading = value?.S ?? "0";
-                if (key == "Batteries") props.Batteries = StringToList(value?.S ?? "");
-                if (key == "BatteryPercentages") props.BatteryPercentages = StringToList(value?.S ?? "");
-                if (key == "Cameras") props.Cameras = StringToList(value?.S ?? "");
-
-                if (key == "Lat") coordinates.Lat = value?.S ?? "0";
-                if (key == "Lon") coordinates.Lon = value?.S ?? "0";
+                switch (key)
+                {
+                    case "Name": drone.Name = value?.S ?? "Not found"; break;
+                    case "Timestamp": drone.Timestamp = value?.N ?? "Not found"; break;
+                    case "Status": drone.Status = value?.S ?? "Not found"; break;
+                    case "Water_depth": props.Water_depth = value?.S ?? "0"; break;
+                    case "Water_temp": props.Water_temp = value?.S ?? "0"; break;
+                    case "Wind_speed": props.Wind_speed = value?.S ?? "0"; break;
+                    case "Wind_direction": props.Wind_direction = value?.S ?? "0"; break;
+                    case "Current_speed": props.Current_speed = value?.S ?? "0"; break;
+                    case "Current_direction": props.Current_direction = value?.S ?? "0"; break;
+                    case "Boat_speed": props.Boat_speed = value?.S ?? "0"; break;
+                    case "Heading": props.Heading = value?.S ?? "0"; break;
+                    case "Batteries": props.Batteries = StringToList(value?.S ?? ""); break;
+                    case "BatteryPercentages": props.BatteryPercentages = StringToList(value?.S ?? ""); break;
+                    case "Cameras": props.Cameras = StringToList(value?.S ?? ""); break;
+                    case "Lat": coordinates.Lat = value?.S ?? "0"; break;
+                    case "Lon": coordinates.Lon = value?.S ?? "0"; break;
+                }
             }
 
             location.Coordinates = coordinates;
