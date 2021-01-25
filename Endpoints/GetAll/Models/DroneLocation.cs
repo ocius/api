@@ -20,12 +20,15 @@ namespace ociusApi
             {
                 var key = kvp.Key;
                 var value = kvp.Value;
+                switch(key) 
+                {
+                    case "Timestamp":   drone.Timestamp = value?.N ?? ""; break;
+                    case "Lat":         drone.Lat = value?.S ?? "";       break;
+                    case "Lon":         drone.Lon = value?.S ?? "";       break;
+                    case "Name":        drone.Name = value?.S ?? "";      break;
+                    case "WaterTemp":   drone.WaterTemp = value?.S ?? ""; break;
+                }
 
-                if (key == "Timestamp") drone.Timestamp = value?.N ?? "";
-                if (key == "Lat") drone.Lat = value?.S ?? "";
-                if (key == "Lon") drone.Lon = value?.S ?? "";
-                if (key == "Name") drone.Name = value?.S ?? "";
-                if (key == "WaterTemp") drone.WaterTemp = value?.S ?? "";
             }
 
             return drone;

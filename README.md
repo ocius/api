@@ -31,13 +31,16 @@ Queries the database for USVS sensor data (locations, battery, etc)
   - APIresponse.cs: An API Gateway wrapper for database interactions. Defines the desired resources from the database. Also supplies HTTP response headers that go back to the client.
   - Database.cs: A centralised interface for requesting resources from the database. This will translate requests into concrete Command/Query implementations following the CQRS pattern (https://docs.microsoft.com/en-us/azure/architecture/patterns/cqrs)
 
-## Development
-For linux users
-```
-cd docker
-sudo sh build.sh
-sudo sh run.sh /path/to/api/repository
-```
+## Deployment
+Deployment of this repo is automated in github workflows here https://github.com/ocius/api/tree/master/.github/workflows
+
+### Stage 1
+In stage 1 of deployment, data fetching services are deployed when merged with the `stage-1` branch.
+After deploying data fetching services, developers will be able to validate the program by checking the data insertions into DynamoDB.
+
+### Stage 2
+In stage 2 of deployment, endpoint services are deployed when merged with the `master` branch.
+After deploying endpoint services, developers will be able to validate the program by checking https://api.ocius.com.au/drones
 
 ## FAQ
 

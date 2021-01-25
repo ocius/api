@@ -101,6 +101,7 @@ namespace ociusApi
             var currentTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             return currentTimestamp - milliseconds;
         }
+
         private async static Task<DroneSensor> QueryClientForDroneAsync(string date, string droneName)
         {
             var latestDronesRequest = Query.CreateLatestDronesRequest(date, droneName);

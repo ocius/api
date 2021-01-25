@@ -17,6 +17,8 @@ namespace RawDataToClientData
         public string Water_temp { get; set; }
         public string Wind_speed { get; set; }
         public string Wind_direction { get; set; }
+        public string Current_speed { get; set; }
+        public string Current_direction { get; set; }
         public string Boat_speed { get; set; }
         public string Heading { get; set; }
         public string Lat { get; set; }
@@ -33,9 +35,15 @@ namespace RawDataToClientData
             var status = mavpos["status"] ?? "Inactive";
             var water_depth = mavpos["water_dep"] ?? "0";
             var water_temp = mavpos["water_tmp"] ?? "0";
-            var wind_speed = mavpos["wind_spd"] ?? "0";
-            var wind_direction = mavpos["wind_dir"] ?? "0";
             var boat_speed = mavpos["groundspeed"] ?? "0";
+
+            var weatherData = mavpos["WEATHER_DATA"] ?? new JObject();
+            var wind_speed = weatherData["wind_spd"] ?? "0";
+            var wind_direction = weatherData["wind_dir"] ?? "0";
+
+            var waterVelocity = mavpos["WATER_VELOCITY"] ?? new JObject();
+            var current_speed = waterVelocity["curr_spd"];
+            var current_direction = waterVelocity["curr_dir"];
 
             var batteryVoltages = new List<string>();
             var batteryPercentages = new List<string>();
@@ -61,6 +69,8 @@ namespace RawDataToClientData
                 Water_temp = water_temp.ToString(),
                 Wind_speed = wind_speed.ToString(),
                 Wind_direction = wind_direction.ToString(),
+                Current_speed = current_speed.ToString(),
+                Current_direction = current_direction.ToString(),
                 Boat_speed = boat_speed.ToString(),
                 Heading = heading.ToString(),
                 Lat = lat,

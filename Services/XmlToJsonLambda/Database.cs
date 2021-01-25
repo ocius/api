@@ -57,7 +57,7 @@ namespace XmlToJson
         {
             // assumes every drone has a name, this is a valid assumpuption since the name is the partition key
             // If the table is changed, this may not be a valid assumption
-            return supportedDronesResponse.Items.Select(item => item["Name"].S).ToList();
+            return supportedDronesResponse.Items.Select(item => item["DroneName"].S).ToList();
         }
     }
 }
