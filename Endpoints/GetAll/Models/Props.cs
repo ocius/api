@@ -8,6 +8,8 @@ namespace ociusApi
         public string Water_temp { get; set; } = "0";
         public string Wind_speed { get; set; } = "0";
         public string Wind_direction { get; set; } = "0";
+        public string Current_speed { get; set; } = "0";
+        public string Current_direction { get; set; } = "0";
         public string Boat_speed { get; set; } = "0";
         public string Heading { get; set; } = "0";
         public List<string> Batteries { get; set; } = new List<string>();
