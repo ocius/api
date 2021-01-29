@@ -1,4 +1,4 @@
-name: "Stage 2: Builing and deploying endpoint services (master)"
+name: "Stage 2: Building and deploying endpoint services (master)"
 
 on:
   push:
