@@ -1,4 +1,4 @@
-name: "Stage 1: Builing and deploying data fetching services"
+name: "Stage 1: Building and deploying data fetching services"
 
 on:
   push:
