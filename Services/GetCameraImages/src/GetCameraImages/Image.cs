@@ -69,7 +69,7 @@ namespace GetCameraImages
                 {
                     await FileTransferUtility.UploadAsync(image, bucketName, path);
                 }
-                catch (Amazon.Runtime.Internal.HttpErrorResponseException e)
+                catch (System.Exception e)
                 {
                     Console.WriteLine("Failed image upload:");
                     Console.WriteLine($"Drone: {drone}, Camera: {camera}");
@@ -77,7 +77,6 @@ namespace GetCameraImages
                     Console.WriteLine(e.StackTrace);
                 }
             }
-
             return path;
         }
 
