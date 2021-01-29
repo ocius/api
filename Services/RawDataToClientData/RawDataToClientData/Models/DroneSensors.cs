@@ -42,8 +42,8 @@ namespace RawDataToClientData
             var wind_direction = weatherData["wind_dir"] ?? "0";
 
             var waterVelocity = mavpos["WATER_VELOCITY"] ?? new JObject();
-            var current_speed = waterVelocity["curr_spd"];
-            var current_direction = waterVelocity["curr_dir"];
+            var current_speed = waterVelocity["curr_spd"] ?? "0";
+            var current_direction = waterVelocity["curr_dir"] ?? "0";
 
             var batteryVoltages = new List<string>();
             var batteryPercentages = new List<string>();
