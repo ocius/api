@@ -128,4 +128,4 @@ jobs:
     - name: Test
       run: dotnet test
     - name: AWS Lambda Deploy
-      run: dotnet lambda deploy-function --name GetCameraImages --region ap-southeast-2 --function-role LambdaDynamo
+      run: dotnet lambda deploy-function --name GetCameraImages --region ap-southeast-2 --function-role LambdaS3
