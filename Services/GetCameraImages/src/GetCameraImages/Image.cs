@@ -61,6 +61,8 @@ namespace GetCameraImages
 
             var bucketName = "ocius-images";
 
+            Console.WriteLine("Attempting image upload:");
+
             using (image as FileStream)
             {
                 try
