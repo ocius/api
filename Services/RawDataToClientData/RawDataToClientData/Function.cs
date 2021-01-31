@@ -14,8 +14,16 @@ namespace RawDataToClientData
     {
         public async Task FunctionHandler(DynamoDBEvent dynamoEvent)
         {
-            var cameras = await CameraRepository.GetCameras();
-            
+            var date = DateTime.UtcNow;
+            var cameras = await CameraRepository.GetCamerasByDate(date);
+
+            if (cameras.Count == 0)
+            {
+                Console.WriteLine($"No Cameras found for {date}");
+                Console.WriteLine($"Checking previous day for cameras");
+                cameras = await CameraRepository.GetCamerasByDate(date.AddDays(-1));
+            }
+
             Console.WriteLine("Camera count: " + cameras.Count);
 
             foreach (var record in dynamoEvent.Records)

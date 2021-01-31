@@ -11,7 +11,6 @@ namespace RawDataToClientData.Repositories
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 
-
         public static async Task<Dictionary<string, string>> GetCamerasByDate(DateTime date)
         {
             var cameraQuery = CreateCameraQueryByDate(date);
