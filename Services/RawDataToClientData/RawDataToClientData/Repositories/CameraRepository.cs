@@ -11,12 +11,36 @@ namespace RawDataToClientData.Repositories
     {
         private static readonly AmazonDynamoDBClient client = new AmazonDynamoDBClient();
 
+        public static async Task<Dictionary<string, string>> GetCamerasByDate(DateTime date)
+        {
+            var cameraQuery = CreateCameraQueryByDate(date);
+            var response = await client.QueryAsync(cameraQuery);
+            return ParseCamerasResponse(response);
+        }
+
+        private static QueryRequest CreateCameraQueryByDate(DateTime date)
+        {
+            var formattedDateToPrimaryKey = $"{date.Month}/{date.Day}/{date.Year.ToString().Substring(2)}";
+            return new QueryRequest
+            {
+                TableName = "CameraImageUrls",
+                KeyConditionExpression = "#date = :date",
+                ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" } },
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { S = formattedDateToPrimaryKey } } },
+                ScanIndexForward = false,
+                Limit = 10 //TODO: make this handle any number of drone cameras
+            };
+        }
+
+        [Obsolete("Use GetCamerasByDate instead")]
         public static async Task<Dictionary<string, string>> GetCameras()
         {
             var cameraQuery = CreateCameraQuery();
             var response = await client.QueryAsync(cameraQuery);
             return ParseCamerasResponse(response);
         }
+
+        [Obsolete("Use CreateCameraQueryByDate instead")]
         private static QueryRequest CreateCameraQuery()
         {
             var date = DateTime.UtcNow;
