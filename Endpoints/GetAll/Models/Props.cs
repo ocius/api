@@ -4,6 +4,7 @@ namespace ociusApi
 {
     public class Props
     {
+        public string Air_temp { get; set; } = "0";
         public string Water_depth { get; set; } = "0";
         public string Water_temp { get; set; } = "0";
         public string Wind_speed { get; set; } = "0";

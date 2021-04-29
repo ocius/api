@@ -13,6 +13,8 @@ namespace RawDataToClientData
     {
         public string Name { get; set; }
         public string Status { get; set; }
+
+        public string Air_temp { get; set; }
         public string Water_depth { get; set; }
         public string Water_temp { get; set; }
         public string Wind_speed { get; set; }
@@ -40,6 +42,7 @@ namespace RawDataToClientData
             var weatherData = mavpos["WEATHER_DATA"] ?? new JObject();
             var wind_speed = weatherData["wind_spd"] ?? "0";
             var wind_direction = weatherData["wind_dir"] ?? "0";
+            var air_temp = weatherData["air_temp"] ?? "0";
 
             var waterVelocity = mavpos["WATER_VELOCITY"] ?? new JObject();
             var current_speed = waterVelocity["curr_spd"] ?? "0";
@@ -66,6 +69,7 @@ namespace RawDataToClientData
                 Name = name,
                 Status = status.ToString(),
                 Water_depth = water_depth.ToString(),
+                Air_temp = air_temp.ToString(),
                 Water_temp = water_temp.ToString(),
                 Wind_speed = wind_speed.ToString(),
                 Wind_direction = wind_direction.ToString(),

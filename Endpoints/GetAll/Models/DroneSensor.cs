@@ -34,6 +34,7 @@ namespace ociusApi
                     case "Name": drone.Name = value?.S ?? "Not found"; break;
                     case "Timestamp": drone.Timestamp = value?.N ?? "Not found"; break;
                     case "Status": drone.Status = value?.S ?? "Not found"; break;
+                    case "Air_temp": props.Air_temp = value?.S ?? "0"; break;
                     case "Water_depth": props.Water_depth = value?.S ?? "0"; break;
                     case "Water_temp": props.Water_temp = value?.S ?? "0"; break;
                     case "Wind_speed": props.Wind_speed = value?.S ?? "0"; break;
