@@ -50,9 +50,12 @@ namespace ociusApi
 
             Console.WriteLine("TICKS " + ticks);
 
-            var utcMidnight = DateTime.Today.Ticks;
+            //var utcMidnight = DateTime.Today.Ticks; // This is not utc nor a unix timestamp
+            var utcMidnight = new DateTimeOffset(DateTime.UtcNow.Date).ToUnixTimeMilliseconds();
+            Console.WriteLine("UTC MIDNIGHT timestamp: " + utcMidnight);
+            
 
-            Console.WriteLine("MIDNIGHT " + utcMidnight);
+
 
             var droneTimespans = await Database.GetByTimespan(Today, supportedDroneNames, timespan.Value);
             if (ticks < utcMidnight)
