@@ -44,23 +44,34 @@ namespace ociusApi
             var supportedDroneNames = await Database.GetSupportedDrones();
             var timespan = queryString.ToObject<Timespan>();
 
+            // TODO: remove null return -> empty list
             if (!Database.IsValidTimePeriod(timespan.Value)) return null;
 
             var ticks = Database.GetTimespan(timespan.Value);
 
             Console.WriteLine("TICKS " + ticks);
 
-            var utcMidnight = DateTime.Today.Ticks;
 
-            Console.WriteLine("MIDNIGHT " + utcMidnight);
+            var currentDate = DateTime.Today;
 
-            var droneTimespans = await Database.GetByTimespan(Today, supportedDroneNames, timespan.Value);
-            if (ticks < utcMidnight)
+            // var utcMidnight = DateTime.Today.Ticks;
+
+            Console.WriteLine("MIDNIGHT " + currentDate.Ticks);
+
+            // if else weekly
+            var droneTimespans = await Database.GetByTimespan(currentDate.ToString("yyyyMMdd"), supportedDroneNames, timespan.Value);
+
+            while (ticks < currentDate.Ticks)
             {
-                Console.WriteLine("FROM YESTERDAY");
-                var dataFromYesterday = await Database.GetByTimespan(Yesterday, supportedDroneNames, timespan.Value);
-                droneTimespans.AddRange(dataFromYesterday);
+                currentDate = currentDate.AddDays(-1);
+                Console.WriteLine("FROM " + currentDate.ToString("yyyyMMdd"));
+                var previousData = await Database.GetByTimespan(currentDate.ToString("yyyyMMdd"), supportedDroneNames, timespan.Value);
+                droneTimespans.AddRange(previousData);
             }
+            // larger than a certain amount -> slice here.
+            // print size here
+            Console.WriteLine($"Number of points ({timespan.Value}): {droneTimespans.Count}");
+
             var dronesJson = JsonConvert.SerializeObject(droneTimespans);
             return CreateApiResponse(dronesJson);
         }
