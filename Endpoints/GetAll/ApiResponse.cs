@@ -51,14 +51,10 @@ namespace ociusApi
 
             Console.WriteLine("TICKS " + ticks);
 
+            var currentDate = new DateTimeOffset(DateTime.UtcNow.Date);
+            Console.WriteLine("Current date: " + currentDate.ToString("yyyyMMdd"));
+            Console.WriteLine("UTC MIDNIGHT timestamp: " + currentDate.ToUnixTimeMilliseconds());
 
-            var currentDate = DateTime.Today;
-
-            // var utcMidnight = DateTime.Today.Ticks;
-
-            Console.WriteLine("MIDNIGHT " + currentDate.Ticks);
-
-            // if else weekly
             var droneTimespans = await Database.GetByTimespan(currentDate.ToString("yyyyMMdd"), supportedDroneNames, timespan.Value);
 
             while (ticks < currentDate.Ticks)
@@ -68,8 +64,7 @@ namespace ociusApi
                 var previousData = await Database.GetByTimespan(currentDate.ToString("yyyyMMdd"), supportedDroneNames, timespan.Value);
                 droneTimespans.AddRange(previousData);
             }
-            // larger than a certain amount -> slice here.
-            // print size here
+            Console.WriteLine($"Earliest date added: " + currentDate.ToString("yyyyMMdd"));
             Console.WriteLine($"Number of points ({timespan.Value}): {droneTimespans.Count}");
 
             var dronesJson = JsonConvert.SerializeObject(droneTimespans);
