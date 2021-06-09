@@ -57,13 +57,14 @@ namespace ociusApi
 
             var droneTimespans = await Database.GetByTimespan(currentDate.ToString("yyyyMMdd"), supportedDroneNames, timespan.Value);
 
-            while (ticks < currentDate.Ticks)
+            while (ticks < currentDate.ToUnixTimeMilliseconds())
             {
                 currentDate = currentDate.AddDays(-1);
                 Console.WriteLine("FROM " + currentDate.ToString("yyyyMMdd"));
                 var previousData = await Database.GetByTimespan(currentDate.ToString("yyyyMMdd"), supportedDroneNames, timespan.Value);
                 droneTimespans.AddRange(previousData);
             }
+
             Console.WriteLine($"Earliest date added: " + currentDate.ToString("yyyyMMdd"));
             Console.WriteLine($"Number of points ({timespan.Value}): {droneTimespans.Count}");
 

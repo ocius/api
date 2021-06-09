@@ -77,7 +77,7 @@ namespace ociusApi
         public static bool IsValidTimePeriod(string timespan)
         {
             //TODO add "week" -> refactor into range
-            var validTimespans = new List<string> { "minute", "hour", "day", "week"};
+            var validTimespans = new List<string> { "minute", "hour", "day", "week" };
 
             return (validTimespans.Contains(timespan));
         }
@@ -85,9 +85,9 @@ namespace ociusApi
         public static long GetTimespan(string timeSpan)
         {
             // CONST! / map / case
-            var oneMinuteMilliseconds = 60000; 
-            var oneHourMilliseconds = 3600000; 
-            var oneDayMilliseconds = 86400000; 
+            var oneMinuteMilliseconds = 60000;
+            var oneHourMilliseconds = 3600000;
+            var oneDayMilliseconds = 86400000;
 
             if (timeSpan == "week")
                 return GetByTime(oneDayMilliseconds * 5);
