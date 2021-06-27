@@ -66,7 +66,7 @@ namespace RawDataToClientData
             var heading = location.Heading;
 
             var llLastMsg = mavpos["llLastMsg"] ?? "0";
-            var status = isActive ? "Active" : "Inactive";
+            var status = IsActive(llLastMsg.Value<int>()) ? "Active" : "Inactive";
 
 
             var sensors = new DroneSensors
@@ -93,9 +93,9 @@ namespace RawDataToClientData
         }
 
 
-        private static bool isActive(int usvTimestamp)
+        private static bool IsActive(int usvTimestamp)
         {
-            const var oneHourMilliseconds = 3600000;
+            var oneHourMilliseconds = 3600000;
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - oneHourMilliseconds;
 
             return usvTimestamp > timestamp;
