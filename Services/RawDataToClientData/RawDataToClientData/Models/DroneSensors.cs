@@ -66,7 +66,7 @@ namespace RawDataToClientData
             var heading = location.Heading;
 
             var llLastMsg = mavpos["llLastMsg"] ?? "0";
-            var status = IsActive(llLastMsg.Value<int>()) ? "Active" : "Inactive";
+            var status = IsActive(llLastMsg.Value<long>()) ? "Active" : "Inactive";
 
 
             var sensors = new DroneSensors
