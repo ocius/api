@@ -106,7 +106,7 @@ namespace GetCameraImages
                 ExpressionAttributeNames = new Dictionary<string, string> { { "#date", "Date" } },
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue> { { ":date", new AttributeValue { N = date } } },
                 ScanIndexForward = false,
-                Limit = 5 //If we have more than 5 drones, we'll need to revist this solution
+                Limit = 10 //If we have more than 10 drones, we'll need to revist this solution
             };
         }
     }

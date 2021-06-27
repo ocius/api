@@ -50,7 +50,6 @@ namespace ociusApi
 
             Console.WriteLine("TICKS " + ticks);
 
-            //var utcMidnight = DateTime.Today.Ticks; // This is not utc nor a unix timestamp
             var utcMidnight = new DateTimeOffset(DateTime.UtcNow.Date).ToUnixTimeMilliseconds();
             Console.WriteLine("UTC MIDNIGHT timestamp: " + utcMidnight);
             

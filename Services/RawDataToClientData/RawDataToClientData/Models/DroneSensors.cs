@@ -34,7 +34,7 @@ namespace RawDataToClientData
         {
             var json = JsonConvert.DeserializeObject(data) as JObject;
             var mavpos = json["mavpos"] ?? new JObject();
-            var status = mavpos["status"] ?? "Inactive";
+
             var water_depth = mavpos["water_dep"] ?? "0";
             var water_temp = mavpos["water_tmp"] ?? "0";
             var boat_speed = mavpos["groundspeed"] ?? "0";
@@ -64,10 +64,15 @@ namespace RawDataToClientData
             var lat = location.Lat;
             var lon = location.Lon;
             var heading = location.Heading;
+
+            var llLastMsg = mavpos["llLastMsg"] ?? "0";
+            var status = isActive ? "Active" : "Inactive";
+
+
             var sensors = new DroneSensors
             {
                 Name = name,
-                Status = status.ToString(),
+                Status = status,
                 Water_depth = water_depth.ToString(),
                 Air_temp = air_temp.ToString(),
                 Water_temp = water_temp.ToString(),
@@ -85,6 +90,15 @@ namespace RawDataToClientData
                 IsSensitive = isSensitive
             };
             return JsonConvert.SerializeObject(sensors);
+        }
+
+
+        private static bool isActive(int usvTimestamp)
+        {
+            const var oneHourMilliseconds = 3600000;
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - oneHourMilliseconds;
+
+            return usvTimestamp > timestamp;
         }
     }
 }
