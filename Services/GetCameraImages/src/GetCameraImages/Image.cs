@@ -37,7 +37,7 @@ namespace GetCameraImages
             Console.WriteLine(response.StatusCode.ToString());
             if (response.StatusCode != System.Net.HttpStatusCode.OK) return true;
             var message = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(message);
+            // Console.WriteLine(message);
             return message.Contains("Could not access file");
 
         }
