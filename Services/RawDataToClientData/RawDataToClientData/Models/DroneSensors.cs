@@ -93,7 +93,7 @@ namespace RawDataToClientData
         }
 
 
-        private static bool IsActive(int usvTimestamp)
+        private static bool IsActive(long usvTimestamp)
         {
             var oneHourMilliseconds = 3600000;
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - oneHourMilliseconds;
